@@ -1,0 +1,44 @@
+$ext-line-height: 40px;
+
+:global {
+  .tabulator .tabulator-header {
+    background-color: #fff !important;
+    height: $ext-line-height;
+
+    .tabulator-col {
+      background-color: #fff !important;
+    }
+  }
+
+  .tabulator-table {
+    width: 100%;
+  }
+
+  /* stylelint-disable */
+  .tabulator .tabulator-tableHolder {
+    /* stylelint-enable */
+    height: calc(100% - #{$ext-line-height}) !important;
+    max-height: calc(100% - #{$ext-line-height}) !important;
+    min-height: calc(100% - #{$ext-line-height}) !important;
+    width: auto;
+
+    .tabulator-table {
+      width: auto;
+    }
+
+    .tabulator-placeholder span {
+      font-size: 14px !important;
+    }
+  }
+
+  .tabulator-row .tabulator-cell {
+    height: auto !important;
+    white-space: normal !important;
+    word-break: break-all;
+  }
+}
+
+.table {
+  height: 100%;
+  width: 100%;
+}

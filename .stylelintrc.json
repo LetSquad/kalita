@@ -1,0 +1,13 @@
+{
+    "extends": "stylelint-config-sass-guidelines",
+    "rules": {
+        "max-nesting-depth": 5,
+        "selector-max-compound-selectors": 5,
+        "property-no-unknown": [true, {
+            "ignoreSelectors": ":export"
+        }],
+        "property-no-vendor-prefix": [true, {
+            "ignoreProperties": "box-flex"
+        }]
+    }
+}
