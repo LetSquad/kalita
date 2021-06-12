@@ -5,7 +5,7 @@ import {
 import { NotFoundErrorScreen } from "./utils/NotFoundErrorScreen";
 import { WithSuspense } from "./utils/WithSuspense";
 
-const Table = lazy(() => import("./ModelPortfolioTable/ModelPortfolioTable"));
+const Table = lazy(/* webpackChunkName: "model-portfolio-table" */() => import("./ModelPortfolioTable/ModelPortfolioTable"));
 
 export function RootRouter() {
     return (

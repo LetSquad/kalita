@@ -35,7 +35,6 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
         new webpack.SourceMapDevToolPlugin({
             filename: "[file].map"
         }),
-        new webpack.HotModuleReplacementPlugin(),
         new ReactRefreshWebpackPlugin()
     ];
 
@@ -129,6 +128,10 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
                     [{
                         loader: "ts-loader",
                         options: {
+                            compilerOptions: {
+                                module: "ESNext",
+                                removeComments: false
+                            },
                             getCustomTransformers: () => ({
                                 before: isProduction ? [] : [ReactRefreshTypeScript()]
                             }),
