@@ -5,7 +5,7 @@ import {
 import { NotFoundErrorScreen } from "./utils/NotFoundErrorScreen";
 import { WithSuspense } from "./utils/WithSuspense";
 
-const Table = lazy(() => import("./Table/Table"));
+const Table = lazy(() => import("./ModelPortfolioTable/ModelPortfolioTable"));
 
 export function RootRouter() {
     return (

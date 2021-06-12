@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { update } from "../../store/tableReducer";
-import styles from "./styles/Table.scss";
+import styles from "./styles/ModelPortfolioTable.scss";
 import { TabulatorColumn } from "../../../custom_typings/types";
 
 const columns: TabulatorColumn[] = [
@@ -122,7 +122,7 @@ const columns: TabulatorColumn[] = [
     }
 ];
 
-export default function Table() {
+export default function ModelPortfolioTable() {
     const dispatch = useAppDispatch();
     const tableRef = useRef<any>(null);
 
