@@ -25,7 +25,9 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
         new CleanWebpackPlugin(),
         new webpack.ProgressPlugin(),
         new webpack.DefinePlugin({
-            "process.env.NODE_ENV": isProduction ? JSON.stringify("production") : JSON.stringify("development"),
+            "process.env.NODE_ENV": isProduction
+                ? JSON.stringify("production")
+                : JSON.stringify("development"),
             "process.env.DEBUG": JSON.stringify(process.env.DEBUG)
         }),
         new ForkTsCheckerWebpackPlugin()
@@ -70,7 +72,9 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
         }
     };
 
-    const plugins = [...commonPlugins, ...(isProduction ? [] : devPlugins)];
+    const plugins = [...commonPlugins, ...(isProduction
+        ? []
+        : devPlugins)];
 
     const config: Configuration = {
         context: __dirname,
@@ -133,9 +137,10 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
                                 removeComments: false
                             },
                             getCustomTransformers: () => ({
-                                before: isProduction ? [] : [ReactRefreshTypeScript()]
-                            }),
-                            transpileOnly: true
+                                before: isProduction
+                                    ? []
+                                    : [ReactRefreshTypeScript()]
+                            })
                         }
                     }]
             }, {
@@ -173,5 +178,7 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
         plugins
     };
 
-    return merge<Configuration>(config, isProduction ? prodOptions : devOptions);
+    return merge<Configuration>(config, isProduction
+        ? prodOptions
+        : devOptions);
 };

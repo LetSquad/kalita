@@ -69,8 +69,19 @@ export const tableSlice = createSlice({
     name: "table",
     initialState,
     reducers: {
-        add: (state, action: PayloadAction<TableData>) => {
-            state.data = [...state.data, action.payload];
+        addToGroup: (state, action: PayloadAction<string>) => {
+            state.data.push({
+                id: uuidv4(),
+                name: "Новая запись",
+                groupName: action.payload,
+                weight: 1,
+                share: 0,
+                targetAmount: 0,
+                price: 0,
+                targetQuantity: 0,
+                briefcase: 0,
+                amount: 0
+            });
         },
         update: (state, action: PayloadAction<UpdatePayload>) => {
             state.data = state.data.map((data) => {
@@ -82,10 +93,23 @@ export const tableSlice = createSlice({
                 }
                 return data;
             });
+        },
+        updateGroupName: (state, action: PayloadAction<{ oldGroupName: string, newGroupName: string }>) => {
+            state.data = state.data.map((data) => {
+                if (data.groupName === action.payload.oldGroupName) {
+                    return {
+                        ...data,
+                        groupName: action.payload.newGroupName
+                    };
+                }
+                return data;
+            });
         }
     }
 });
 
-export const { add, update } = tableSlice.actions;
+export const {
+    addToGroup, update, updateGroupName
+} = tableSlice.actions;
 
 export default tableSlice.reducer;
