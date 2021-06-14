@@ -1,4 +1,5 @@
 $ext-height: 40px;
+$additional-header-height: $ext-height;
 $tabulator-header-height: $ext-height;
 $tabulator-footer-height: $ext-height;
 
@@ -44,8 +45,25 @@ $tabulator-footer-height: $ext-height;
   }
 }
 
-.table {
+.main-container {
   height: 100%;
+}
+
+.additional-header {
+  align-items: center;
+  display: flex;
+  height: $additional-header-height;
+  justify-content: flex-end;
+  width: 100%;
+
+  &-add-icon {
+    font-size: 16px !important;
+    margin-right: 10px !important;
+  }
+}
+
+.table {
+  height: calc(100% - #{$additional-header-height});
 }
 
 .group- {

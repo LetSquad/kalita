@@ -1,8 +1,12 @@
 import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
 import _ from "lodash";
+import { Icon } from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { addToGroup, update, updateGroupName } from "../../store/tableReducer";
+import {
+    addNewGroup, addToGroup, deleteRowById, update, updateGroupName
+} from "../../store/tableReducer";
+import { ActionBlock } from "./ActionBlock";
 import { columns } from "./constants";
 import styles from "./styles/ModelPortfolioTable.scss";
 
@@ -32,8 +36,19 @@ export default function ModelPortfolioTable() {
         dispatch(addToGroup(groupName));
     }, [dispatch]);
 
+    const addGroup = useCallback(() => {
+        dispatch(addNewGroup());
+    }, [dispatch]);
+
     const updateGroup = useCallback((oldGroupName, newGroupName) => {
-        dispatch(updateGroupName({ oldGroupName, newGroupName }));
+        dispatch(updateGroupName({
+            oldGroupName,
+            newGroupName
+        }));
+    }, [dispatch]);
+
+    const deleteRow = useCallback((id: string) => {
+        dispatch(deleteRowById(id));
     }, [dispatch]);
 
     const options = useMemo(() => ({
@@ -44,7 +59,6 @@ export default function ModelPortfolioTable() {
         responsiveLayout: "hide",
         groupBy: "groupName",
         columnCalcs: "both",
-        reactiveData: true,
         groupHeader: (value: any, count: any, data: any, group: any) => {
             const elem = document.createElement("div");
             elem.className = styles.groupContainer;
@@ -63,10 +77,23 @@ export default function ModelPortfolioTable() {
         }
     }), [addRowToGroup, updateGroup]);
 
-    return useMemo(() => (
+    const actionBlock = useCallback(() => (
+        <ActionBlock deleteRow={deleteRow} />
+    ), [deleteRow]);
+
+    const table = useMemo(() => (
         <ReactTabulator
-            ref={tableRef} columns={columns} data={_.cloneDeep(tableData)} options={options}
+            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(tableData)} options={options}
             className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
         />
-    ), [cellUpdated, options, rowMoved, tableData]);
+    ), [actionBlock, cellUpdated, options, rowMoved, tableData]);
+
+    return (
+        <div className={styles.mainContainer}>
+            <div className={styles.additionalHeader}>
+                <Icon name="plus" link className={styles.additionalHeaderAddIcon} onClick={() => addGroup()} />
+            </div>
+            {table}
+        </div>
+    );
 }

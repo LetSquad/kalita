@@ -83,6 +83,20 @@ export const tableSlice = createSlice({
                 amount: 0
             });
         },
+        addNewGroup: (state) => {
+            state.data.push({
+                id: uuidv4(),
+                name: "Новая запись",
+                groupName: getNewGroupName(state.data),
+                weight: 1,
+                share: 0,
+                targetAmount: 0,
+                price: 0,
+                targetQuantity: 0,
+                briefcase: 0,
+                amount: 0
+            });
+        },
         update: (state, action: PayloadAction<UpdatePayload>) => {
             state.data = state.data.map((data) => {
                 if (data.id === action.payload.id) {
@@ -104,12 +118,26 @@ export const tableSlice = createSlice({
                 }
                 return data;
             });
+        },
+        deleteRowById: (state, action: PayloadAction<string>) => {
+            state.data = state.data.filter((data) => data.id !== action.payload);
         }
     }
 });
 
 export const {
-    addToGroup, update, updateGroupName
+    addToGroup, addNewGroup, update, updateGroupName, deleteRowById
 } = tableSlice.actions;
 
 export default tableSlice.reducer;
+
+function getNewGroupName(tableData: TableData[]): string {
+    const groups = [...new Set(tableData
+        .map((data) => data.groupName)
+        .filter((groupName) => /^\(Без названия\d*\)$/.test(groupName)))];
+    if (groups.length === 0) {
+        return "(Без названия)";
+    }
+    const newGroupsNums = groups.map((groupName) => groupName.replace("(Без названия", "").replace(")", ""));
+    return `(Без названия${newGroupsNums.length})`;
+}
