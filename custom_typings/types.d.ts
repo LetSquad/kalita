@@ -16,7 +16,7 @@ export interface TabulatorColumn {
     cssClass?: string,
     formatter?: "plaintext" | "textarea" | "html" | "money" | "image" | "link" | "datetime" | "datetimediff"
     | "tickCross" | "color" | "star" | "traffic" | "progress" | "lookup" | "buttonTick" | "buttonCross" | "rownum"
-    | "handle",
+    | "handle" | ((cell: any, formatterParams: any, onRendered: (callback: () => void) => void) => string),
     headerSort?: boolean,
     headerHozAlign?: "left" | "center" | "right",
     headerTooltip?: string,

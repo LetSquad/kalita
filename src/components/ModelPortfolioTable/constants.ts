@@ -1,6 +1,7 @@
+import { reactFormatter } from "react-tabulator";
 import { TabulatorColumn } from "../../../custom_typings/types";
 
-export const columns: TabulatorColumn[] = [
+export const columns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
     {
         title: "Имя",
         field: "name",
@@ -11,6 +12,7 @@ export const columns: TabulatorColumn[] = [
         headerHozAlign: "left",
         minWidth: 100,
         editor: "input",
+        validator: "required",
         widthGrow: 2
     }, {
         title: "Вес",
@@ -22,7 +24,8 @@ export const columns: TabulatorColumn[] = [
         vertAlign: "middle",
         hozAlign: "left",
         headerHozAlign: "left",
-        editor: "input"
+        editor: "input",
+        validator: "min:1"
     }, {
         title: "Доля",
         field: "share",
@@ -95,7 +98,8 @@ export const columns: TabulatorColumn[] = [
         vertAlign: "middle",
         hozAlign: "left",
         headerHozAlign: "left",
-        editor: "input"
+        editor: "input",
+        validator: "min:0"
     }, {
         title: "Сумма",
         minWidth: 100,
@@ -115,5 +119,15 @@ export const columns: TabulatorColumn[] = [
             symbol: "₽",
             symbolAfter: "р"
         }
+    }, {
+        title: "",
+        field: "action",
+        width: 40,
+        resizable: false,
+        formatter: reactFormatter(actionBlock),
+        visible: true,
+        vertAlign: "middle",
+        hozAlign: "center",
+        headerSort: false
     }
 ];
