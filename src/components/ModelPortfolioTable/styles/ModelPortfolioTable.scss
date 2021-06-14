@@ -1,7 +1,6 @@
 $ext-height: 40px;
 $tabulator-header-height: $ext-height;
 $tabulator-footer-height: $ext-height;
-$add-line-height: $ext-height;
 
 :global {
   .tabulator .tabulator-header {
@@ -25,9 +24,9 @@ $add-line-height: $ext-height;
   /* stylelint-disable */
   .tabulator .tabulator-tableHolder {
     /* stylelint-enable */
-    height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height} - #{$add-line-height}) !important;
-    max-height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height} - #{$add-line-height}) !important;
-    min-height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height} - #{$add-line-height}) !important;
+    height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height}) !important;
+    max-height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height}) !important;
+    min-height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height}) !important;
 
     .tabulator-placeholder span {
       font-size: 14px !important;
@@ -46,11 +45,7 @@ $add-line-height: $ext-height;
 }
 
 .table {
-  height: calc(100% - #{$add-line-height});
-}
-
-.add {
-  height: $add-line-height;
+  height: 100%;
 }
 
 .group- {
