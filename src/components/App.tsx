@@ -7,18 +7,16 @@ import { persistor } from "../store";
 
 export default function App() {
     return (
-        <div>
-            <PersistGate
-                loading={(
-                    <div>
-                        <Loader active inline="centered" />
-                    </div>
-                )} persistor={persistor}
-            >
-                <WithErrorBoundaries>
-                    <RootRouter />
-                </WithErrorBoundaries>
-            </PersistGate>
-        </div>
+        <PersistGate
+            loading={(
+                <div>
+                    <Loader active inline="centered" />
+                </div>
+            )} persistor={persistor}
+        >
+            <WithErrorBoundaries>
+                <RootRouter />
+            </WithErrorBoundaries>
+        </PersistGate>
     );
 }

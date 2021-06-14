@@ -10,21 +10,19 @@ const Table = lazy(/* webpackChunkName: "model-portfolio-table" */() => import("
 export function RootRouter() {
     return (
         <Router>
-            <div>
-                <WithSuspense>
-                    <Switch>
-                        <Route exact path="/">
-                            <Redirect to="/table" />
-                        </Route>
-                        <Route
-                            exact path="/table"
-                            component={Table}
-                        />
-                        <Route exact path="/not-found" component={NotFoundErrorScreen} />
-                        <Redirect to="/not-found" />
-                    </Switch>
-                </WithSuspense>
-            </div>
+            <WithSuspense>
+                <Switch>
+                    <Route exact path="/">
+                        <Redirect to="/table" />
+                    </Route>
+                    <Route
+                        exact path="/table"
+                        component={Table}
+                    />
+                    <Route exact path="/not-found" component={NotFoundErrorScreen} />
+                    <Redirect to="/not-found" />
+                </Switch>
+            </WithSuspense>
         </Router>
     );
 }

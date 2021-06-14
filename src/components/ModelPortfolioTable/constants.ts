@@ -10,7 +10,8 @@ export const columns: TabulatorColumn[] = [
         vertAlign: "middle",
         headerHozAlign: "left",
         minWidth: 100,
-        editor: "input"
+        editor: "input",
+        widthGrow: 2
     }, {
         title: "Вес",
         field: "weight",
@@ -53,7 +54,7 @@ export const columns: TabulatorColumn[] = [
         visible: true,
         vertAlign: "middle",
         headerHozAlign: "left",
-        minWidth: 100,
+        minWidth: 152,
         topCalc: "sum",
         topCalcFormatter: "money",
         topCalcFormatterParams: {
@@ -79,7 +80,7 @@ export const columns: TabulatorColumn[] = [
         field: "targetQuantity",
         sorter: "number",
         formatter: "plaintext",
-        minWidth: 100,
+        minWidth: 191,
         visible: true,
         vertAlign: "middle",
         hozAlign: "left",
@@ -89,7 +90,7 @@ export const columns: TabulatorColumn[] = [
         field: "briefcase",
         sorter: "number",
         formatter: "plaintext",
-        minWidth: 100,
+        minWidth: 128,
         visible: true,
         vertAlign: "middle",
         hozAlign: "left",
