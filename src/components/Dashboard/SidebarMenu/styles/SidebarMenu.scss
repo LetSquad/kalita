@@ -1,0 +1,17 @@
+@use '../../styles/Dashboard' as *;
+
+$big-menu-margin-size: 20px;
+$small-menu-margin-size: 15px;
+
+.title {
+  font-size: 18px;
+  margin: $big-menu-margin-size 0 $small-menu-margin-size $big-menu-margin-size;
+}
+
+.separator {
+  border: 2px solid;
+  height: 2px;
+  margin: 0 $big-menu-margin-size $small-menu-margin-size;
+  width: calc(#{$menu-width} - 2 * #{$big-menu-margin-size});
+}
+
