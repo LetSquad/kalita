@@ -1,14 +1,13 @@
 import _ from "lodash";
 import React, {
-    useCallback, useEffect, useMemo, useRef
+    useCallback, useMemo, useRef
 } from "react";
 import { ReactTabulator } from "react-tabulator";
 import { Icon } from "semantic-ui-react";
 import { $enum } from "ts-enum-util";
-import { BrokeragePortfolioTypes, EditableTableColumns, SidebarMenuElementsTypes } from "../../../custom_typings/enums";
+import { EditableTableColumns } from "../../../custom_typings/enums";
 import { CurrentPortfolio, TabulatorColumn } from "../../../custom_typings/types";
 import { useAppDispatch } from "../../store/hooks";
-import { updateMenuElementData } from "../../store/sidebarMenuReducer";
 import {
     addNewGroup, addToGroup, deleteRowById, update, updateGroupName
 } from "../../store/table/tableReducer";
@@ -29,7 +28,7 @@ export default function Table(props: Props) {
         dispatch(update({
             id: cell._cell.row.data.id,
             valueKey: $enum(EditableTableColumns)
-                .getKeyOrThrow(cell._cell.column.field) as EditableTableColumns,
+                .asValueOrThrow(cell._cell.column.field),
             newValue: cell._cell.value
         }));
     }, [dispatch]);
@@ -92,30 +91,12 @@ export default function Table(props: Props) {
         <ActionBlock deleteRow={deleteRow} />
     ), [deleteRow]);
 
-    const updateMenuElement = useCallback((currentPortfolio: CurrentPortfolio) => {
-        if (currentPortfolio[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-            dispatch(updateMenuElementData({
-                elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-                data: currentPortfolio[1]
-            }));
-        } else {
-            dispatch(updateMenuElementData({
-                elementType: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-                data: currentPortfolio[1]
-            }));
-        }
-    }, [dispatch]);
-
     const table = useMemo(() => (
         <ReactTabulator
             ref={tableRef} columns={props.columns(actionBlock())} data={_.cloneDeep(props.currentPortfolio[1])}
             options={options} className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
         />
     ), [actionBlock, cellUpdated, options, props, rowMoved]);
-
-    useEffect(() => {
-        updateMenuElement(props.currentPortfolio);
-    }, [props.currentPortfolio]);
 
     return (
         <div className={partsStyles.baseContainer}>

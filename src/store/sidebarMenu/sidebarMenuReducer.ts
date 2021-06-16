@@ -1,13 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-import { SidebarMenuElementsTypes } from "../../custom_typings/enums";
+import { SidebarMenuElementsTypes } from "../../../custom_typings/enums";
 import {
     BrokerAccountMenuElement,
-    BrokerAccountTableData,
+    BrokerAccountTableData, MenuElementIdentifier,
     ModelPortfolioMenuElement,
     ModelPortfolioTableData,
     SidebarMenuGroupType
-} from "../../custom_typings/types";
+} from "../../../custom_typings/types";
+import { newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
 
 type UpdateMenuData = {
     elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
@@ -19,7 +20,7 @@ type UpdateMenuData = {
 
 export interface SidebarMenuState {
     menuGroups: SidebarMenuGroupType[];
-    activeMenuElementId?: [SidebarMenuElementsTypes, string]
+    activeMenuElementId?: MenuElementIdentifier
 }
 
 const initialState: SidebarMenuState = {
@@ -138,30 +139,49 @@ export const sidebarMenuSlice = createSlice({
     name: "sidebarMenu",
     initialState,
     reducers: {
-        addNewElement: (state, action: PayloadAction<SidebarMenuElementsTypes>) => {
+        addNewElementToGroup: (state, action: PayloadAction<SidebarMenuElementsTypes>) => {
             state.menuGroups = state.menuGroups.map((menuGroup) => {
                 if (menuGroup.type === action.payload) {
                     if (menuGroup.type === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
                         return {
                             ...menuGroup,
-                            sidebarMenu: [...menuGroup.elements, {
-                                id: [SidebarMenuElementsTypes.BROKER_ACCOUNT, uuidv4()],
-                                name: "Новый портфель",
-                                data: []
-                            }]
+                            elements: [...menuGroup.elements, newBrokerGroupMenuElement]
                         };
                     }
                     return {
                         ...menuGroup,
-                        sidebarMenu: [...menuGroup.elements, {
-                            id: [SidebarMenuElementsTypes.MODEL_PORTFOLIO, uuidv4()],
-                            name: "Новый портфель",
-                            data: []
-                        }]
+                        elements: [...menuGroup.elements, newModelGroupMenuElement]
                     };
                 }
                 return menuGroup;
             });
+        },
+        deleteElementFromGroup: (state, action: PayloadAction<MenuElementIdentifier>) => {
+            state.menuGroups = state.menuGroups.map((menuGroup) => {
+                if (menuGroup.type === action.payload.type) {
+                    if (menuGroup.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
+                        return {
+                            ...menuGroup,
+                            elements: menuGroup.elements.filter((elem) => elem.id !== action.payload.id)
+                        };
+                    }
+                    return {
+                        ...menuGroup,
+                        elements: menuGroup.elements.filter((elem) => elem.id !== action.payload.id)
+                    };
+                }
+                return menuGroup;
+            });
+        },
+        renameElementInGroup: (state, action: PayloadAction<MenuElementIdentifier & { newName: string }>) => {
+            const group = state.menuGroups.find((menuGroup) => menuGroup.type === action.payload.type);
+            if (group) {
+                const menuElement = (group.elements as Array<ModelPortfolioMenuElement | BrokerAccountMenuElement>)
+                    .find((elem) => elem.id === action.payload.id);
+                if (menuElement && menuElement.type === action.payload.type) {
+                    menuElement.name = action.payload.newName;
+                }
+            }
         },
         changePortfolioTypeOpenState: (state, action: PayloadAction<SidebarMenuElementsTypes>) => {
             state.menuGroups = state.menuGroups.map((menuGroup) =>
@@ -172,14 +192,14 @@ export const sidebarMenuSlice = createSlice({
                     }
                     : menuGroup));
         },
-        setActiveId: (state, action: PayloadAction<[SidebarMenuElementsTypes, string]>) => {
+        setActiveId: (state, action: PayloadAction<MenuElementIdentifier>) => {
             state.activeMenuElementId = action.payload;
         },
         updateMenuElementData: (state, action: PayloadAction<UpdateMenuData>) => {
-            const group = state.menuGroups.find((menuGroup) => menuGroup.type === state.activeMenuElementId?.[0]);
+            const group = state.menuGroups.find((menuGroup) => menuGroup.type === state.activeMenuElementId?.type);
             if (group) {
                 const menuElement = (group.elements as Array<ModelPortfolioMenuElement | BrokerAccountMenuElement>)
-                    .find((elem) => elem.id === state.activeMenuElementId?.[1]);
+                    .find((elem) => elem.id === state.activeMenuElementId?.id);
                 if (menuElement && menuElement.type === action.payload.elementType) {
                     menuElement.data = action.payload.data;
                 }
@@ -189,7 +209,9 @@ export const sidebarMenuSlice = createSlice({
 });
 
 export const {
-    addNewElement,
+    addNewElementToGroup,
+    deleteElementFromGroup,
+    renameElementInGroup,
     changePortfolioTypeOpenState,
     setActiveId,
     updateMenuElementData

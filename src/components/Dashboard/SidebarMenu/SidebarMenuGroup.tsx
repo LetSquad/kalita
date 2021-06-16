@@ -3,7 +3,7 @@ import { Accordion, Icon } from "semantic-ui-react";
 import { SidebarMenuElementsTypes } from "../../../../custom_typings/enums";
 import { SidebarMenuGroupType } from "../../../../custom_typings/types";
 import { useAppDispatch } from "../../../store/hooks";
-import { changePortfolioTypeOpenState } from "../../../store/sidebarMenuReducer";
+import { addNewElementToGroup, changePortfolioTypeOpenState } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import SidebarMenuElement from "./SidebarMenuElement";
 import styles from "./styles/SidebarMenuGroup.scss";
 
@@ -16,6 +16,10 @@ export default function SidebarMenuGroup(props: Props) {
 
     const changeOpenState = useCallback((type: SidebarMenuElementsTypes) => {
         dispatch(changePortfolioTypeOpenState(type));
+    }, [dispatch]);
+
+    const addElement = useCallback((type: SidebarMenuElementsTypes) => {
+        dispatch(addNewElementToGroup(type));
     }, [dispatch]);
 
     return (
@@ -37,6 +41,7 @@ export default function SidebarMenuGroup(props: Props) {
                     )
                     : null}
                 <span>{props.sidebarMenuGroupType.name}</span>
+                <Icon name="plus" className={styles.addIcon} link onClick={() => addElement(props.sidebarMenuGroupType.type)} />
             </Accordion.Title>
             <Accordion.Content active={props.sidebarMenuGroupType.isOpen} className={styles.content}>
                 {props.sidebarMenuGroupType.elements.map((portfolio) => (

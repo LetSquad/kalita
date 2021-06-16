@@ -5,7 +5,7 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import persistStore from "redux-persist/es/persistStore";
 import tableReducer from "./table/tableReducer";
-import sidebarMenuReducer, { SidebarMenuState } from "./sidebarMenuReducer";
+import sidebarMenuReducer, { SidebarMenuState } from "./sidebarMenu/sidebarMenuReducer";
 
 const persistConfig = {
     key: "root",

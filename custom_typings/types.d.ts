@@ -67,8 +67,11 @@ export interface BrokerAccountTableData {
 
 export type TableData = BrokerAccountTableData[] | ModelPortfolioTableData[];
 
-export type CurrentPortfolio = [BrokeragePortfolioTypes.MODEL_PORTFOLIO, ModelPortfolioTableData[]]
-| [BrokeragePortfolioTypes.BROKER_ACCOUNT, BrokerAccountTableData[]];
+export type CurrentModelPortfolio = [BrokeragePortfolioTypes.MODEL_PORTFOLIO, ModelPortfolioTableData[]];
+
+export type CurrentBrokerAccount = [BrokeragePortfolioTypes.BROKER_ACCOUNT, BrokerAccountTableData[]];
+
+export type CurrentPortfolio = CurrentModelPortfolio | CurrentBrokerAccount;
 
 export interface BrokerAccountMenuElement {
     id: string,
@@ -82,6 +85,11 @@ export interface ModelPortfolioMenuElement {
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
     name: string,
     data: ModelPortfolioTableData[]
+}
+
+export interface MenuElementIdentifier {
+    id: string,
+    type: SidebarMenuElementsTypes,
 }
 
 export type MenuElementData = BrokerAccountTableData[] | ModelPortfolioTableData[];

@@ -1,6 +1,7 @@
 import React, { lazy } from "react";
 import kalitaImages from "../../static/images/kalita.png";
 import { useAppSelector } from "../../store/hooks";
+import { WithSuspense } from "../utils/WithSuspense";
 import styles from "./styles/DashboardContent.scss";
 
 const Table = lazy(/* webpackChunkName: "model-portfolio-table" */() =>
@@ -11,9 +12,11 @@ export default function DashboardContent() {
 
     if (currentPortfolio) {
         return (
-            <div className={styles.content}>
-                <Table currentPortfolio={currentPortfolio} />
-            </div>
+            <WithSuspense>
+                <div className={styles.content}>
+                    <Table currentPortfolio={currentPortfolio} />
+                </div>
+            </WithSuspense>
         );
     }
     return (

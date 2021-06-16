@@ -12,6 +12,8 @@ $menu-width: 250px;
   align-items: flex-start;
   display: flex !important;
   flex-direction: column !important;
+  overflow-x: hidden;
+  overflow-y: auto;
   width: $menu-width !important;
 }
 
