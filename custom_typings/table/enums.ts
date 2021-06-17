@@ -1,6 +1,6 @@
 export enum EditableTableColumns {
-    NAME = "name",
+    TICKER = "ticker",
     WEIGHT = "weight",
-    BRIEFCASE = "briefcase",
+    QUANTITY = "quantity",
     GROUP_NAME = "groupName"
 }
