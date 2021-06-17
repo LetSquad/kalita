@@ -45,7 +45,7 @@ export default function SidebarMenuGroup(props: Props) {
             </Accordion.Title>
             <Accordion.Content active={props.sidebarMenuGroupType.isOpen} className={styles.content}>
                 {props.sidebarMenuGroupType.elements.map((portfolio) => (
-                    <SidebarMenuElement key={portfolio.id[1]} menuElement={portfolio} />
+                    <SidebarMenuElement key={portfolio.id} menuElement={portfolio} />
                 ))}
             </Accordion.Content>
         </Accordion>
