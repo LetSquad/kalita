@@ -4,18 +4,20 @@ import promise from "redux-promise-middleware";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import persistStore from "redux-persist/es/persistStore";
-import tableReducer, { TableDataState } from "./tableReducer";
+import tableReducer from "./table/tableReducer";
+import sidebarMenuReducer, { SidebarMenuState } from "./sidebarMenu/sidebarMenuReducer";
 
 const persistConfig = {
     key: "root",
     storage
 };
 
-const tablePersistReducer = persistReducer<TableDataState>(persistConfig, tableReducer);
+const sidebarMenuPersistReducer = persistReducer<SidebarMenuState>(persistConfig, sidebarMenuReducer);
 
 export const store = configureStore({
     reducer: {
-        tableData: tablePersistReducer
+        tableData: tableReducer,
+        sidebarMenu: sidebarMenuPersistReducer
     },
     devTools: process.env.NODE_ENV !== "production",
     middleware: [promise, thunk]

@@ -1,0 +1,42 @@
+.accordion {
+  margin-bottom: 10px !important;
+  margin-top: 0 !important;
+  width: 100%;
+}
+
+.item,
+%item {
+  align-items: center;
+  cursor: default !important;
+  display: flex;
+  padding: 2px 0 !important;
+  width: 100%;
+  z-index: 2;
+
+  &-empty {
+    @extend %item;
+    padding: 0 0 0 17px !important;
+  }
+}
+
+.add-icon {
+  margin: 0 10px 0 auto !important;
+}
+
+.content {
+  margin-left: 16px;
+  padding: 0 !important;
+}
+
+.dropdown,
+%dropdown {
+  cursor: pointer;
+  transition: transform 0.1s ease !important;
+
+  &-open {
+    @extend %dropdown;
+    backface-visibility: unset !important;
+    transform: rotate(90deg) !important;
+    z-index: 2;
+  }
+}

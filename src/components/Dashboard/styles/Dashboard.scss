@@ -1,0 +1,24 @@
+@use 'src/styles/parts' as *;
+
+$menu-width: 250px;
+
+.pushable-segment {
+  @extend %base-container;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+.sidebar {
+  align-items: flex-start;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: $menu-width !important;
+}
+
+.pusher {
+  height: 100%;
+  transform: translate3d($menu-width, 0, 0) !important;
+  width: calc(100% - #{$menu-width});
+}

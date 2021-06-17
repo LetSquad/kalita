@@ -1,25 +1,35 @@
-import React, { useCallback, useMemo, useRef } from "react";
-import { ReactTabulator } from "react-tabulator";
 import _ from "lodash";
+import React, {
+    useCallback, useMemo, useRef
+} from "react";
+import { ReactTabulator } from "react-tabulator";
 import { Icon } from "semantic-ui-react";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { $enum } from "ts-enum-util";
+import { TabulatorColumn } from "../../../custom_typings/libs/react-tabulator/types";
+import { EditableTableColumns } from "../../../custom_typings/table/enums";
+import { CurrentPortfolio } from "../../../custom_typings/table/types";
+import { useAppDispatch } from "../../store/hooks";
 import {
     addNewGroup, addToGroup, deleteRowById, update, updateGroupName
-} from "../../store/tableReducer";
+} from "../../store/table/tableReducer";
+import partsStyles from "../../styles/parts.scss";
 import { ActionBlock } from "./ActionBlock";
-import { columns } from "./constants";
-import styles from "./styles/ModelPortfolioTable.scss";
+import styles from "./styles/Table.scss";
 
-export default function ModelPortfolioTable() {
+interface Props {
+    columns: (actionBlock: JSX.Element) => TabulatorColumn[],
+    currentPortfolio: CurrentPortfolio
+}
+
+export default function Table(props: Props) {
     const dispatch = useAppDispatch();
     const tableRef = useRef<any>(null);
-
-    const tableData = useAppSelector((state) => state.tableData.data);
 
     const cellUpdated = useCallback((cell: any) => {
         dispatch(update({
             id: cell._cell.row.data.id,
-            valueKey: cell._cell.column.field,
+            valueKey: $enum(EditableTableColumns)
+                .asValueOrThrow(cell._cell.column.field),
             newValue: cell._cell.value
         }));
     }, [dispatch]);
@@ -27,7 +37,7 @@ export default function ModelPortfolioTable() {
     const rowMoved = useCallback((row: any) => {
         dispatch(update({
             id: row._row.data.id,
-            valueKey: "groupName",
+            valueKey: EditableTableColumns.GROUP_NAME,
             newValue: row._row.data.groupName
         }));
     }, [dispatch]);
@@ -59,6 +69,7 @@ export default function ModelPortfolioTable() {
         responsiveLayout: "hide",
         groupBy: "groupName",
         columnCalcs: "both",
+        reactiveData: true,
         groupHeader: (value: any, count: any, data: any, group: any) => {
             const elem = document.createElement("div");
             elem.className = styles.groupContainer;
@@ -83,13 +94,13 @@ export default function ModelPortfolioTable() {
 
     const table = useMemo(() => (
         <ReactTabulator
-            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(tableData)} options={options}
-            className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
+            ref={tableRef} columns={props.columns(actionBlock())} data={_.cloneDeep(props.currentPortfolio[1])}
+            options={options} className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
         />
-    ), [actionBlock, cellUpdated, options, rowMoved, tableData]);
+    ), [actionBlock, cellUpdated, options, props, rowMoved]);
 
     return (
-        <div className={styles.mainContainer}>
+        <div className={partsStyles.baseContainer}>
             <div className={styles.additionalHeader}>
                 <Icon name="plus" link className={styles.additionalHeaderAddIcon} onClick={() => addGroup()} />
             </div>
