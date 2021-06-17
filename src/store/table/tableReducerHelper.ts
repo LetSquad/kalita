@@ -1,11 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-import { BrokeragePortfolioTypes } from "../../../custom_typings/enums";
-import {
-    BrokerAccountTableData,
-    CurrentPortfolio,
-    ModelPortfolioTableData,
-    TableData
-} from "../../../custom_typings/types";
+import { BrokeragePortfolioTypes } from "../../../custom_typings/portfolios/enums";
+import { BrokerAccountTableData, ModelPortfolioTableData } from "../../../custom_typings/portfolios/types";
+import { CurrentPortfolio, TableData } from "../../../custom_typings/table/types";
 
 const NEW_ENTRY = "Новая запись";
 const NO_NAME = "Без названия";

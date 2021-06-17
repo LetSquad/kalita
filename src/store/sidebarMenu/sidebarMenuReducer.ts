@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-import { SidebarMenuElementsTypes } from "../../../custom_typings/enums";
+import { SidebarMenuElementsTypes } from "../../../custom_typings/menu/enums";
 import {
     BrokerAccountMenuElement,
-    BrokerAccountTableData, MenuElementIdentifier,
+    MenuElementIdentifier,
     ModelPortfolioMenuElement,
-    ModelPortfolioTableData,
     SidebarMenuGroupType
-} from "../../../custom_typings/types";
+} from "../../../custom_typings/menu/types";
+import { BrokerAccountTableData, ModelPortfolioTableData } from "../../../custom_typings/portfolios/types";
 import { newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
 
 type UpdateMenuData = {

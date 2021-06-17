@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { EditableTableColumns } from "../../../custom_typings/enums";
-import { BrokerAccountTableData, CurrentPortfolio, ModelPortfolioTableData } from "../../../custom_typings/types";
+import { BrokerAccountTableData, ModelPortfolioTableData } from "../../../custom_typings/portfolios/types";
+import { EditableTableColumns } from "../../../custom_typings/table/enums";
+import { CurrentPortfolio } from "../../../custom_typings/table/types";
 import { generateNewRow, getNewGroupName } from "./tableReducerHelper";
 
 interface UpdatePayload {
