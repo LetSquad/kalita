@@ -1,66 +1,25 @@
-import {
-    BrokeragePortfolioTypes,
-    FormattersValues,
-    HorizontalAlignValues,
-    SidebarMenuElementsTypes,
-    SortersValues,
-    VerticalAlignValues
-} from "./enums";
-
-export interface TabulatorColumn {
-    title: string,
-    field: string,
-    visible?: boolean,
-    hozAlign?: HorizontalAlignValues,
-    vertAlign?: VerticalAlignValues,
-    width?: number,
-    minWidth?: number,
-    maxWidth?: number,
-    widthGrow?: number,
-    widthShrink?: number,
-    resizable?: boolean,
-    frozen?: boolean,
-    responsive?: number,
-    tooltip?: (cell: any) => string,
-    cssClass?: string,
-    formatter?: FormattersValues
-    | ((cell: any, formatterParams: any, onRendered: (callback: () => void) => void) => string),
-    formatterParams?: any,
-    topCalc?: string,
-    topCalcFormatter?: FormattersValues,
-    topCalcFormatterParams?: any,
-    bottomCalc?: string,
-    bottomCalcFormatter?: string,
-    bottomCalcFormatterParams?: any,
-    headerSort?: boolean,
-    headerHozAlign?: HorizontalAlignValues,
-    headerTooltip?: string,
-    sorter?: SortersValues,
-    validator?: string,
-    editor?: string,
-    [key: string]: any
-}
+import { BrokeragePortfolioTypes, SidebarMenuElementsTypes } from "./enums";
 
 export interface ModelPortfolioTableData {
     id: string,
-    name: string,
+    ticker: string,
     weight: number,
-    share: number,
+    proportion: number,
     targetAmount: number,
-    price: number,
+    currentPrice: number,
     targetQuantity: number,
-    briefcase: number,
+    quantity: number,
     amount: number,
     groupName: string
 }
 
 export interface BrokerAccountTableData {
     id: string,
-    name: string,
-    share: number,
-    purchasePrice: number,
-    price: number,
-    briefcase: number,
+    ticker: string,
+    proportion: number,
+    averagePrice: number,
+    currentPrice: number,
+    quantity: number,
     amount: number,
     groupName: string
 }

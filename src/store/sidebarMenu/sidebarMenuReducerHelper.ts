@@ -5,16 +5,18 @@ import {
     ModelPortfolioMenuElement
 } from "../../../custom_typings/types";
 
+const NEW_PORTFOLIO = "Новый портфель";
+
 export const newBrokerGroupMenuElement: BrokerAccountMenuElement = {
     id: uuidv4(),
     type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-    name: "Новый портфель",
+    name: NEW_PORTFOLIO,
     data: []
 };
 
 export const newModelGroupMenuElement: ModelPortfolioMenuElement = {
     id: uuidv4(),
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-    name: "Новый портфель",
+    name: NEW_PORTFOLIO,
     data: []
 };

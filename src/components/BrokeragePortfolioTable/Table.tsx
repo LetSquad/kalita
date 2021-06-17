@@ -6,7 +6,8 @@ import { ReactTabulator } from "react-tabulator";
 import { Icon } from "semantic-ui-react";
 import { $enum } from "ts-enum-util";
 import { EditableTableColumns } from "../../../custom_typings/enums";
-import { CurrentPortfolio, TabulatorColumn } from "../../../custom_typings/types";
+import { TabulatorColumn } from "../../../custom_typings/libs/react-tabulator/types";
+import { CurrentPortfolio } from "../../../custom_typings/types";
 import { useAppDispatch } from "../../store/hooks";
 import {
     addNewGroup, addToGroup, deleteRowById, update, updateGroupName

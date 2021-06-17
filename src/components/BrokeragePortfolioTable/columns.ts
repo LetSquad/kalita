@@ -1,16 +1,15 @@
 import { reactFormatter } from "react-tabulator";
 import {
-    FormattersValues,
-    HorizontalAlignValues,
+    FormattersValues, HorizontalAlignValues,
     SortersValues,
     VerticalAlignValues
-} from "../../../custom_typings/enums";
-import { TabulatorColumn } from "../../../custom_typings/types";
+} from "../../../custom_typings/libs/react-tabulator/enums";
+import { TabulatorColumn } from "../../../custom_typings/libs/react-tabulator/types";
 
 export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
     {
         title: "Тикер",
-        field: "name",
+        field: "ticker",
         sorter: SortersValues.STRING,
         formatter: FormattersValues.PLAINTEXT,
         visible: true,
@@ -22,7 +21,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
         widthGrow: 2
     }, {
         title: "Доля",
-        field: "share",
+        field: "proportion",
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
@@ -41,7 +40,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
         }
     }, {
         title: "Цена",
-        field: "price",
+        field: "currentPrice",
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
@@ -55,7 +54,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
         headerHozAlign: HorizontalAlignValues.LEFT
     }, {
         title: "В портфеле",
-        field: "briefcase",
+        field: "quantity",
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.PLAINTEXT,
         minWidth: 128,
@@ -98,13 +97,13 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
 ];
 
 const modelPortfolioColumnsOrder = [
-    "name",
+    "ticker",
     "weight",
-    "share",
+    "proportion",
     "targetAmount",
-    "price",
+    "currentPrice",
     "targetQuantity",
-    "briefcase",
+    "quantity",
     "amount",
     "action"
 ];
@@ -157,11 +156,11 @@ export const modelPortfolioColumns: (actionBlock: JSX.Element) => TabulatorColum
     modelPortfolioColumnsOrder.indexOf(columnA.field) - modelPortfolioColumnsOrder.indexOf(columnB.field));
 
 const brokerAccountColumnsOrder = [
-    "name",
+    "ticker",
     "share",
-    "purchasePrice",
-    "price",
-    "briefcase",
+    "averagePrice",
+    "currentPrice",
+    "quantity",
     "amount",
     "action"
 ];
@@ -170,7 +169,7 @@ export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn
     ...commonColumns(actionBlock),
     {
         title: "Цена покупки",
-        field: "purchasePrice",
+        field: "averagePrice",
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
