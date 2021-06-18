@@ -1,20 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../model/portfolios/types";
 import { EditableTableColumns } from "../../model/table/enums";
-import { CurrentPortfolio } from "../../model/table/types";
+import { CurrentPortfolio, TableUpdatePayload } from "../../model/table/types";
 import {
     generateNewRow,
     getNewGroupName, recalculateBrokerAccountPercentage,
     recalculateModelPortfolioPercentage,
-    recalculatePositionAmountByQuantity
+    recalculatePositionAmountByQuantity, recalculateRow
 } from "./tableReducerHelper";
 import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
-
-interface UpdatePayload {
-    readonly id: string,
-    readonly valueKey: EditableTableColumns,
-    readonly newValue: string
-}
 
 export interface TableDataState {
     currentPortfolio?: CurrentPortfolio,
@@ -43,40 +37,25 @@ export const tableSlice = createSlice({
                 generateNewRow(state.currentPortfolio, getNewGroupName(state.currentPortfolio[1]));
             }
         },
-        update: (state, action: PayloadAction<UpdatePayload>) => {
+        update: (state, action: PayloadAction<TableUpdatePayload>) => {
             if (state.currentPortfolio) {
-                state.currentPortfolio[1] = state.currentPortfolio[1].map((row) => {
-                    if (row.id === action.payload.id) {
-                        if (action.payload.valueKey === EditableTableColumns.QUANTITY) {
-                            return recalculatePositionAmountByQuantity(row, Number.parseInt(action.payload.newValue, 10));
-                        }
-                        if (action.payload.valueKey === EditableTableColumns.WEIGHT) {
-                            return {
-                                ...row,
-                                [action.payload.valueKey]: Number.parseInt(action.payload.newValue, 10)
-                            };
-                        }
-                        return {
-                            ...row,
-                            [action.payload.valueKey]: action.payload.newValue
-                        };
-                    }
-                    return row;
-                }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+                const updatedPortfolio = recalculateRow(state.currentPortfolio, action);
 
-                if (state.currentPortfolio[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
+                if (updatedPortfolio[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
                     action.payload.valueKey === EditableTableColumns.WEIGHT
                 ) {
-                    state.currentPortfolio[1] = recalculateModelPortfolioPercentage(
-                        state.currentPortfolio[1],
+                    updatedPortfolio[1] = recalculateModelPortfolioPercentage(
+                        updatedPortfolio[1],
                         state.totalTargetAmount
                     );
                 } else if (
-                    state.currentPortfolio[0] === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
+                    updatedPortfolio[0] === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
                     action.payload.valueKey === EditableTableColumns.QUANTITY
                 ) {
-                    state.currentPortfolio[1] = recalculateBrokerAccountPercentage(state.currentPortfolio[1]);
+                    updatedPortfolio[1] = recalculateBrokerAccountPercentage(updatedPortfolio[1]);
                 }
+
+                state.currentPortfolio = updatedPortfolio;
             }
         },
         updateGroupName: (state, action: PayloadAction<{ oldGroupName: string, newGroupName: string }>) => {

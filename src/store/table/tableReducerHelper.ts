@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition, PortfolioPosition } from "../../model/portfolios/types";
-import { CurrentPortfolio, TableData } from "../../model/table/types";
+import { CurrentPortfolio, TableData, TableUpdatePayload } from "../../model/table/types";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { EditableTableColumns } from "../../model/table/enums";
 
 const NEW_ENTRY = "Новая запись";
 const NO_NAME = "Без названия";
@@ -37,6 +39,28 @@ export const newBrokerAccountRow: (groupName: string) => BrokerAccountPosition =
     quantity: 0,
     amount: 0
 });
+
+export function recalculateRow(portfolio: CurrentPortfolio, action: PayloadAction<TableUpdatePayload>): CurrentPortfolio {
+    portfolio[1] = portfolio[1].map((row) => {
+        if (row.id === action.payload.id) {
+            if (action.payload.valueKey === EditableTableColumns.QUANTITY) {
+                return recalculatePositionAmountByQuantity(row, Number.parseInt(action.payload.newValue, 10));
+            }
+            if (action.payload.valueKey === EditableTableColumns.WEIGHT) {
+                return {
+                    ...row,
+                    [action.payload.valueKey]: Number.parseInt(action.payload.newValue, 10)
+                };
+            }
+            return {
+                ...row,
+                [action.payload.valueKey]: action.payload.newValue
+            };
+        }
+        return row;
+    }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+    return portfolio;
+}
 
 export function recalculateModelPortfolioPercentage(
     modelPortfolio: ModelPortfolioPosition[],

@@ -28,7 +28,6 @@ $tabulator-footer-height: $ext-height;
     height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height}) !important;
     max-height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height}) !important;
     min-height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height}) !important;
-    overflow: hidden;
 
     .tabulator-placeholder span {
       font-size: 14px !important;
