@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
-import { BrokeragePortfolioTypes } from "../../../custom_typings/portfolios/enums";
-import { BrokerAccountTableData, ModelPortfolioTableData } from "../../../custom_typings/portfolios/types";
-import { CurrentPortfolio, TableData } from "../../../custom_typings/table/types";
+import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
+import { BrokerAccountPosition, ModelPortfolioPosition, PortfolioPosition } from "../../model/portfolios/types";
+import { CurrentPortfolio, TableData, TableUpdatePayload } from "../../model/table/types";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { EditableTableColumns } from "../../model/table/enums";
 
 const NEW_ENTRY = "Новая запись";
 const NO_NAME = "Без названия";
@@ -14,12 +16,12 @@ export function generateNewRow(currentPortfolio: CurrentPortfolio, groupName: st
     }
 }
 
-export const newModelPortfolioRow: (groupName: string) => ModelPortfolioTableData = (groupName: string) => ({
+export const newModelPortfolioRow: (groupName: string) => ModelPortfolioPosition = (groupName: string) => ({
     id: uuidv4(),
     ticker: NEW_ENTRY,
     groupName,
     weight: 1,
-    proportion: 0,
+    percentage: 0,
     targetAmount: 0,
     currentPrice: 0,
     targetQuantity: 0,
@@ -27,16 +29,75 @@ export const newModelPortfolioRow: (groupName: string) => ModelPortfolioTableDat
     amount: 0
 });
 
-export const newBrokerAccountRow: (groupName: string) => BrokerAccountTableData = (groupName: string) => ({
+export const newBrokerAccountRow: (groupName: string) => BrokerAccountPosition = (groupName: string) => ({
     id: uuidv4(),
     ticker: NEW_ENTRY,
     groupName,
-    proportion: 0,
+    percentage: 0,
     averagePrice: 0,
     currentPrice: 0,
     quantity: 0,
     amount: 0
 });
+
+export function recalculateRow(portfolio: CurrentPortfolio, action: PayloadAction<TableUpdatePayload>): CurrentPortfolio {
+    portfolio[1] = portfolio[1].map((row) => {
+        if (row.id === action.payload.id) {
+            if (action.payload.valueKey === EditableTableColumns.QUANTITY) {
+                return recalculatePositionAmountByQuantity(row, Number.parseInt(action.payload.newValue, 10));
+            }
+            if (action.payload.valueKey === EditableTableColumns.WEIGHT) {
+                return {
+                    ...row,
+                    [action.payload.valueKey]: Number.parseInt(action.payload.newValue, 10)
+                };
+            }
+            return {
+                ...row,
+                [action.payload.valueKey]: action.payload.newValue
+            };
+        }
+        return row;
+    }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+    return portfolio;
+}
+
+export function recalculateModelPortfolioPercentage(
+    modelPortfolio: ModelPortfolioPosition[],
+    totalTargetAmount: number
+): ModelPortfolioPosition[] {
+    let totalWeight = 0;
+    for (const position of modelPortfolio) {
+        totalWeight += position.weight;
+    }
+    return modelPortfolio.map((position) => {
+        const proportion = position.weight / totalWeight;
+        return {
+            ...position,
+            percentage: proportion * 100,
+            targetAmount: totalTargetAmount * proportion
+        };
+    });
+}
+
+export function recalculateBrokerAccountPercentage(brokerAccount: BrokerAccountPosition[]) {
+    let totalAmount = 0;
+    for (const position of brokerAccount) {
+        totalAmount += position.amount;
+    }
+    return brokerAccount.map((position) => ({
+        ...position,
+        percentage: (position.amount / totalAmount) * 100
+    }));
+}
+
+export function recalculatePositionAmountByQuantity<T extends PortfolioPosition>(position: T, quantity: number): T {
+    return {
+        ...position,
+        quantity,
+        amount: position.currentPrice * quantity
+    };
+}
 
 export function getNewGroupName(tableData: TableData): string {
     const noNameRegExp = new RegExp(`^\\(${NO_NAME}\\d*\\)$`);

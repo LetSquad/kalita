@@ -1,18 +1,18 @@
-import { BrokerAccountTableData, ModelPortfolioTableData } from "../portfolios/types";
+import { BrokerAccountPosition, ModelPortfolioPosition } from "../portfolios/types";
 import { SidebarMenuElementsTypes } from "./enums";
 
 export interface BrokerAccountMenuElement {
     id: string,
     type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
     name: string,
-    data: BrokerAccountTableData[]
+    data: BrokerAccountPosition[]
 }
 
 export interface ModelPortfolioMenuElement {
     id: string,
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
     name: string,
-    data: ModelPortfolioTableData[]
+    data: ModelPortfolioPosition[]
 }
 
 export interface MenuElementIdentifier {
@@ -20,7 +20,7 @@ export interface MenuElementIdentifier {
     type: SidebarMenuElementsTypes,
 }
 
-export type MenuElementData = BrokerAccountTableData[] | ModelPortfolioTableData[];
+export type MenuElementData = BrokerAccountPosition[] | ModelPortfolioPosition[];
 
 export type SidebarMenuGroupType = {
     name: string,
