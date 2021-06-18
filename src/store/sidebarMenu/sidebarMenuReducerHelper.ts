@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import { SidebarMenuElementsTypes } from "../../../custom_typings/menu/enums";
-import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../custom_typings/menu/types";
+import { SidebarMenuElementsTypes } from "../../model/menu/enums";
+import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../model/menu/types";
 
 const NEW_PORTFOLIO = "Новый портфель";
 

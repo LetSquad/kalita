@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
-import { SidebarMenuElementsTypes } from "../../../custom_typings/menu/enums";
-import { CurrentBrokerAccount } from "../../../custom_typings/table/types";
+import { SidebarMenuElementsTypes } from "../../model/menu/enums";
+import { CurrentBrokerAccount } from "../../model/table/types";
 import { useAppDispatch } from "../../store/hooks";
 import { updateMenuElementData } from "../../store/sidebarMenu/sidebarMenuReducer";
 import { brokerAccountColumns } from "./columns";

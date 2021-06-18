@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Icon, Input } from "semantic-ui-react";
-import { SidebarMenuElementsTypes } from "../../../../custom_typings/menu/enums";
-import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../../custom_typings/menu/types";
-import { BrokeragePortfolioTypes } from "../../../../custom_typings/portfolios/enums";
+import { SidebarMenuElementsTypes } from "../../../model/menu/enums";
+import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../model/menu/types";
+import { BrokeragePortfolioTypes } from "../../../model/portfolios/enums";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
     deleteElementFromGroup,

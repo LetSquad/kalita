@@ -3,8 +3,8 @@ import {
     FormattersValues, HorizontalAlignValues,
     SortersValues,
     VerticalAlignValues
-} from "../../../custom_typings/libs/react-tabulator/enums";
-import { TabulatorColumn } from "../../../custom_typings/libs/react-tabulator/types";
+} from "../../model/libs/react-tabulator/enums";
+import { TabulatorColumn } from "../../model/libs/react-tabulator/types";
 
 export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
     {
@@ -21,7 +21,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
         widthGrow: 2
     }, {
         title: "Доля",
-        field: "proportion",
+        field: "percentage",
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
@@ -99,7 +99,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
 const modelPortfolioColumnsOrder = [
     "ticker",
     "weight",
-    "proportion",
+    "percentage",
     "targetAmount",
     "currentPrice",
     "targetQuantity",
@@ -157,7 +157,7 @@ export const modelPortfolioColumns: (actionBlock: JSX.Element) => TabulatorColum
 
 const brokerAccountColumnsOrder = [
     "ticker",
-    "share",
+    "percentage",
     "averagePrice",
     "currentPrice",
     "quantity",

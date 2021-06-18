@@ -1,21 +1,29 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BrokerAccountTableData, ModelPortfolioTableData } from "../../../custom_typings/portfolios/types";
-import { EditableTableColumns } from "../../../custom_typings/table/enums";
-import { CurrentPortfolio } from "../../../custom_typings/table/types";
-import { generateNewRow, getNewGroupName } from "./tableReducerHelper";
+import { BrokerAccountPosition, ModelPortfolioPosition } from "../../model/portfolios/types";
+import { EditableTableColumns } from "../../model/table/enums";
+import { CurrentPortfolio } from "../../model/table/types";
+import {
+    generateNewRow,
+    getNewGroupName, recalculateBrokerAccountPercentage,
+    recalculateModelPortfolioPercentage,
+    recalculatePositionAmountByQuantity
+} from "./tableReducerHelper";
+import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
 
 interface UpdatePayload {
-    id: string,
-    valueKey: EditableTableColumns,
-    newValue: string
+    readonly id: string,
+    readonly valueKey: EditableTableColumns,
+    readonly newValue: string
 }
 
 export interface TableDataState {
-    currentPortfolio?: CurrentPortfolio
+    currentPortfolio?: CurrentPortfolio,
+    totalTargetAmount: number
 }
 
 const initialState: TableDataState = {
-    currentPortfolio: undefined
+    currentPortfolio: undefined,
+    totalTargetAmount: 1_000_000
 };
 
 export const tableSlice = createSlice({
@@ -39,13 +47,35 @@ export const tableSlice = createSlice({
             if (state.currentPortfolio) {
                 state.currentPortfolio[1] = state.currentPortfolio[1].map((row) => {
                     if (row.id === action.payload.id) {
+                        if (action.payload.valueKey == EditableTableColumns.QUANTITY) {
+                            return recalculatePositionAmountByQuantity(row, parseInt(action.payload.newValue));
+                        }
+                        if (action.payload.valueKey == EditableTableColumns.WEIGHT) {
+                            return {
+                                ...row,
+                                [action.payload.valueKey]: parseInt(action.payload.newValue)
+                            };
+                        }
                         return {
                             ...row,
                             [action.payload.valueKey]: action.payload.newValue
                         };
                     }
                     return row;
-                }) as ModelPortfolioTableData[] | BrokerAccountTableData[];
+                }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+
+                if (state.currentPortfolio[0] == BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                    if (action.payload.valueKey == EditableTableColumns.WEIGHT) {
+                        state.currentPortfolio[1] = recalculateModelPortfolioPercentage(
+                            state.currentPortfolio[1],
+                            state.totalTargetAmount
+                        )
+                    }
+                } else if (state.currentPortfolio[0] == BrokeragePortfolioTypes.BROKER_ACCOUNT) {
+                    if (action.payload.valueKey == EditableTableColumns.QUANTITY) {
+                        state.currentPortfolio[1] = recalculateBrokerAccountPercentage(state.currentPortfolio[1]);
+                    }
+                }
             }
         },
         updateGroupName: (state, action: PayloadAction<{ oldGroupName: string, newGroupName: string }>) => {
@@ -58,14 +88,13 @@ export const tableSlice = createSlice({
                         };
                     }
                     return row;
-                }) as ModelPortfolioTableData[] | BrokerAccountTableData[];
+                }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
             }
         },
         deleteRowById: (state, action: PayloadAction<string>) => {
             if (state.currentPortfolio) {
-                state.currentPortfolio[1] = (state.currentPortfolio[1] as Array<ModelPortfolioTableData
-                | BrokerAccountTableData>)
-                    .filter((row) => row.id !== action.payload) as ModelPortfolioTableData[] | BrokerAccountTableData[];
+                state.currentPortfolio[1] = (state.currentPortfolio[1] as Array<ModelPortfolioPosition | BrokerAccountPosition>)
+                    .filter((row) => row.id !== action.payload) as ModelPortfolioPosition[] | BrokerAccountPosition[];
             }
         }
     }

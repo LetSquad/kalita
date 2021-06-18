@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
-import { SidebarMenuElementsTypes } from "../../../custom_typings/menu/enums";
-import { CurrentModelPortfolio } from "../../../custom_typings/table/types";
+import { SidebarMenuElementsTypes } from "../../model/menu/enums";
+import { CurrentModelPortfolio } from "../../model/table/types";
 import { useAppDispatch } from "../../store/hooks";
 import { updateMenuElementData } from "../../store/sidebarMenu/sidebarMenuReducer";
 import { modelPortfolioColumns } from "./columns";

@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-import { SidebarMenuElementsTypes } from "../../../custom_typings/menu/enums";
+import { SidebarMenuElementsTypes } from "../../model/menu/enums";
 import {
     BrokerAccountMenuElement,
     MenuElementIdentifier,
     ModelPortfolioMenuElement,
     SidebarMenuGroupType
-} from "../../../custom_typings/menu/types";
-import { BrokerAccountTableData, ModelPortfolioTableData } from "../../../custom_typings/portfolios/types";
+} from "../../model/menu/types";
+import { BrokerAccountPosition, ModelPortfolioPosition } from "../../model/portfolios/types";
 import { newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
 
 type UpdateMenuData = {
     elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-    data: ModelPortfolioTableData[]
+    data: ModelPortfolioPosition[]
 } | {
     elementType: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-    data: BrokerAccountTableData[]
+    data: BrokerAccountPosition[]
 };
 
 export interface SidebarMenuState {
@@ -38,7 +38,7 @@ const initialState: SidebarMenuState = {
                             groupName: "Финансы",
                             ticker: "SBER",
                             weight: 1,
-                            proportion: 0.92,
+                            percentage: 0.92,
                             targetAmount: 18_348.62,
                             currentPrice: 303.02,
                             targetQuantity: 61,
@@ -50,7 +50,7 @@ const initialState: SidebarMenuState = {
                             groupName: "Финансы",
                             ticker: "SBERP",
                             weight: 15,
-                            proportion: 13.76,
+                            percentage: 13.76,
                             targetAmount: 275_229.36,
                             currentPrice: 281.01,
                             targetQuantity: 980,
@@ -62,7 +62,7 @@ const initialState: SidebarMenuState = {
                             groupName: "Телекомы",
                             ticker: "MTSS",
                             weight: 4,
-                            proportion: 3.67,
+                            percentage: 3.67,
                             targetAmount: 73_394.5,
                             currentPrice: 340.2,
                             targetQuantity: 216,
@@ -74,7 +74,7 @@ const initialState: SidebarMenuState = {
                             groupName: "Телекомы",
                             ticker: "MGTSP",
                             weight: 1,
-                            proportion: 0.92,
+                            percentage: 0.92,
                             targetAmount: 18_348.62,
                             currentPrice: 1712,
                             targetQuantity: 11,
@@ -104,7 +104,7 @@ const initialState: SidebarMenuState = {
                             id: uuidv4(),
                             groupName: "Финансы",
                             ticker: "SBER",
-                            proportion: 0.92,
+                            percentage: 0.92,
                             averagePrice: 18_348.62,
                             currentPrice: 303.02,
                             quantity: 40,
@@ -114,7 +114,7 @@ const initialState: SidebarMenuState = {
                             id: uuidv4(),
                             groupName: "Телекомы",
                             ticker: "MTSS",
-                            proportion: 3.67,
+                            percentage: 3.67,
                             averagePrice: 73_394.5,
                             currentPrice: 340.2,
                             quantity: 120,
