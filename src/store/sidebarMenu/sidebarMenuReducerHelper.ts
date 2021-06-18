@@ -4,16 +4,16 @@ import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../model
 
 const NEW_PORTFOLIO = "Новый портфель";
 
-export const newBrokerGroupMenuElement: BrokerAccountMenuElement = {
+export const newBrokerGroupMenuElement: () => BrokerAccountMenuElement = () => ({
     id: uuidv4(),
     type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
     name: NEW_PORTFOLIO,
     data: []
-};
+});
 
-export const newModelGroupMenuElement: ModelPortfolioMenuElement = {
+export const newModelGroupMenuElement: () => ModelPortfolioMenuElement = () => ({
     id: uuidv4(),
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
     name: NEW_PORTFOLIO,
     data: []
-};
+});

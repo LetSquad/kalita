@@ -47,13 +47,13 @@ export const tableSlice = createSlice({
             if (state.currentPortfolio) {
                 state.currentPortfolio[1] = state.currentPortfolio[1].map((row) => {
                     if (row.id === action.payload.id) {
-                        if (action.payload.valueKey == EditableTableColumns.QUANTITY) {
-                            return recalculatePositionAmountByQuantity(row, parseInt(action.payload.newValue));
+                        if (action.payload.valueKey === EditableTableColumns.QUANTITY) {
+                            return recalculatePositionAmountByQuantity(row, Number.parseInt(action.payload.newValue, 10));
                         }
-                        if (action.payload.valueKey == EditableTableColumns.WEIGHT) {
+                        if (action.payload.valueKey === EditableTableColumns.WEIGHT) {
                             return {
                                 ...row,
-                                [action.payload.valueKey]: parseInt(action.payload.newValue)
+                                [action.payload.valueKey]: Number.parseInt(action.payload.newValue, 10)
                             };
                         }
                         return {
@@ -64,17 +64,18 @@ export const tableSlice = createSlice({
                     return row;
                 }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 
-                if (state.currentPortfolio[0] == BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-                    if (action.payload.valueKey == EditableTableColumns.WEIGHT) {
-                        state.currentPortfolio[1] = recalculateModelPortfolioPercentage(
-                            state.currentPortfolio[1],
-                            state.totalTargetAmount
-                        )
-                    }
-                } else if (state.currentPortfolio[0] == BrokeragePortfolioTypes.BROKER_ACCOUNT) {
-                    if (action.payload.valueKey == EditableTableColumns.QUANTITY) {
-                        state.currentPortfolio[1] = recalculateBrokerAccountPercentage(state.currentPortfolio[1]);
-                    }
+                if (state.currentPortfolio[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
+                    action.payload.valueKey === EditableTableColumns.WEIGHT
+                ) {
+                    state.currentPortfolio[1] = recalculateModelPortfolioPercentage(
+                        state.currentPortfolio[1],
+                        state.totalTargetAmount
+                    );
+                } else if (
+                    state.currentPortfolio[0] === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
+                    action.payload.valueKey === EditableTableColumns.QUANTITY
+                ) {
+                    state.currentPortfolio[1] = recalculateBrokerAccountPercentage(state.currentPortfolio[1]);
                 }
             }
         },

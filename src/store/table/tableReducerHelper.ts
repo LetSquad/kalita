@@ -42,9 +42,11 @@ export function recalculateModelPortfolioPercentage(
     modelPortfolio: ModelPortfolioPosition[],
     totalTargetAmount: number
 ): ModelPortfolioPosition[] {
-    const totalWeight: number = modelPortfolio.map(p => p.weight)
-        .reduce((acc, w) => acc + w);
-    return modelPortfolio.map(position => {
+    let totalWeight = 0;
+    for (const position of modelPortfolio) {
+        totalWeight += position.weight;
+    }
+    return modelPortfolio.map((position) => {
         const proportion = position.weight / totalWeight;
         return {
             ...position,
@@ -55,14 +57,14 @@ export function recalculateModelPortfolioPercentage(
 }
 
 export function recalculateBrokerAccountPercentage(brokerAccount: BrokerAccountPosition[]) {
-    const totalAmount: number = brokerAccount.map(p => p.amount)
-        .reduce((acc, a) => acc + a);
-    return brokerAccount.map(position => {
-        return {
-            ...position,
-            percentage: position.amount / totalAmount * 100
-        }
-    });
+    let totalAmount = 0;
+    for (const position of brokerAccount) {
+        totalAmount += position.amount;
+    }
+    return brokerAccount.map((position) => ({
+        ...position,
+        percentage: (position.amount / totalAmount) * 100
+    }));
 }
 
 export function recalculatePositionAmountByQuantity<T extends PortfolioPosition>(position: T, quantity: number): T {

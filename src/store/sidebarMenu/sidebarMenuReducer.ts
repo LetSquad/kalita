@@ -145,12 +145,12 @@ export const sidebarMenuSlice = createSlice({
                     if (menuGroup.type === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
                         return {
                             ...menuGroup,
-                            elements: [...menuGroup.elements, newBrokerGroupMenuElement]
+                            elements: [...menuGroup.elements, newBrokerGroupMenuElement()]
                         };
                     }
                     return {
                         ...menuGroup,
-                        elements: [...menuGroup.elements, newModelGroupMenuElement]
+                        elements: [...menuGroup.elements, newModelGroupMenuElement()]
                     };
                 }
                 return menuGroup;
