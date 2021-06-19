@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Icon, Input } from "semantic-ui-react";
+import ChartJS from "chart.js/auto";
+import Chart from "../../Chart/Chart";
 import { SidebarMenuElementsTypes } from "../../../model/menu/enums";
 import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../model/menu/types";
 import { BrokeragePortfolioTypes } from "../../../model/portfolios/enums";
@@ -11,6 +13,7 @@ import {
 } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import { setCurrentPortfolio } from "../../../store/table/tableReducer";
 import styles from "./styles/SidebarMenuElement.scss";
+import { backgroundColor, borderColor, borderWidth } from "../../Chart/constants";
 
 interface Props {
     menuElement: ModelPortfolioMenuElement | BrokerAccountMenuElement;
@@ -22,6 +25,7 @@ export default function SidebarMenuElement(props: Props) {
     const active = activeFile?.id === props.menuElement.id;
 
     const [currentEditValue, setCurrentEditValue] = useState<string>();
+    const [isChartVisible, setIsChartVisible] = useState<boolean>(false);
 
     const changeActiveId = useCallback((type: SidebarMenuElementsTypes, id: string) => {
         dispatch(setActiveId({
@@ -88,23 +92,45 @@ export default function SidebarMenuElement(props: Props) {
             : elementNameBlock
     ), [currentEditValue, elementNameBlock, elementRenameInput]);
 
+    const chartData: ChartJS.ChartData = {
+        labels: props.menuElement.data.map((row) => row.ticker),
+        datasets: [
+            {
+                data: props.menuElement.data.map((row) => row.percentage),
+                backgroundColor,
+                borderColor,
+                borderWidth
+            }
+        ]
+    };
+
     return (
-        <div className={active
-            ? styles.activeItemContainer
-            : styles.itemContainer}
-        >
-            {elementTitle}
-            <div className={styles.iconsContainer}>
-                <Icon
-                    name="edit outline" link={currentEditValue === undefined} className={styles.renameIcon}
-                    disabled={currentEditValue !== undefined}
-                    onClick={() => setCurrentEditValue(props.menuElement.name)}
-                />
-                <Icon
-                    name="trash alternate outline" link className={styles.removeIcon}
-                    onClick={() => deleteElement(props.menuElement.type, props.menuElement.id)}
-                />
+        <>
+            <div className={active
+                ? styles.activeItemContainer
+                : styles.itemContainer}
+            >
+                {elementTitle}
+                <div className={styles.iconsContainer}>
+                    <Icon
+                        name="edit outline" link={currentEditValue === undefined} className={styles.renameIcon}
+                        disabled={currentEditValue !== undefined}
+                        onClick={() => setCurrentEditValue(props.menuElement.name)}
+                    />
+                    <Icon
+                        name="chart pie" link className={styles.renameIcon}
+                        onClick={() => setIsChartVisible(!isChartVisible)}
+                        disabled={props.menuElement.data.length === 0}
+                    />
+                    <Icon
+                        name="trash alternate outline" link className={styles.removeIcon}
+                        onClick={() => deleteElement(props.menuElement.type, props.menuElement.id)}
+                    />
+                </div>
             </div>
-        </div>
+            {isChartVisible && props.menuElement.data.length > 0 && (
+                <Chart data={chartData} />
+            )}
+        </>
     );
 }
