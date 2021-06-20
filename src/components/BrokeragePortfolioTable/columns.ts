@@ -9,18 +9,20 @@ import { TabulatorColumn } from "../../model/libs/react-tabulator/types";
 import styles from "./styles/columns.scss";
 import { ModelPortfolioPosition } from "../../model/portfolios/types";
 
+const tickerValidator = (cell: any, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);
+
 export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
     {
         title: "Тикер",
         field: "ticker",
         sorter: SortersValues.STRING,
-        formatter: FormattersValues.PLAINTEXT,
+        formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         headerHozAlign: HorizontalAlignValues.LEFT,
         minWidth: 100,
         editor: "input",
-        validator: "required",
+        validator: tickerValidator,
         widthGrow: 2
     }, {
         title: "Доля",
@@ -106,14 +108,16 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
             title: "Вес",
             field: "weight",
             sorter: SortersValues.NUMBER,
-            formatter: FormattersValues.PLAINTEXT,
+            formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
             minWidth: 100,
             visible: true,
             vertAlign: VerticalAlignValues.MIDDLE,
             hozAlign: HorizontalAlignValues.LEFT,
             headerHozAlign: HorizontalAlignValues.LEFT,
             editor: "input",
-            validator: "min:1"
+            validator: "min:1",
+            bottomCalc: "sum",
+            bottomCalcFormatter: FormattersValues.PLAINTEXT
         }, {
             title: "Целевая сумма",
             field: "targetAmount",
@@ -159,7 +163,7 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
                     }
                 }
 
-                return quantity;
+                return `<span class="${styles.editCell}">${cell.getValue()}</span>`;
             },
             minWidth: 128,
             visible: true,
@@ -197,7 +201,7 @@ export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn
         title: "В портфеле",
         field: "quantity",
         sorter: SortersValues.NUMBER,
-        formatter: FormattersValues.PLAINTEXT,
+        formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
         minWidth: 128,
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
