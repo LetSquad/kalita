@@ -24,5 +24,5 @@ export default function ModelTable(props: Props) {
         updateMenuElement(props.currentPortfolio);
     }, [props.currentPortfolio, updateMenuElement]);
 
-    return <Table columns={modelPortfolioColumns} currentPortfolio={props.currentPortfolio} />;
+    return <Table columns={modelPortfolioColumns(props.currentPortfolio[1])} currentPortfolio={props.currentPortfolio} />;
 }

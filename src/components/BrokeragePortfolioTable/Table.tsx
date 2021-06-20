@@ -1,7 +1,5 @@
 import _ from "lodash";
-import React, {
-    useCallback, useMemo, useRef
-} from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
 import { Icon } from "semantic-ui-react";
 import { $enum } from "ts-enum-util";
