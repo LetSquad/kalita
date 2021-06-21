@@ -18,8 +18,7 @@ export interface TabulatorColumn {
     responsive?: number,
     tooltip?: (cell: any) => string,
     cssClass?: string,
-    formatter?: FormattersValues
-    | ((cell: any, formatterParams: any, onRendered: (callback: () => void) => void) => string),
+    formatter?: FormattersValues | ((cell: any, formatterParams: any, onRendered: (callback: () => void) => void) => string),
     formatterParams?: any,
     topCalc?: string,
     topCalcFormatter?: FormattersValues,
@@ -31,7 +30,7 @@ export interface TabulatorColumn {
     headerHozAlign?: HorizontalAlignValues,
     headerTooltip?: string,
     sorter?: SortersValues,
-    validator?: string,
+    validator?: string | ((cell: any, value: string) => boolean),
     editor?: string,
     [key: string]: any
 }

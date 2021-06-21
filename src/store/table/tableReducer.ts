@@ -4,9 +4,10 @@ import { EditableTableColumns } from "../../model/table/enums";
 import { CurrentPortfolio, TableUpdatePayload } from "../../model/table/types";
 import {
     generateNewRow,
-    getNewGroupName, recalculateBrokerAccountPercentage,
+    getNewGroupName,
+    recalculateBrokerAccountPercentage,
     recalculateModelPortfolioPercentage,
-    recalculatePositionAmountByQuantity, recalculateRow
+    recalculateRow
 } from "./tableReducerHelper";
 import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
 
