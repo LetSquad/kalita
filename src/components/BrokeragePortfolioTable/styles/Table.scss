@@ -1,7 +1,7 @@
 $ext-height: 40px;
 $additional-header-height: $ext-height;
 $tabulator-header-height: $ext-height;
-$tabulator-footer-height: $ext-height;
+$tabulator-footer-height: 60px;
 
 :global {
   .tabulator .tabulator-header {
@@ -13,21 +13,16 @@ $tabulator-footer-height: $ext-height;
     }
   }
 
-  .tabulator .tabulator-footer {
-    background-color: #fff !important;
-    height: $tabulator-footer-height;
-
-    .tabulator-col {
-      background-color: #fff !important;
-    }
-  }
-
   /* stylelint-disable */
   .tabulator .tabulator-tableHolder {
     /* stylelint-enable */
-    height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height}) !important;
-    max-height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height}) !important;
-    min-height: calc(100% - #{$tabulator-header-height} - #{$tabulator-footer-height}) !important;
+    height: calc(100% - #{$tabulator-header-height}) !important;
+    max-height: calc(100% - #{$tabulator-header-height}) !important;
+    min-height: calc(100% - #{$tabulator-header-height}) !important;
+
+    &::-webkit-scrollbar {
+      height: 0;
+    }
 
     .tabulator-placeholder span {
       font-size: 14px !important;

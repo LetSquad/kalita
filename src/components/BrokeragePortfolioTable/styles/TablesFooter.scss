@@ -1,0 +1,20 @@
+@use './Table' as *;
+
+.footer {
+  border-top: 2px solid #dee2e6;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  font-weight: bold;
+  height: $tabulator-footer-height;
+  overflow: auto;
+  padding: 5px 0;
+  width: 100%;
+}
+
+.cell {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  padding: 10.5px;
+}

@@ -77,7 +77,16 @@ export const tableSlice = createSlice({
                 state.currentPortfolio[1] = (state.currentPortfolio[1] as Array<ModelPortfolioPosition | BrokerAccountPosition>)
                     .filter((row) => row.id !== action.payload) as ModelPortfolioPosition[] | BrokerAccountPosition[];
             }
-        }
+        },
+        updateTotalTargetAmount: ((state, action: PayloadAction<string>) => {
+            state.totalTargetAmount = Number.parseInt(action.payload, 10);
+            if (state.currentPortfolio && state.currentPortfolio[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                state.currentPortfolio[1] = recalculateModelPortfolioPercentage(
+                    state.currentPortfolio[1],
+                    state.totalTargetAmount
+                );
+            }
+        })
     }
 });
 
@@ -87,7 +96,8 @@ export const {
     addNewGroup,
     update,
     updateGroupName,
-    deleteRowById
+    deleteRowById,
+    updateTotalTargetAmount
 } = tableSlice.actions;
 
 export default tableSlice.reducer;

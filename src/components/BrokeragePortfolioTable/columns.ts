@@ -15,18 +15,18 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
     {
         title: "Тикер",
         field: "ticker",
+        resizable: false,
         sorter: SortersValues.STRING,
         formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         headerHozAlign: HorizontalAlignValues.LEFT,
-        minWidth: 100,
         editor: "input",
-        validator: tickerValidator,
-        widthGrow: 2
+        validator: tickerValidator
     }, {
         title: "Доля",
         field: "percentage",
+        resizable: false,
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
@@ -35,7 +35,6 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
         },
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
-        minWidth: 100,
         headerHozAlign: HorizontalAlignValues.LEFT,
         topCalc: "sum",
         topCalcFormatter: FormattersValues.MONEY,
@@ -46,20 +45,20 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
     }, {
         title: "Цена",
         field: "currentPrice",
+        resizable: false,
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
             symbol: "₽",
             symbolAfter: "р"
         },
-        minWidth: 100,
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         hozAlign: HorizontalAlignValues.LEFT,
         headerHozAlign: HorizontalAlignValues.LEFT
     }, {
         title: "Сумма",
-        minWidth: 100,
+        resizable: false,
         field: "amount",
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
@@ -79,7 +78,6 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
     }, {
         title: "",
         field: "action",
-        width: 40,
         resizable: false,
         formatter: reactFormatter(actionBlock),
         visible: true,
@@ -89,7 +87,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
     }
 ];
 
-const modelPortfolioColumnsOrder = [
+export const modelPortfolioColumnsOrder = [
     "ticker",
     "weight",
     "percentage",
@@ -101,15 +99,27 @@ const modelPortfolioColumnsOrder = [
     "action"
 ];
 
+export const modelPortfolioColumnsWidth = [
+    170,
+    80,
+    85,
+    280,
+    200,
+    200,
+    200,
+    285,
+    40
+];
+
 export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionBlock: JSX.Element) => TabulatorColumn[] =
     (data: ModelPortfolioPosition[]) => (actionBlock: JSX.Element) => [
         ...commonColumns(actionBlock),
         {
             title: "Вес",
             field: "weight",
+            resizable: false,
             sorter: SortersValues.NUMBER,
             formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
-            minWidth: 100,
             visible: true,
             vertAlign: VerticalAlignValues.MIDDLE,
             hozAlign: HorizontalAlignValues.LEFT,
@@ -121,6 +131,7 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
         }, {
             title: "Целевая сумма",
             field: "targetAmount",
+            resizable: false,
             sorter: SortersValues.NUMBER,
             formatter: FormattersValues.MONEY,
             formatterParams: {
@@ -130,7 +141,6 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
             visible: true,
             vertAlign: VerticalAlignValues.MIDDLE,
             headerHozAlign: HorizontalAlignValues.LEFT,
-            minWidth: 152,
             topCalc: "sum",
             topCalcFormatter: FormattersValues.MONEY,
             topCalcFormatterParams: {
@@ -140,9 +150,9 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
         }, {
             title: "Целевое количество",
             field: "targetQuantity",
+            resizable: false,
             sorter: SortersValues.NUMBER,
             formatter: FormattersValues.PLAINTEXT,
-            minWidth: 191,
             visible: true,
             vertAlign: VerticalAlignValues.MIDDLE,
             hozAlign: HorizontalAlignValues.LEFT,
@@ -150,6 +160,7 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
         }, {
             title: "В портфеле",
             field: "quantity",
+            resizable: false,
             sorter: SortersValues.NUMBER,
             formatter: (cell: any) => {
                 const quantity = cell.getValue();
@@ -165,7 +176,6 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
 
                 return `<span class="${styles.editCell}">${cell.getValue()}</span>`;
             },
-            minWidth: 128,
             visible: true,
             vertAlign: VerticalAlignValues.MIDDLE,
             hozAlign: HorizontalAlignValues.LEFT,
@@ -174,9 +184,10 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
             validator: "min:0"
         }
     ].sort((columnA, columnB) =>
-        modelPortfolioColumnsOrder.indexOf(columnA.field) - modelPortfolioColumnsOrder.indexOf(columnB.field));
+        modelPortfolioColumnsOrder.indexOf(columnA.field) - modelPortfolioColumnsOrder.indexOf(columnB.field))
+        .map((column, index) => ({ ...column, width: modelPortfolioColumnsWidth[index] }));
 
-const brokerAccountColumnsOrder = [
+export const brokerAccountColumnsOrder = [
     "ticker",
     "percentage",
     "averagePrice",
@@ -186,11 +197,22 @@ const brokerAccountColumnsOrder = [
     "action"
 ];
 
+export const brokerAccountColumnsWidth = [
+    170,
+    85,
+    311,
+    310,
+    276,
+    350,
+    40
+];
+
 export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
     ...commonColumns(actionBlock),
     {
         title: "Цена покупки",
         field: "averagePrice",
+        resizable: false,
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
@@ -200,9 +222,9 @@ export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn
     }, {
         title: "В портфеле",
         field: "quantity",
+        resizable: false,
         sorter: SortersValues.NUMBER,
         formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
-        minWidth: 128,
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         hozAlign: HorizontalAlignValues.LEFT,
@@ -211,4 +233,5 @@ export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn
         validator: "min:0"
     }
 ].sort((columnA, columnB) =>
-    brokerAccountColumnsOrder.indexOf(columnA.field) - brokerAccountColumnsOrder.indexOf(columnB.field));
+    brokerAccountColumnsOrder.indexOf(columnA.field) - brokerAccountColumnsOrder.indexOf(columnB.field))
+    .map((column, index) => ({ ...column, width: brokerAccountColumnsWidth[index] }));

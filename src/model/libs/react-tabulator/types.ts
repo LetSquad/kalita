@@ -30,7 +30,7 @@ export interface TabulatorColumn {
     headerHozAlign?: HorizontalAlignValues,
     headerTooltip?: string,
     sorter?: SortersValues,
-    validator?: string | ((cell: any, value: string) => boolean),
+    validator?: ((cell: any, value: any, parameters: any) => boolean) | string,
     editor?: string,
     [key: string]: any
 }
