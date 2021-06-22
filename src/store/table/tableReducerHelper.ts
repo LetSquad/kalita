@@ -72,10 +72,12 @@ export function recalculateModelPortfolioPercentage(
     }
     return modelPortfolio.map((position) => {
         const proportion = position.weight / totalWeight;
+        const targetAmount = totalTargetAmount * proportion;
         return {
             ...position,
             percentage: proportion * 100,
-            targetAmount: totalTargetAmount * proportion
+            targetAmount,
+            targetQuantity: Math.floor(targetAmount / position.currentPrice)
         };
     });
 }
