@@ -21,7 +21,7 @@ export interface TabulatorColumn {
     formatter?: FormattersValues | ((cell: any, formatterParams: any, onRendered: (callback: () => void) => void) => string),
     formatterParams?: any,
     topCalc?: string,
-    topCalcFormatter?: FormattersValues,
+    topCalcFormatter?: FormattersValues | ((cell: any, formatterParams: any, onRendered: (callback: () => void) => void) => string),
     topCalcFormatterParams?: any,
     bottomCalc?: string,
     bottomCalcFormatter?: string,
@@ -30,7 +30,7 @@ export interface TabulatorColumn {
     headerHozAlign?: HorizontalAlignValues,
     headerTooltip?: string,
     sorter?: SortersValues,
-    validator?: string | ((cell: any, value: string) => boolean),
+    validator?: ((cell: any, value: any, parameters: any) => boolean) | string,
     editor?: string,
     [key: string]: any
 }

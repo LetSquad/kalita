@@ -8,11 +8,14 @@ import {
     SidebarMenuGroupType
 } from "../../model/menu/types";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../model/portfolios/types";
-import { newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
+import { defaultTotalTargetAmount, newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
 
 type UpdateMenuData = {
     elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-    data: ModelPortfolioPosition[]
+    content: ModelPortfolioPosition[]
+} | {
+    elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
+    totalTargetAmount: number
 } | {
     elementType: SidebarMenuElementsTypes.BROKER_ACCOUNT,
     data: BrokerAccountPosition[]
@@ -32,61 +35,64 @@ const initialState: SidebarMenuState = {
                     id: uuidv4(),
                     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
                     name: "Портфель тинька",
-                    data: [
-                        {
-                            id: uuidv4(),
-                            groupName: "Финансы",
-                            ticker: "SBER",
-                            weight: 1,
-                            percentage: 0.92,
-                            targetAmount: 18_348.62,
-                            currentPrice: 303.02,
-                            targetQuantity: 61,
-                            quantity: 40,
-                            amount: 112_120.8
-                        },
-                        {
-                            id: uuidv4(),
-                            groupName: "Финансы",
-                            ticker: "SBERP",
-                            weight: 15,
-                            percentage: 13.76,
-                            targetAmount: 275_229.36,
-                            currentPrice: 281.01,
-                            targetQuantity: 980,
-                            quantity: 470,
-                            amount: 132_074.7
-                        },
-                        {
-                            id: uuidv4(),
-                            groupName: "Телекомы",
-                            ticker: "MTSS",
-                            weight: 4,
-                            percentage: 3.67,
-                            targetAmount: 73_394.5,
-                            currentPrice: 340.2,
-                            targetQuantity: 216,
-                            quantity: 120,
-                            amount: 40_824
-                        },
-                        {
-                            id: uuidv4(),
-                            groupName: "Телекомы",
-                            ticker: "MGTSP",
-                            weight: 1,
-                            percentage: 0.92,
-                            targetAmount: 18_348.62,
-                            currentPrice: 1712,
-                            targetQuantity: 11,
-                            quantity: 10,
-                            amount: 17_120
-                        }
-                    ]
+                    data: {
+                        totalTargetAmount: 1_000_000,
+                        content: [
+                            {
+                                id: uuidv4(),
+                                groupName: "Финансы",
+                                ticker: "SBER",
+                                weight: 1,
+                                percentage: 0.92,
+                                targetAmount: 18_348.62,
+                                currentPrice: 303.02,
+                                targetQuantity: 61,
+                                quantity: 40,
+                                amount: 112_120.8
+                            },
+                            {
+                                id: uuidv4(),
+                                groupName: "Финансы",
+                                ticker: "SBERP",
+                                weight: 15,
+                                percentage: 13.76,
+                                targetAmount: 275_229.36,
+                                currentPrice: 281.01,
+                                targetQuantity: 980,
+                                quantity: 470,
+                                amount: 132_074.7
+                            },
+                            {
+                                id: uuidv4(),
+                                groupName: "Телекомы",
+                                ticker: "MTSS",
+                                weight: 4,
+                                percentage: 3.67,
+                                targetAmount: 73_394.5,
+                                currentPrice: 340.2,
+                                targetQuantity: 216,
+                                quantity: 120,
+                                amount: 40_824
+                            },
+                            {
+                                id: uuidv4(),
+                                groupName: "Телекомы",
+                                ticker: "MGTSP",
+                                weight: 1,
+                                percentage: 0.92,
+                                targetAmount: 18_348.62,
+                                currentPrice: 1712,
+                                targetQuantity: 11,
+                                quantity: 10,
+                                amount: 17_120
+                            }
+                        ]
+                    }
                 }, {
                     id: uuidv4(),
                     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
                     name: "Портфель ВТБ",
-                    data: []
+                    data: { content: [], totalTargetAmount: defaultTotalTargetAmount }
                 }
             ],
             isOpen: true,
@@ -200,8 +206,18 @@ export const sidebarMenuSlice = createSlice({
             if (group) {
                 const menuElement = (group.elements as Array<ModelPortfolioMenuElement | BrokerAccountMenuElement>)
                     .find((elem) => elem.id === state.activeMenuElementId?.id);
-                if (menuElement && menuElement.type === action.payload.elementType) {
-                    menuElement.data = action.payload.data;
+                if (menuElement) {
+                    if (menuElement.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO &&
+                        action.payload.elementType === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
+                        if ("content" in action.payload) {
+                            menuElement.data.content = action.payload.content;
+                        } else if ("totalTargetAmount" in action.payload) {
+                            menuElement.data.totalTargetAmount = action.payload.totalTargetAmount;
+                        }
+                    } else if (menuElement.type === SidebarMenuElementsTypes.BROKER_ACCOUNT &&
+                        action.payload.elementType === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
+                        menuElement.data = action.payload.data;
+                    }
                 }
             }
         }

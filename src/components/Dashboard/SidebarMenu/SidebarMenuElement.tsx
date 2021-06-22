@@ -48,7 +48,10 @@ export default function SidebarMenuElement(props: Props) {
 
     const setPortfolio = useCallback(() => {
         if (props.menuElement.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
-            dispatch(setCurrentPortfolio([BrokeragePortfolioTypes.MODEL_PORTFOLIO, props.menuElement.data]));
+            dispatch(setCurrentPortfolio([BrokeragePortfolioTypes.MODEL_PORTFOLIO, {
+                portfolio: props.menuElement.data.content,
+                totalTargetAmount: props.menuElement.data.totalTargetAmount
+            }]));
         } else {
             dispatch(setCurrentPortfolio([BrokeragePortfolioTypes.BROKER_ACCOUNT, props.menuElement.data]));
         }

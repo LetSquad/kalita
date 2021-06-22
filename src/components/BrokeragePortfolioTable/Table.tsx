@@ -10,16 +10,16 @@ import { useAppDispatch } from "../../store/hooks";
 import {
     addNewGroup, addToGroup, deleteRowById, update, updateGroupName
 } from "../../store/table/tableReducer";
-import partsStyles from "../../styles/parts.scss";
 import { ActionBlock } from "./ActionBlock";
 import styles from "./styles/Table.scss";
 
 interface Props {
     columns: (actionBlock: JSX.Element) => TabulatorColumn[],
-    currentPortfolio: CurrentPortfolio
+    currentPortfolio: CurrentPortfolio,
+    additionalHeaderPart?: JSX.Element
 }
 
-export default function Table(props: Props) {
+export default function Table({ columns, currentPortfolio, additionalHeaderPart }: Props) {
     const dispatch = useAppDispatch();
     const tableRef = useRef<any>(null);
 
@@ -63,11 +63,10 @@ export default function Table(props: Props) {
         movableRows: true,
         headerSortTristate: true,
         layoutColumnsOnNewData: true,
-        layout: "fitColumns",
-        responsiveLayout: "hide",
         groupBy: "groupName",
         columnCalcs: "both",
         reactiveData: true,
+        layout: "fitColumns",
         groupHeader: (value: any, count: any, data: any, group: any) => {
             const elem = document.createElement("div");
             elem.className = styles.groupContainer;
@@ -92,14 +91,17 @@ export default function Table(props: Props) {
 
     const table = useMemo(() => (
         <ReactTabulator
-            ref={tableRef} columns={props.columns(actionBlock())} data={_.cloneDeep(props.currentPortfolio[1])}
+            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(currentPortfolio[1])}
             options={options} className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
         />
-    ), [actionBlock, cellUpdated, options, props, rowMoved]);
+    ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
 
     return (
-        <div className={partsStyles.baseContainer}>
+        <div className={styles.container}>
             <div className={styles.additionalHeader}>
+                <div className={styles.additionalHeaderPart}>
+                    {additionalHeaderPart}
+                </div>
                 <Icon name="plus" link className={styles.additionalHeaderAddIcon} onClick={() => addGroup()} />
             </div>
             {table}

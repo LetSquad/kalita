@@ -8,14 +8,18 @@ interface Props {
     currentPortfolio: CurrentPortfolio
 }
 
-export default function TableWrapper(props: Props) {
+export default function TableWrapper({ currentPortfolio }: Props) {
     return useMemo(() => {
-        if (props.currentPortfolio[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-            return <ModelTable currentPortfolio={props.currentPortfolio} />;
+        if (currentPortfolio[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+            return (
+                <ModelTable currentPortfolio={currentPortfolio} />
+            );
         }
-        if (props.currentPortfolio[0] === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
-            return <BrokerTable currentPortfolio={props.currentPortfolio} />;
+        if (currentPortfolio[0] === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
+            return (
+                <BrokerTable currentPortfolio={currentPortfolio} />
+            );
         }
         return null;
-    }, [props.currentPortfolio]);
+    }, [currentPortfolio]);
 }

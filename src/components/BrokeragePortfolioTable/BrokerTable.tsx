@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { SidebarMenuElementsTypes } from "../../model/menu/enums";
 import { CurrentBrokerAccount } from "../../model/table/types";
 import { useAppDispatch } from "../../store/hooks";
@@ -10,19 +10,19 @@ interface Props {
     currentPortfolio: CurrentBrokerAccount
 }
 
-export default function BrokerTable(props: Props) {
+export default function BrokerTable({ currentPortfolio }: Props) {
     const dispatch = useAppDispatch();
 
-    const updateMenuElement = useCallback((currentPortfolio: CurrentBrokerAccount) => {
+    const updateMenuElement = useCallback((_currentPortfolio: CurrentBrokerAccount) => {
         dispatch(updateMenuElementData({
             elementType: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-            data: currentPortfolio[1]
+            data: _currentPortfolio[1]
         }));
     }, [dispatch]);
 
     useEffect(() => {
-        updateMenuElement(props.currentPortfolio);
-    }, [props.currentPortfolio, updateMenuElement]);
+        updateMenuElement(currentPortfolio);
+    }, [currentPortfolio, updateMenuElement]);
 
-    return <Table columns={brokerAccountColumns} currentPortfolio={props.currentPortfolio} />;
+    return useMemo(() => <Table columns={brokerAccountColumns} currentPortfolio={currentPortfolio} />, [currentPortfolio]);
 }

@@ -8,11 +8,16 @@ export interface BrokerAccountMenuElement {
     data: BrokerAccountPosition[]
 }
 
+export interface ModelPortfolioMenuElementData {
+    content: ModelPortfolioPosition[];
+    totalTargetAmount: number;
+}
+
 export interface ModelPortfolioMenuElement {
     id: string,
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
     name: string,
-    data: ModelPortfolioPosition[]
+    data: ModelPortfolioMenuElementData
 }
 
 export interface MenuElementIdentifier {
