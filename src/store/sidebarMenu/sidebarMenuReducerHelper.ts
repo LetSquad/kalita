@@ -4,6 +4,8 @@ import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../model
 
 const NEW_PORTFOLIO = "Новый портфель";
 
+export const defaultTotalTargetAmount = 1_000_000;
+
 export const newBrokerGroupMenuElement: () => BrokerAccountMenuElement = () => ({
     id: uuidv4(),
     type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
@@ -15,5 +17,5 @@ export const newModelGroupMenuElement: () => ModelPortfolioMenuElement = () => (
     id: uuidv4(),
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
     name: NEW_PORTFOLIO,
-    data: []
+    data: { content: [], totalTargetAmount: defaultTotalTargetAmount }
 });

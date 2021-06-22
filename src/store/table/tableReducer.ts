@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../model/portfolios/types";
 import { EditableTableColumns } from "../../model/table/enums";
-import { CurrentPortfolio, TableUpdatePayload } from "../../model/table/types";
+import { CurrentPortfolio, ImportedCurrentPortfolio, TableUpdatePayload } from "../../model/table/types";
 import {
     generateNewRow,
     getNewGroupName,
@@ -9,7 +10,6 @@ import {
     recalculateModelPortfolioPercentage,
     recalculateRow
 } from "./tableReducerHelper";
-import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
 
 export interface TableDataState {
     currentPortfolio?: CurrentPortfolio,
@@ -25,8 +25,16 @@ export const tableSlice = createSlice({
     name: "table",
     initialState,
     reducers: {
-        setCurrentPortfolio: (state, action: PayloadAction<CurrentPortfolio>) => {
-            state.currentPortfolio = action.payload;
+        setCurrentPortfolio: (state, action: PayloadAction<ImportedCurrentPortfolio>) => {
+            if (action.payload[0] === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
+                state.currentPortfolio = [action.payload[0], recalculateBrokerAccountPercentage(action.payload[1])];
+            } else if (action.payload[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                state.currentPortfolio = [action.payload[0], recalculateModelPortfolioPercentage(
+                    action.payload[1].portfolio,
+                    action.payload[1].totalTargetAmount
+                )];
+                state.totalTargetAmount = action.payload[1].totalTargetAmount;
+            }
         },
         addToGroup: (state, action: PayloadAction<string>) => {
             if (state.currentPortfolio) {
@@ -78,8 +86,8 @@ export const tableSlice = createSlice({
                     .filter((row) => row.id !== action.payload) as ModelPortfolioPosition[] | BrokerAccountPosition[];
             }
         },
-        updateTotalTargetAmount: ((state, action: PayloadAction<string>) => {
-            state.totalTargetAmount = Number.parseInt(action.payload, 10);
+        updateTotalTargetAmount: ((state, action: PayloadAction<number>) => {
+            state.totalTargetAmount = action.payload;
             if (state.currentPortfolio && state.currentPortfolio[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
                 state.currentPortfolio[1] = recalculateModelPortfolioPercentage(
                     state.currentPortfolio[1],

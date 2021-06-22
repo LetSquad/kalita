@@ -1,10 +1,5 @@
 import _ from "lodash";
-import React, {
-    Ref,
-    useCallback,
-    useMemo,
-    useRef
-} from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
 import { Icon } from "semantic-ui-react";
 import { $enum } from "ts-enum-util";
@@ -15,17 +10,16 @@ import { useAppDispatch } from "../../store/hooks";
 import {
     addNewGroup, addToGroup, deleteRowById, update, updateGroupName
 } from "../../store/table/tableReducer";
-import partsStyles from "../../styles/parts.scss";
 import { ActionBlock } from "./ActionBlock";
 import styles from "./styles/Table.scss";
 
 interface Props {
     columns: (actionBlock: JSX.Element) => TabulatorColumn[],
     currentPortfolio: CurrentPortfolio,
-    onTableRendered: (tableRef: Ref<any>) => void
+    additionalHeaderPart?: JSX.Element
 }
 
-export default function Table({ columns, currentPortfolio, onTableRendered }: Props) {
+export default function Table({ columns, currentPortfolio, additionalHeaderPart }: Props) {
     const dispatch = useAppDispatch();
     const tableRef = useRef<any>(null);
 
@@ -70,9 +64,9 @@ export default function Table({ columns, currentPortfolio, onTableRendered }: Pr
         headerSortTristate: true,
         layoutColumnsOnNewData: true,
         groupBy: "groupName",
-        columnCalcs: "group",
+        columnCalcs: "both",
         reactiveData: true,
-        renderComplete: () => onTableRendered(tableRef.current),
+        layout: "fitColumns",
         groupHeader: (value: any, count: any, data: any, group: any) => {
             const elem = document.createElement("div");
             elem.className = styles.groupContainer;
@@ -89,7 +83,7 @@ export default function Table({ columns, currentPortfolio, onTableRendered }: Pr
             elem.append(plus);
             return elem;
         }
-    }), [addRowToGroup, onTableRendered, updateGroup]);
+    }), [addRowToGroup, updateGroup]);
 
     const actionBlock = useCallback(() => (
         <ActionBlock deleteRow={deleteRow} />
@@ -103,8 +97,11 @@ export default function Table({ columns, currentPortfolio, onTableRendered }: Pr
     ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
 
     return (
-        <div className={partsStyles.baseContainer}>
+        <div className={styles.container}>
             <div className={styles.additionalHeader}>
+                <div className={styles.additionalHeaderPart}>
+                    {additionalHeaderPart}
+                </div>
                 <Icon name="plus" link className={styles.additionalHeaderAddIcon} onClick={() => addGroup()} />
             </div>
             {table}

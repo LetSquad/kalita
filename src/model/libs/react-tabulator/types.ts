@@ -21,7 +21,7 @@ export interface TabulatorColumn {
     formatter?: FormattersValues | ((cell: any, formatterParams: any, onRendered: (callback: () => void) => void) => string),
     formatterParams?: any,
     topCalc?: string,
-    topCalcFormatter?: FormattersValues,
+    topCalcFormatter?: FormattersValues | ((cell: any, formatterParams: any, onRendered: (callback: () => void) => void) => string),
     topCalcFormatterParams?: any,
     bottomCalc?: string,
     bottomCalcFormatter?: string,

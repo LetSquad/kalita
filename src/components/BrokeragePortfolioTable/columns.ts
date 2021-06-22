@@ -69,9 +69,9 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         headerHozAlign: HorizontalAlignValues.LEFT,
-        bottomCalc: "sum",
-        bottomCalcFormatter: FormattersValues.MONEY,
-        bottomCalcFormatterParams: {
+        topCalc: "sum",
+        topCalcFormatter: FormattersValues.MONEY,
+        topCalcFormatterParams: {
             symbol: "₽",
             symbolAfter: "р"
         }
@@ -100,15 +100,15 @@ export const modelPortfolioColumnsOrder = [
 ];
 
 export const modelPortfolioColumnsWidth = [
-    170,
-    80,
-    85,
-    280,
-    200,
-    200,
-    200,
-    285,
-    40
+    { minWidth: 90, maxWidth: 170, widthGrow: 4 },
+    { minWidth: 80, maxWidth: 110, widthGrow: 1 },
+    { minWidth: 85, maxWidth: 85 },
+    { minWidth: 165, widthGrow: 2 },
+    { minWidth: 120, widthGrow: 1 },
+    { minWidth: 190, widthGrow: 3 },
+    { minWidth: 130, widthGrow: 1 },
+    { minWidth: 130, widthGrow: 3 },
+    { minWidth: 40, maxWidth: 40 }
 ];
 
 export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionBlock: JSX.Element) => TabulatorColumn[] =
@@ -126,8 +126,8 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
             headerHozAlign: HorizontalAlignValues.LEFT,
             editor: "input",
             validator: "min:1",
-            bottomCalc: "sum",
-            bottomCalcFormatter: FormattersValues.PLAINTEXT
+            topCalc: "sum",
+            topCalcFormatter: FormattersValues.PLAINTEXT
         }, {
             title: "Целевая сумма",
             field: "targetAmount",
@@ -166,12 +166,8 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
                 const quantity = cell.getValue();
                 const rowIndex = cell.getRow().getIndex();
                 const targetQuantity = data.find((row) => row.id === rowIndex)?.targetQuantity;
-                if (targetQuantity !== undefined) {
-                    if (quantity >= targetQuantity) {
-                        cell.getElement().classList.add(styles.successQuantity);
-                    } else {
-                        cell.getElement().classList.add(styles.errorQuantity);
-                    }
+                if (targetQuantity !== undefined && quantity < targetQuantity) {
+                    cell.getElement().classList.add(styles.errorQuantity);
                 }
 
                 return `<span class="${styles.editCell}">${cell.getValue()}</span>`;
@@ -185,7 +181,13 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
         }
     ].sort((columnA, columnB) =>
         modelPortfolioColumnsOrder.indexOf(columnA.field) - modelPortfolioColumnsOrder.indexOf(columnB.field))
-        .map((column, index) => ({ ...column, width: modelPortfolioColumnsWidth[index] }));
+        .map((column, index) =>
+            ({
+                ...column,
+                minWidth: modelPortfolioColumnsWidth[index].minWidth,
+                maxWidth: modelPortfolioColumnsWidth[index].maxWidth,
+                widthGrow: modelPortfolioColumnsWidth[index].widthGrow
+            }));
 
 export const brokerAccountColumnsOrder = [
     "ticker",
@@ -198,13 +200,13 @@ export const brokerAccountColumnsOrder = [
 ];
 
 export const brokerAccountColumnsWidth = [
-    170,
-    85,
-    311,
-    310,
-    276,
-    350,
-    40
+    { minWidth: 90, maxWidth: 170, widthGrow: 3 },
+    { minWidth: 85, maxWidth: 85 },
+    { minWidth: 145, widthGrow: 3 },
+    { minWidth: 85, widthGrow: 2 },
+    { minWidth: 130, widthGrow: 1 },
+    { minWidth: 130, widthGrow: 3 },
+    { minWidth: 40, maxWidth: 40 }
 ];
 
 export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
@@ -234,4 +236,9 @@ export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn
     }
 ].sort((columnA, columnB) =>
     brokerAccountColumnsOrder.indexOf(columnA.field) - brokerAccountColumnsOrder.indexOf(columnB.field))
-    .map((column, index) => ({ ...column, width: brokerAccountColumnsWidth[index] }));
+    .map((column, index) => ({
+        ...column,
+        minWidth: brokerAccountColumnsWidth[index].minWidth,
+        maxWidth: brokerAccountColumnsWidth[index].maxWidth,
+        widthGrow: brokerAccountColumnsWidth[index].widthGrow
+    }));
