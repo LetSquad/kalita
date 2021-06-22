@@ -13,7 +13,7 @@ const tickerValidator = (cell: any, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/
 
 export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
     {
-        title: "Тикер",
+        title: "Инструмент",
         field: "ticker",
         resizable: false,
         sorter: SortersValues.STRING,

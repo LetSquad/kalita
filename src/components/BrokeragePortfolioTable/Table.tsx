@@ -8,7 +8,7 @@ import { EditableTableColumns } from "../../model/table/enums";
 import { CurrentPortfolio } from "../../model/table/types";
 import { useAppDispatch } from "../../store/hooks";
 import {
-    addNewGroup, addToGroup, deleteRowById, update, updateGroupName
+    addNewGroup, addToGroup, deleteRowById, openSettings, update, updateGroupName
 } from "../../store/table/tableReducer";
 import { ActionBlock } from "./ActionBlock";
 import styles from "./styles/Table.scss";
@@ -91,7 +91,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const table = useMemo(() => (
         <ReactTabulator
-            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(currentPortfolio[1])}
+            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(currentPortfolio.positions)}
             options={options} className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
         />
     ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
@@ -102,7 +102,10 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 <div className={styles.additionalHeaderPart}>
                     {additionalHeaderPart}
                 </div>
-                <Icon name="plus" link className={styles.additionalHeaderAddIcon} onClick={() => addGroup()} />
+                <div>
+                    <Icon name="cog" link className={styles.additionalHeaderIcon} onClick={() => dispatch(openSettings())} />
+                    <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
+                </div>
             </div>
             {table}
         </div>

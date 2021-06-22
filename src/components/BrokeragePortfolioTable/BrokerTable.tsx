@@ -16,7 +16,7 @@ export default function BrokerTable({ currentPortfolio }: Props) {
     const updateMenuElement = useCallback((_currentPortfolio: CurrentBrokerAccount) => {
         dispatch(updateMenuElementData({
             elementType: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-            data: _currentPortfolio[1]
+            data: _currentPortfolio.positions
         }));
     }, [dispatch]);
 

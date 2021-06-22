@@ -17,5 +17,5 @@ export const newModelGroupMenuElement: () => ModelPortfolioMenuElement = () => (
     id: uuidv4(),
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
     name: NEW_PORTFOLIO,
-    data: { content: [], totalTargetAmount: defaultTotalTargetAmount }
+    data: { positions: [], totalTargetAmount: defaultTotalTargetAmount }
 });

@@ -3,15 +3,18 @@ import { BrokerAccountPosition, ModelPortfolioPosition } from "../portfolios/typ
 import { EditableTableColumns } from "./enums";
 
 export type TableData = BrokerAccountPosition[] | ModelPortfolioPosition[];
-export type CurrentModelPortfolio = [BrokeragePortfolioTypes.MODEL_PORTFOLIO, ModelPortfolioPosition[]];
-export type CurrentBrokerAccount = [BrokeragePortfolioTypes.BROKER_ACCOUNT, BrokerAccountPosition[]];
-export type CurrentPortfolio = CurrentModelPortfolio | CurrentBrokerAccount;
 
-export type ImportedCurrentModelPortfolio = [
-    BrokeragePortfolioTypes.MODEL_PORTFOLIO,
-    { portfolio: ModelPortfolioPosition[], totalTargetAmount: number }
-];
-export type ImportedCurrentPortfolio = CurrentBrokerAccount | ImportedCurrentModelPortfolio;
+export interface CurrentModelPortfolio {
+    type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
+    positions: ModelPortfolioPosition[],
+    totalTargetAmount: number
+}
+
+export interface CurrentBrokerAccount {
+    type: BrokeragePortfolioTypes.BROKER_ACCOUNT,
+    positions: BrokerAccountPosition[]
+}
+export type CurrentPortfolio = CurrentModelPortfolio | CurrentBrokerAccount;
 
 export interface TableUpdatePayload {
     readonly id: string,

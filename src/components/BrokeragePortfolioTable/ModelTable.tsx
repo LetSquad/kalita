@@ -8,6 +8,7 @@ import { updateTotalTargetAmount } from "../../store/table/tableReducer";
 import { modelPortfolioColumns } from "./columns";
 import Table from "./Table";
 import styles from "./styles/ModelTable.scss";
+import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
 
 interface Props {
     currentPortfolio: CurrentModelPortfolio
@@ -15,12 +16,17 @@ interface Props {
 
 export default function ModelTable({ currentPortfolio }: Props) {
     const dispatch = useAppDispatch();
-    const totalTargetAmount = useAppSelector((state) => state.tableData.totalTargetAmount);
+    const totalTargetAmount = useAppSelector((state) => {
+        if (!state.tableData.currentPortfolio || state.tableData.currentPortfolio.type !== BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+            return undefined;
+        }
+        return state.tableData.currentPortfolio.totalTargetAmount;
+    });
 
     const updateMenuElementContent = useCallback((_currentPortfolio: CurrentModelPortfolio) => {
         dispatch(updateMenuElementData({
             elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-            content: _currentPortfolio[1]
+            content: _currentPortfolio.positions
         }));
     }, [dispatch]);
 
@@ -54,7 +60,7 @@ export default function ModelTable({ currentPortfolio }: Props) {
 
     return useMemo(() => (
         <Table
-            columns={modelPortfolioColumns(currentPortfolio[1])}
+            columns={modelPortfolioColumns(currentPortfolio.positions)}
             currentPortfolio={currentPortfolio}
             additionalHeaderPart={targetAmountInput}
         />
