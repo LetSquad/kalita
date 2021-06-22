@@ -8,18 +8,19 @@ const Table = lazy(/* webpackChunkName: "model-portfolio-table" */() =>
     import("../BrokeragePortfolioTable/TableWrapper"));
 
 export default function DashboardContent() {
-    const tableState = useAppSelector((state) => state.tableData);
+    const isSettingsOpened = useAppSelector((state) => state.tableData.isSettingsOpened);
+    const currentPortfolio = useAppSelector((state) => state.tableData.currentPortfolio);
 
-    if (tableState.isSettingsOpened) {
+    if (isSettingsOpened) {
         return (
             <div>Sunny India will provide settings soon...</div>
         );
     }
-    if (tableState.currentPortfolio) {
+    if (currentPortfolio) {
         return (
             <WithSuspense>
                 <div className={styles.content}>
-                    <Table currentPortfolio={tableState.currentPortfolio} />
+                    <Table currentPortfolio={currentPortfolio} />
                 </div>
             </WithSuspense>
         );
