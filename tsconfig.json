@@ -16,6 +16,7 @@
         "jsx": "react",
         "sourceMap": true,
         "strict": true,
+        "noImplicitAny": false,
         "noStrictGenericChecks": false,
         "strictNullChecks": true,
         "noImplicitReturns": true,
@@ -35,6 +36,8 @@
         "./src/**/*",
         "./custom_typings/**/*",
         "./webpack.config.ts",
-        "./postcss.config.js"
+        "./webpack.main.config.ts",
+        "./postcss.config.js",
+        "./app/main.ts"
     ]
 }
