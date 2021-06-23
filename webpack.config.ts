@@ -3,31 +3,33 @@ import webpack, { Configuration } from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import { merge } from "webpack-merge";
-import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import ReactRefreshTypeScript from "react-refresh-typescript";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+import createElectronReloadWebpackPlugin from "electron-reload-webpack-plugin";
 
-const PATHS = {
+export const PATHS = {
     src: path.join(__dirname, "./src"),
-    dist: path.join(__dirname, "./dist"),
+    dist: path.join(__dirname, "./app/dist"),
     global: path.resolve(__dirname, "./src/styles/globals.scss"),
     assets: "assets/"
 };
 
-module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string]: string }) => {
-    const isProduction = argv.mode === "production";
+const isProduction = process.env.NODE_ENV === "production";
+const mode = isProduction ? "production" : "development";
+
+module.exports = () => {
     const commonPlugins = [
         new HtmlWebpackPlugin({
             template: `${PATHS.src}/index.html`,
             filename: "./index.html",
-            title: "Demo"
+            title: "Demo",
+            publicPath: isProduction ? "./" : ""
         }),
-        new CleanWebpackPlugin(),
+        new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: []
+        }),
         new webpack.ProgressPlugin(),
         new webpack.DefinePlugin({
-            "process.env.NODE_ENV": isProduction
-                ? JSON.stringify("production")
-                : JSON.stringify("development"),
+            "process.env.NODE_ENV": JSON.stringify(mode),
             "process.env.DEBUG": JSON.stringify(process.env.DEBUG)
         }),
         new ForkTsCheckerWebpackPlugin()
@@ -37,46 +39,30 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
         new webpack.SourceMapDevToolPlugin({
             filename: "[file].map"
         }),
-        new ReactRefreshWebpackPlugin()
+        createElectronReloadWebpackPlugin()()
     ];
-
-    const devOptions: Configuration = {
-        mode: "development",
-        devtool: "eval-cheap-module-source-map",
-        devServer: {
-            contentBase: PATHS.dist,
-            port: 8085,
-            overlay: {
-                warnings: false,
-                errors: true
-            },
-            hot: true,
-            open: true,
-            historyApiFallback: true
-        }
-    };
-
-    const prodOptions: Configuration = {
-        mode: "production",
-        devtool: "cheap-source-map",
-        devServer: {
-            contentBase: PATHS.dist,
-            port: 8085,
-            overlay: {
-                warnings: false,
-                errors: true
-            },
-            hot: true,
-            open: true,
-            historyApiFallback: true
-        }
-    };
 
     const plugins = [...commonPlugins, ...(isProduction
         ? []
         : devPlugins)];
 
+    const devOptions: Configuration = {
+        devServer: {
+            contentBase: PATHS.dist,
+            port: 8085,
+            overlay: {
+                warnings: false,
+                errors: true
+            },
+            hot: true,
+            historyApiFallback: true
+        }
+    };
+
     const config: Configuration = {
+        mode,
+        target: "electron-renderer",
+        devtool: isProduction ? "cheap-source-map" : "eval-cheap-module-source-map",
         context: __dirname,
         entry: {
             app: PATHS.src
@@ -135,12 +121,7 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
                             compilerOptions: {
                                 module: "ESNext",
                                 removeComments: false
-                            },
-                            getCustomTransformers: () => ({
-                                before: isProduction
-                                    ? []
-                                    : [ReactRefreshTypeScript()]
-                            })
+                            }
                         }
                     }]
             }, {
@@ -149,7 +130,7 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
                     [{
                         loader: "file-loader",
                         options: {
-                            name: "[path][name]-[contenthash].[ext]",
+                            name: "[name]-[contenthash].[ext]",
                             outputPath: "static/assets/"
                         }
                     }]
@@ -173,12 +154,10 @@ module.exports = (env: { [key: string]: string | boolean }, argv: { [key: string
         output: {
             path: PATHS.dist,
             filename: `${PATHS.assets}js/[name]-bundle.[fullhash].js`,
-            publicPath: "/"
+            publicPath: isProduction ? "./" : "/"
         },
         plugins
     };
 
-    return merge<Configuration>(config, isProduction
-        ? prodOptions
-        : devOptions);
+    return isProduction ? config : merge(config, devOptions);
 };
