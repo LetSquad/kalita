@@ -8,7 +8,7 @@ import { EditableTableColumns } from "../../model/table/enums";
 import { CurrentPortfolio } from "../../model/table/types";
 import { useAppDispatch } from "../../store/hooks";
 import {
-    addNewGroup, addToGroup, deleteRowById, openSettings, update, updateGroupName
+    addNewGroup, addToGroup, deleteRowById, update, updateGroupName
 } from "../../store/table/tableReducer";
 import { ActionBlock } from "./ActionBlock";
 import styles from "./styles/Table.scss";
@@ -103,7 +103,8 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                     {additionalHeaderPart}
                 </div>
                 <div>
-                    <Icon name="cog" link className={styles.additionalHeaderIcon} onClick={() => dispatch(openSettings())} />
+                    <Icon name="cog" link className={styles.additionalHeaderIcon}
+                          onClick={() => alert("Sunny India will provide settings soon!")} />
                     <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
                 </div>
             </div>

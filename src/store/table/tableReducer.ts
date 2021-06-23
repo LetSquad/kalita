@@ -12,13 +12,11 @@ import {
 } from "./tableReducerHelper";
 
 export interface TableDataState {
-    currentPortfolio?: CurrentPortfolio,
-    isSettingsOpened: boolean
+    currentPortfolio?: CurrentPortfolio
 }
 
 const initialState: TableDataState = {
-    currentPortfolio: undefined,
-    isSettingsOpened: false
+    currentPortfolio: undefined
 };
 
 export const tableSlice = createSlice({
@@ -38,13 +36,6 @@ export const tableSlice = createSlice({
                     totalTargetAmount: action.payload.totalTargetAmount
                 };
             }
-            state.isSettingsOpened = false;
-        },
-        openSettings: (state) => {
-            state.isSettingsOpened = true;
-        },
-        closeSettings: (state) => {
-            state.isSettingsOpened = false;
         },
         addToGroup: (state, action: PayloadAction<string>) => {
             if (state.currentPortfolio) {
@@ -112,8 +103,6 @@ export const tableSlice = createSlice({
 });
 
 export const {
-    openSettings,
-    closeSettings,
     setCurrentPortfolio,
     addToGroup,
     addNewGroup,
