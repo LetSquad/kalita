@@ -60,11 +60,11 @@ $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-t
   align-items: center;
   display: flex;
   height: $additional-header-height;
+  justify-content: space-between;
   width: 100%;
 
-  &-add-icon {
+  &-icon {
     font-size: 16px !important;
-    margin-left: auto !important;
     margin-right: 10px !important;
   }
 

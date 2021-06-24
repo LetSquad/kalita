@@ -37,7 +37,7 @@ const initialState: SidebarMenuState = {
                     name: "Портфель тинька",
                     data: {
                         totalTargetAmount: 1_000_000,
-                        content: [
+                        positions: [
                             {
                                 id: uuidv4(),
                                 groupName: "Финансы",
@@ -92,7 +92,7 @@ const initialState: SidebarMenuState = {
                     id: uuidv4(),
                     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
                     name: "Портфель ВТБ",
-                    data: { content: [], totalTargetAmount: defaultTotalTargetAmount }
+                    data: { positions: [], totalTargetAmount: defaultTotalTargetAmount }
                 }
             ],
             isOpen: true,
@@ -210,7 +210,7 @@ export const sidebarMenuSlice = createSlice({
                     if (menuElement.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO &&
                         action.payload.elementType === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
                         if ("content" in action.payload) {
-                            menuElement.data.content = action.payload.content;
+                            menuElement.data.positions = action.payload.content;
                         } else if ("totalTargetAmount" in action.payload) {
                             menuElement.data.totalTargetAmount = action.payload.totalTargetAmount;
                         }

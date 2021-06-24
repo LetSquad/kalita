@@ -9,7 +9,7 @@ export interface BrokerAccountMenuElement {
 }
 
 export interface ModelPortfolioMenuElementData {
-    content: ModelPortfolioPosition[];
+    positions: ModelPortfolioPosition[];
     totalTargetAmount: number;
 }
 

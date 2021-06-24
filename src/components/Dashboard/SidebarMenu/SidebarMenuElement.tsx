@@ -48,12 +48,16 @@ export default function SidebarMenuElement(props: Props) {
 
     const setPortfolio = useCallback(() => {
         if (props.menuElement.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
-            dispatch(setCurrentPortfolio([BrokeragePortfolioTypes.MODEL_PORTFOLIO, {
-                portfolio: props.menuElement.data.content,
+            dispatch(setCurrentPortfolio({
+                type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
+                positions: props.menuElement.data.positions,
                 totalTargetAmount: props.menuElement.data.totalTargetAmount
-            }]));
+            }));
         } else {
-            dispatch(setCurrentPortfolio([BrokeragePortfolioTypes.BROKER_ACCOUNT, props.menuElement.data]));
+            dispatch(setCurrentPortfolio({
+                type: BrokeragePortfolioTypes.BROKER_ACCOUNT,
+                positions: props.menuElement.data
+            }));
         }
     }, [dispatch, props.menuElement]);
 

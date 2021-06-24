@@ -6,13 +6,13 @@ import { CurrentPortfolio, TableData, TableUpdatePayload } from "../../model/tab
 import { EditableTableColumns } from "../../model/table/enums";
 
 const NEW_ENTRY = "Новая запись";
-const NO_NAME = "Без названия";
+const NEW_GROUP = "Новая группа";
 
 export function generateNewRow(currentPortfolio: CurrentPortfolio, groupName: string) {
-    if (currentPortfolio[0] === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-        currentPortfolio[1].push(newModelPortfolioRow(groupName));
+    if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+        currentPortfolio.positions.push(newModelPortfolioRow(groupName));
     } else {
-        currentPortfolio[1].push(newBrokerAccountRow(groupName));
+        currentPortfolio.positions.push(newBrokerAccountRow(groupName));
     }
 }
 
@@ -23,7 +23,7 @@ export const newModelPortfolioRow: (groupName: string) => ModelPortfolioPosition
     weight: 1,
     percentage: 0,
     targetAmount: 0,
-    currentPrice: 0,
+    currentPrice: 1,
     targetQuantity: 0,
     quantity: 0,
     amount: 0
@@ -35,13 +35,13 @@ export const newBrokerAccountRow: (groupName: string) => BrokerAccountPosition =
     groupName,
     percentage: 0,
     averagePrice: 0,
-    currentPrice: 0,
+    currentPrice: 1,
     quantity: 0,
     amount: 0
 });
 
 export function recalculateRow(portfolio: CurrentPortfolio, action: PayloadAction<TableUpdatePayload>): CurrentPortfolio {
-    portfolio[1] = portfolio[1].map((row) => {
+    portfolio.positions = portfolio.positions.map((row) => {
         if (row.id === action.payload.id) {
             if (action.payload.valueKey === EditableTableColumns.QUANTITY) {
                 return recalculatePositionAmountByQuantity(row, Number.parseInt(action.payload.newValue, 10));
@@ -102,14 +102,16 @@ export function recalculatePositionAmountByQuantity<T extends PortfolioPosition>
 }
 
 export function getNewGroupName(tableData: TableData): string {
-    const noNameRegExp = new RegExp(`^\\(${NO_NAME}\\d*\\)$`);
+    const noNameRegExp = new RegExp(`^${NEW_GROUP} ?\\d*$`);
     const groups = [...new Set(tableData
         .map((data) => data.groupName)
         .filter((groupName) => noNameRegExp.test(groupName)))];
     if (groups.length === 0) {
-        return `(${NO_NAME})`;
+        return NEW_GROUP;
     }
-    const newGroupsNums = groups.map((groupName) => groupName.replace(`(${NO_NAME}`, "")
-        .replace(")", ""));
-    return `(${NO_NAME}${newGroupsNums.length})`;
+    const newGroupsNums = groups.map((groupName) => {
+        if (groupName.length === NEW_GROUP.length) return 0;
+        return Number.parseInt(groupName[groupName.length - 1], 10);
+    }).sort();
+    return `${NEW_GROUP} ${newGroupsNums[newGroupsNums.length - 1] + 1}`;
 }

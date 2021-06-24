@@ -91,7 +91,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const table = useMemo(() => (
         <ReactTabulator
-            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(currentPortfolio[1])}
+            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(currentPortfolio.positions)}
             options={options} className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
         />
     ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
@@ -102,7 +102,11 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 <div className={styles.additionalHeaderPart}>
                     {additionalHeaderPart}
                 </div>
-                <Icon name="plus" link className={styles.additionalHeaderAddIcon} onClick={() => addGroup()} />
+                <div>
+                    <Icon name="cog" link className={styles.additionalHeaderIcon}
+                          onClick={() => alert("Sunny India will provide settings soon!")} />
+                    <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
+                </div>
             </div>
             {table}
         </div>
