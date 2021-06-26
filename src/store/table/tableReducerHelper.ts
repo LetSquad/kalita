@@ -2,18 +2,33 @@ import { v4 as uuidv4 } from "uuid";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition, PortfolioPosition } from "../../model/portfolios/types";
-import { CurrentPortfolio, TableData, TableUpdatePayload } from "../../model/table/types";
+import {
+    BrokerReportPosition, CurrentPortfolio, TableData, TableUpdatePayload
+} from "../../model/table/types";
 import { EditableTableColumns } from "../../model/table/enums";
 
 const NEW_ENTRY = "Новая запись";
 const NEW_GROUP = "Новая группа";
 
-export function generateNewRow(currentPortfolio: CurrentPortfolio, groupName: string) {
+export function generateNewPosition(currentPortfolio: CurrentPortfolio, groupName: string) {
     if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
         currentPortfolio.positions.push(newModelPortfolioRow(groupName));
     } else {
         currentPortfolio.positions.push(newBrokerAccountRow(groupName));
     }
+}
+
+export function mapPositionFromBrokerReport(groupName: string, position: BrokerReportPosition): BrokerAccountPosition {
+    return {
+        id: uuidv4(),
+        ticker: position.name,
+        percentage: 0,
+        currentPrice: position.averagePrice,
+        quantity: position.quantity,
+        amount: position.quantity * position.averagePrice,
+        groupName,
+        averagePrice: position.averagePrice
+    };
 }
 
 export const newModelPortfolioRow: (groupName: string) => ModelPortfolioPosition = (groupName: string) => ({

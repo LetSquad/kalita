@@ -22,3 +22,20 @@ export interface TableUpdatePayload {
     readonly newValue: string,
     readonly newOrder?: string[]
 }
+
+export interface BrokerReportData {
+    readonly accountName: string,
+    readonly positions: Array<BrokerReportPosition>
+}
+
+export interface BrokerReportPosition {
+    readonly name: string,
+    readonly averagePrice: number,
+    readonly quantity: number
+}
+
+export interface BrokerReportDeal {
+    readonly name: string,
+    readonly price: number,
+    readonly quantity: number
+}

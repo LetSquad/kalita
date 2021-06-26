@@ -8,10 +8,12 @@ import { EditableTableColumns } from "../../model/table/enums";
 import { CurrentPortfolio } from "../../model/table/types";
 import { useAppDispatch } from "../../store/hooks";
 import {
-    addNewGroup, addToGroup, deleteRowById, update, updateGroupName
+    addNewGroup, addNewPosition, deleteRowById, update, updateGroupName
 } from "../../store/table/tableReducer";
 import { ActionBlock } from "./ActionBlock";
 import styles from "./styles/Table.scss";
+import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
+import BrokerAccountSettingsModal from "./BrokerAccountSettingsModal";
 
 interface Props {
     columns: (actionBlock: JSX.Element) => TabulatorColumn[],
@@ -43,7 +45,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     }, [dispatch]);
 
     const addRowToGroup = useCallback((groupName) => {
-        dispatch(addToGroup(groupName));
+        dispatch(addNewPosition(groupName));
     }, [dispatch]);
 
     const addGroup = useCallback(() => {
@@ -105,10 +107,14 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                     {additionalHeaderPart}
                 </div>
                 <div>
-                    <Icon
-                        name="cog" link className={styles.additionalHeaderIcon}
-                        onClick={() => alert("Sunny India will provide settings soon!")}
-                    />
+                    {currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO && (
+                        <Icon
+                            name="cog" link className={styles.additionalHeaderIcon}
+                            onClick={() => alert("Sunny India will provide model portfolio settings soon!")}
+                        />
+                    )}
+                    {currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
+                        <BrokerAccountSettingsModal trigger={<Icon name="cog" link className={styles.additionalHeaderIcon} />} />}
                     <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
                 </div>
             </div>

@@ -51,6 +51,7 @@ function loadMain() {
         webPreferences: {
             devTools: isElectronDev,
             nodeIntegration: true,
+            nodeIntegrationInWorker: true,
             contextIsolation: false,
             enableRemoteModule: true
         }
