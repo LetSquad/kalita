@@ -80,12 +80,6 @@ module.exports = () => {
                 exclude: [/node_modules/, PATHS.global],
                 use: [
                     "style-loader", {
-                        loader: "dts-css-modules-loader",
-                        options: {
-                            namedExport: true,
-                            dropEmptyFile: true
-                        }
-                    }, {
                         loader: "css-loader",
                         options: {
                             import: true,

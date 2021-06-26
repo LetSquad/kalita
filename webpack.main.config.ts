@@ -20,7 +20,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts$/,
+                test: /app\/main\.ts$/,
                 exclude: /node_modules/,
                 use:
                     [{
