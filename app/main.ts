@@ -2,6 +2,7 @@ import electron from "electron";
 import isElectronDev from "electron-is-dev";
 import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from "electron-devtools-installer";
 import { client } from "electron-connect";
+import { initialize as remoteInitialize } from "@electron/remote/main";
 
 const {
     app,
@@ -39,6 +40,8 @@ function loadMain() {
     const screenWidth = electron.screen.getPrimaryDisplay().size.width;
     const screenHeight = electron.screen.getPrimaryDisplay().size.height;
 
+    remoteInitialize();
+
     const mainWindow = new BrowserWindow({
         width: 1366,
         height: 768,
@@ -48,11 +51,9 @@ function loadMain() {
         webPreferences: {
             devTools: isElectronDev,
             nodeIntegration: true,
-            contextIsolation: false
+            contextIsolation: false,
+            enableRemoteModule: true
         }
-    });
-    mainWindow.webContents.session.setCertificateVerifyProc((request, callback) => {
-        callback(0);
     });
     mainWindow.loadURL(isElectronDev ? "http://localhost:8085" : `file://${__dirname}/index.html`);
     mainWindow.once("ready-to-show", () => {
