@@ -1,18 +1,22 @@
 import { reactFormatter } from "react-tabulator";
 import {
-    FormattersValues,
-    HorizontalAlignValues,
-    SortersValues,
-    VerticalAlignValues
+    FormattersValues, HorizontalAlignValues, SortersValues, VerticalAlignValues
 } from "../../model/libs/react-tabulator/enums";
 import { TabulatorColumn } from "../../model/libs/react-tabulator/types";
-import styles from "./styles/columns.scss";
 import { ModelPortfolioPosition } from "../../model/portfolios/types";
+import styles from "./styles/columns.scss";
 
 const tickerValidator = (cell: any, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);
 
 export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
     {
+        field: "handle",
+        rowHandle: true,
+        formatter: FormattersValues.HANDLE,
+        headerSort: false,
+        frozen: true,
+        resizable: false
+    }, {
         title: "Инструмент",
         field: "ticker",
         resizable: false,
@@ -76,7 +80,6 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
             symbolAfter: "р"
         }
     }, {
-        title: "",
         field: "action",
         resizable: false,
         formatter: reactFormatter(actionBlock),
@@ -88,6 +91,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
 ];
 
 export const modelPortfolioColumnsOrder = [
+    "handle",
     "ticker",
     "weight",
     "percentage",
@@ -100,6 +104,7 @@ export const modelPortfolioColumnsOrder = [
 ];
 
 export const modelPortfolioColumnsWidth = [
+    { minWidth: 30, maxWidth: 30 },
     { minWidth: 90, maxWidth: 170, widthGrow: 4 },
     { minWidth: 80, maxWidth: 110, widthGrow: 1 },
     { minWidth: 85, maxWidth: 85 },
@@ -190,6 +195,7 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
             }));
 
 export const brokerAccountColumnsOrder = [
+    "handle",
     "ticker",
     "percentage",
     "averagePrice",
@@ -200,6 +206,7 @@ export const brokerAccountColumnsOrder = [
 ];
 
 export const brokerAccountColumnsWidth = [
+    { minWidth: 30, maxWidth: 30 },
     { minWidth: 90, maxWidth: 170, widthGrow: 3 },
     { minWidth: 85, maxWidth: 85 },
     { minWidth: 145, widthGrow: 3 },
