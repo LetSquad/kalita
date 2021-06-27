@@ -19,5 +19,6 @@ export type CurrentPortfolio = CurrentModelPortfolio | CurrentBrokerAccount;
 export interface TableUpdatePayload {
     readonly id: string,
     readonly valueKey: EditableTableColumns,
-    readonly newValue: string
+    readonly newValue: string,
+    readonly newOrder?: string[]
 }
