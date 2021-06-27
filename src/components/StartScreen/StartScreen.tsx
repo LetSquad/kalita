@@ -4,6 +4,7 @@ import React, { useCallback, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { Button, Icon } from "semantic-ui-react";
+import { saveProjectFileName } from "../../model/constants";
 import { addRecentProject, removeRecentProject } from "../../store/electronCache/electronCacheReducer";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { baseSidebarMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducerHelper";
@@ -44,7 +45,7 @@ export default function StartScreen() {
             } else {
                 try {
                     fs.mkdirpSync(path);
-                    const filePath = `${path}/portfolios.json`;
+                    const filePath = `${path}/${saveProjectFileName}`;
                     fs.createFileSync(filePath);
                     fs.writeJsonSync(filePath, baseSidebarMenuGroups);
                     addRecent(path);

@@ -3,8 +3,8 @@ import React, { useCallback, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { Menu, Segment, Sidebar } from "semantic-ui-react";
+import { saveProjectFileName } from "../../model/constants";
 import { SidebarMenuGroupType } from "../../model/menu/types";
-import { store } from "../../store";
 import { useAppDispatch } from "../../store/hooks";
 import { setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
 import partsStyles from "../../styles/parts.scss";
@@ -23,23 +23,20 @@ export default function Dashboard() {
 
     useEffect(() => {
         const folderPath = decodeURI(history.location.search.replace("?currentProject=", ""));
-        const filePath = `${folderPath}/portfolios.json`;
+        const filePath = `${folderPath}/${saveProjectFileName}`;
 
         if (fs.existsSync(filePath)) {
-            let menuGroups: SidebarMenuGroupType[] = fs.readJSONSync(filePath);
-            setStartState(menuGroups);
-            const autosaveInterval = setInterval(() => {
-                if (menuGroups !== store.getState().sidebarMenu.menuGroups) {
-                    fs.writeJsonSync(filePath, store.getState().sidebarMenu.menuGroups);
-                    menuGroups = store.getState().sidebarMenu.menuGroups;
-                }
-            }, 5000);
-            return () => clearInterval(autosaveInterval);
+            try {
+                const menuGroups: SidebarMenuGroupType[] = fs.readJSONSync(filePath);
+                setStartState(menuGroups);
+            } catch {
+                addToast(`Ошибка открытия проекта "${folderPath}"`, { appearance: "error" });
+                history.push("/");
+            }
+        } else {
+            addToast(`Проект "${folderPath}" отсутствует или сломан`, { appearance: "error" });
+            history.push("/");
         }
-
-        addToast(`Проект "${folderPath}" отсутствует или сломан`, { appearance: "error" });
-        history.push("/");
-        return () => {};
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
