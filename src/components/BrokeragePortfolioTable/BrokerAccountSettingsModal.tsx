@@ -1,7 +1,8 @@
 import { Button, Header, Modal } from "semantic-ui-react";
-import React, { ChangeEvent, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { app, dialog } from "@electron/remote";
 import BrokerReportLoaderWorker from "../../workers/BrokerReportLoader.worker";
-import styles from "./styles/BrokerSettingsModal.scss";
+import styles from "./styles/BrokerAccountSettingsModal.scss";
 import { addBrokerAccountPositions } from "../../store/table/tableReducer";
 import { useAppDispatch } from "../../store/hooks";
 import { BrokerReportData } from "../../model/table/types";
@@ -17,15 +18,24 @@ export default function BrokerAccountSettingsModal({ trigger }: Props) {
     const [chosenReportPath, setChosenReportPath] = useState<string | undefined>(undefined);
     const [isReportLoading, setReportLoading] = useState<boolean>(false);
 
-    function onBrokerReportChosen(e: ChangeEvent<HTMLInputElement>) {
-        if (e.target.files == null) {
+    const chooseBrokerReport = useCallback(() => {
+        const path = dialog.showOpenDialogSync({
+            defaultPath: `${app.getPath("home")}`,
+            title: "Выберите брокерский отчёт",
+            filters: [
+                { name: "xml", extensions: ["xml"] }
+            ],
+            properties: ["openFile"]
+        })?.[0];
+
+        if (path == null) {
             setChosenReportPath(undefined);
         } else {
-            setChosenReportPath(e.target.files[0].path);
+            setChosenReportPath(path);
         }
-    }
+    }, [setChosenReportPath]);
 
-    function loadBrokerReport() {
+    const loadBrokerReport = useCallback(() => {
         if (chosenReportPath !== undefined) {
             setReportLoading(true);
 
@@ -41,7 +51,7 @@ export default function BrokerAccountSettingsModal({ trigger }: Props) {
                 setModalOpen(false);
             });
         }
-    }
+    }, [dispatch, setReportLoading, chosenReportPath, setChosenReportPath, setModalOpen]);
 
     return (
         <Modal
@@ -53,15 +63,18 @@ export default function BrokerAccountSettingsModal({ trigger }: Props) {
             <Modal.Header className={styles.modal}>Параметры брокерского счёта</Modal.Header>
             <Modal.Content className={styles.modal}>
                 <Header>Загрузка отчёта брокера (ВТБ)</Header>
-                <input type="file" accept="application/xml" onChange={onBrokerReportChosen} />
-                <br />
-                <br />
-                <Button disabled={chosenReportPath === undefined || isReportLoading} onClick={loadBrokerReport}>
+                <div className={styles.chooseReportBlock}>
+                    <Button secondary basic size="mini" onClick={chooseBrokerReport}>Выберите файл</Button>
+                    <span className={styles.chosenReportPath}>
+                        {chosenReportPath === undefined ? "Файл не выбран" : chosenReportPath}
+                    </span>
+                </div>
+                <Button primary disabled={chosenReportPath === undefined || isReportLoading} onClick={loadBrokerReport}>
                     {isReportLoading ? "Загрузка..." : "Загрузить"}
                 </Button>
             </Modal.Content>
             <Modal.Actions className={styles.modal}>
-                <Button color="black" onClick={() => setModalOpen(false)}>Закрыть</Button>
+                <Button secondary onClick={() => setModalOpen(false)}>Закрыть</Button>
             </Modal.Actions>
         </Modal>
     );
