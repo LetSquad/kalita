@@ -33,10 +33,12 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     }, [dispatch]);
 
     const rowMoved = useCallback((row: any) => {
+        const newOrder = row.getTable().rowManager.activeRows.map((_row) => _row.data.id);
         dispatch(update({
             id: row._row.data.id,
             valueKey: EditableTableColumns.GROUP_NAME,
-            newValue: row._row.data.groupName
+            newValue: row._row.data.groupName,
+            newOrder
         }));
     }, [dispatch]);
 
