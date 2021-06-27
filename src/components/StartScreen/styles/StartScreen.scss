@@ -1,0 +1,87 @@
+@use 'src/styles/parts' as *;
+
+.start-screen {
+  @extend %flex-base-center-container;
+  flex-direction: row;
+}
+
+.kalita-container,
+%kalita-container {
+  @extend %flex-center-container;
+  flex-direction: column;
+  height: 100%;
+
+  &-combined {
+    @extend %kalita-container;
+    width: 100%;
+  }
+
+  &-split {
+    @extend %kalita-container;
+    flex: 1 1 50%;
+  }
+}
+
+$recent-project-color: #4c74b9;
+
+.recent {
+  display: flex;
+  flex: 1 1 50%;
+  flex-direction: column;
+  max-height: 50%;
+  overflow: hidden;
+  padding: 20px;
+
+  &-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 7px;
+  }
+
+  &-project {
+    font-size: 16px;
+    margin-bottom: 5px;
+
+    &-title {
+      color: $recent-project-color;
+      cursor: pointer;
+
+      &:hover {
+        color: lighten($recent-project-color, 10);
+        cursor: pointer;
+      }
+
+      &:active {
+        color: darken($recent-project-color, 10);
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.separator {
+  border: 1px solid #c6c6c6;
+  height: 65%;
+}
+
+.buttons-container {
+  &-combined {
+    margin-top: 20px;
+  }
+
+  &-split {
+    align-items: flex-end;
+    display: flex;
+    flex: 1 1 50%;
+    min-height: 50%;
+  }
+}
+
+.projects-container {
+  align-items: center;
+  display: flex;
+  flex: 1 1 50%;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}

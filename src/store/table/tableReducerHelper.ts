@@ -11,8 +11,13 @@ const NEW_GROUP = "Новая группа";
 export function generateNewRow(currentPortfolio: CurrentPortfolio, groupName: string) {
     if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
         currentPortfolio.positions.push(newModelPortfolioRow(groupName));
+        currentPortfolio.positions = recalculateModelPortfolioPercentage(
+            currentPortfolio.positions,
+            currentPortfolio.totalTargetAmount
+        );
     } else {
         currentPortfolio.positions.push(newBrokerAccountRow(groupName));
+        currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
     }
 }
 

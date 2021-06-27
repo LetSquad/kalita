@@ -103,8 +103,10 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                     {additionalHeaderPart}
                 </div>
                 <div>
-                    <Icon name="cog" link className={styles.additionalHeaderIcon}
-                          onClick={() => alert("Sunny India will provide settings soon!")} />
+                    <Icon
+                        name="cog" link className={styles.additionalHeaderIcon}
+                        onClick={() => alert("Sunny India will provide settings soon!")}
+                    />
                     <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
                 </div>
             </div>

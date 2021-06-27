@@ -21,7 +21,7 @@ module.exports = {
         rules: [
             {
                 test: /app\/main\.ts$/,
-                exclude: /node_modules/,
+                include: PATHS.electronMain,
                 use:
                     [{
                         loader: "ts-loader",
