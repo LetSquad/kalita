@@ -55,6 +55,7 @@ export default function BrokerAccountSettingsModal({ trigger }: Props) {
 
     return (
         <Modal
+            closeIcon
             onClose={() => setModalOpen(false)}
             onOpen={() => setModalOpen(true)}
             open={isModalOpen}
@@ -73,9 +74,6 @@ export default function BrokerAccountSettingsModal({ trigger }: Props) {
                     {isReportLoading ? "Загрузка..." : "Загрузить"}
                 </Button>
             </Modal.Content>
-            <Modal.Actions className={styles.modal}>
-                <Button secondary onClick={() => setModalOpen(false)}>Закрыть</Button>
-            </Modal.Actions>
         </Modal>
     );
 }
