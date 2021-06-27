@@ -3,7 +3,7 @@ import {
 } from "./enums";
 
 export interface TabulatorColumn {
-    title: string,
+    title?: string,
     field: string,
     visible?: boolean,
     hozAlign?: HorizontalAlignValues,

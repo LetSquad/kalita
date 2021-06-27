@@ -33,10 +33,12 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     }, [dispatch]);
 
     const rowMoved = useCallback((row: any) => {
+        const newOrder = row.getTable().rowManager.activeRows.map((_row) => _row.data.id);
         dispatch(update({
             id: row._row.data.id,
             valueKey: EditableTableColumns.GROUP_NAME,
-            newValue: row._row.data.groupName
+            newValue: row._row.data.groupName,
+            newOrder
         }));
     }, [dispatch]);
 
@@ -103,8 +105,10 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                     {additionalHeaderPart}
                 </div>
                 <div>
-                    <Icon name="cog" link className={styles.additionalHeaderIcon}
-                          onClick={() => alert("Sunny India will provide settings soon!")} />
+                    <Icon
+                        name="cog" link className={styles.additionalHeaderIcon}
+                        onClick={() => alert("Sunny India will provide settings soon!")}
+                    />
                     <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
                 </div>
             </div>

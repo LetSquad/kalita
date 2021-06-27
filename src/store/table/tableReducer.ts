@@ -67,6 +67,12 @@ export const tableSlice = createSlice({
                     updatedPortfolio.positions = recalculateBrokerAccountPercentage(updatedPortfolio.positions);
                 }
 
+                if (action.payload.newOrder) {
+                    updatedPortfolio.positions = action.payload.newOrder.map((id) =>
+                        (updatedPortfolio.positions as Array<ModelPortfolioPosition | BrokerAccountPosition>)
+                            .find((data) => data.id === id)) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+                }
+
                 state.currentPortfolio = updatedPortfolio;
             }
         },

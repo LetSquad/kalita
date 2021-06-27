@@ -6,6 +6,10 @@ $tabulator-top-calc-height: 50px;
 $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-top-calc-height});
 
 :global {
+  .tabulator-frozen.tabulator-frozen-left {
+    border-right: 0 !important;
+  }
+
   .tabulator .tabulator-header {
     background-color: #fff !important;
     height: $tabulator-full-header-height;
