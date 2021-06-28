@@ -2,10 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../model/portfolios/types";
 import { EditableTableColumns } from "../../model/table/enums";
-import { CurrentPortfolio, TableUpdatePayload } from "../../model/table/types";
+import { BrokerReportData, CurrentPortfolio, TableUpdatePayload } from "../../model/table/types";
 import {
-    generateNewRow,
-    getNewGroupName,
+    generateNewPosition,
+    getNewGroupName, mapPositionFromBrokerReport,
     recalculateBrokerAccountPercentage,
     recalculateModelPortfolioPercentage,
     recalculateRow
@@ -37,14 +37,22 @@ export const tableSlice = createSlice({
                 };
             }
         },
-        addToGroup: (state, action: PayloadAction<string>) => {
+        addNewPosition: (state, action: PayloadAction<string>) => {
             if (state.currentPortfolio) {
-                generateNewRow(state.currentPortfolio, action.payload);
+                generateNewPosition(state.currentPortfolio, action.payload);
+            }
+        },
+        addBrokerAccountPositions: (state, action: PayloadAction<BrokerReportData>) => {
+            if (state.currentPortfolio && state.currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
+                for (const position of action.payload.positions) {
+                    state.currentPortfolio.positions.push(mapPositionFromBrokerReport(action.payload.accountName, position));
+                }
+                state.currentPortfolio.positions = recalculateBrokerAccountPercentage(state.currentPortfolio.positions);
             }
         },
         addNewGroup: (state) => {
             if (state.currentPortfolio) {
-                generateNewRow(state.currentPortfolio, getNewGroupName(state.currentPortfolio.positions));
+                generateNewPosition(state.currentPortfolio, getNewGroupName(state.currentPortfolio.positions));
             }
         },
         update: (state, action: PayloadAction<TableUpdatePayload>) => {
@@ -61,7 +69,7 @@ export const tableSlice = createSlice({
                     );
                 } else if (
                     updatedPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
-                    state.currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
+                    state.currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
                     action.payload.valueKey === EditableTableColumns.QUANTITY
                 ) {
                     updatedPortfolio.positions = recalculateBrokerAccountPercentage(updatedPortfolio.positions);
@@ -110,7 +118,8 @@ export const tableSlice = createSlice({
 
 export const {
     setCurrentPortfolio,
-    addToGroup,
+    addNewPosition,
+    addBrokerAccountPositions,
     addNewGroup,
     update,
     updateGroupName,

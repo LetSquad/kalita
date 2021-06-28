@@ -108,28 +108,29 @@ module.exports = () => {
                     }
                 ]
             }, {
+                test: /\.worker\.ts$/,
+                loader: "worker-loader"
+            }, {
                 test: /\.tsx?$/,
                 exclude: [PATHS.nodeModules, PATHS.app],
-                use:
-                    [{
-                        loader: "ts-loader",
-                        options: {
-                            compilerOptions: {
-                                module: "ESNext",
-                                removeComments: false
-                            }
+                use: [{
+                    loader: "ts-loader",
+                    options: {
+                        compilerOptions: {
+                            module: "ESNext",
+                            removeComments: false
                         }
-                    }]
+                    }
+                }]
             }, {
                 test: /\.(ignore|zip|png|ttf|otf|eot|svg|woff(2)?)(\?[\da-z]+)?$/,
-                use:
-                    [{
-                        loader: "file-loader",
-                        options: {
-                            name: "[name]-[contenthash].[ext]",
-                            outputPath: "static/assets/"
-                        }
-                    }]
+                use: [{
+                    loader: "file-loader",
+                    options: {
+                        name: "[name]-[contenthash].[ext]",
+                        outputPath: "static/assets/"
+                    }
+                }]
             }]
         },
         optimization: {
