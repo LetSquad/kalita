@@ -18,22 +18,19 @@ module.exports = {
         extensions: [".js", ".ts"]
     },
     module: {
-        rules: [
-            {
-                test: /app\/main\.ts$/,
-                exclude: /node_modules/,
-                use:
-                    [{
-                        loader: "ts-loader",
-                        options: {
-                            compilerOptions: {
-                                module: "commonjs",
-                                removeComments: true
-                            }
-                        }
-                    }]
-            }
-        ]
+        rules: [{
+            test: /app\/main\.ts$/,
+            exclude: /node_modules/,
+            use: [{
+                loader: "ts-loader",
+                options: {
+                    compilerOptions: {
+                        module: "commonjs",
+                        removeComments: true
+                    }
+                }
+            }]
+        }]
     },
     output: {
         path: PATHS.dist,
