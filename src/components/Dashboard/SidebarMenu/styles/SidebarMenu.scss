@@ -4,8 +4,12 @@ $big-menu-margin-size: 20px;
 $small-menu-margin-size: 15px;
 
 .title {
+  align-items: center;
+  display: flex;
   font-size: 18px;
-  margin: $big-menu-margin-size 0 $small-menu-margin-size $big-menu-margin-size;
+  justify-content: space-between;
+  padding: $big-menu-margin-size $big-menu-margin-size $small-menu-margin-size;
+  width: 100%;
 }
 
 .separator {

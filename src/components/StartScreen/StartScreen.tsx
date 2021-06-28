@@ -75,7 +75,6 @@ export default function StartScreen() {
     const openProject = useCallback(() => {
         const path = dialog.showOpenDialogSync({
             defaultPath: `${app.getPath("home")}`,
-            buttonLabel: "Открыть",
             title: "Открытие проекта",
             properties: ["openDirectory"]
         })?.[0];

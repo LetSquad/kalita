@@ -112,6 +112,9 @@ export const tableSlice = createSlice({
                     state.currentPortfolio.totalTargetAmount
                 );
             }
+        },
+        resetCurrentPortfolio: (state) => {
+            state.currentPortfolio = undefined;
         }
     }
 });
@@ -124,7 +127,8 @@ export const {
     update,
     updateGroupName,
     deleteRowById,
-    updateTotalTargetAmount
+    updateTotalTargetAmount,
+    resetCurrentPortfolio
 } = tableSlice.actions;
 
 export default tableSlice.reducer;
