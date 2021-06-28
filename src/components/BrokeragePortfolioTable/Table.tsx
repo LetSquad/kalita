@@ -1,7 +1,6 @@
 import _ from "lodash";
 import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
-import { Icon } from "semantic-ui-react";
 import { $enum } from "ts-enum-util";
 import { TabulatorColumn } from "../../model/libs/react-tabulator/types";
 import { EditableTableColumns } from "../../model/table/enums";
@@ -11,9 +10,9 @@ import {
     addNewGroup, addNewPosition, deleteRowById, update, updateGroupName
 } from "../../store/table/tableReducer";
 import { ActionBlock } from "./ActionBlock";
+import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
+import { generateCsv, generateExportList } from "./utils/utils";
 import styles from "./styles/Table.scss";
-import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
-import BrokerAccountSettingsModal from "./BrokerAccountSettingsModal";
 
 interface Props {
     columns: (actionBlock: JSX.Element) => TabulatorColumn[],
@@ -93,6 +92,23 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         <ActionBlock deleteRow={deleteRow} />
     ), [deleteRow]);
 
+    const importTableToCsvText = useCallback(() => {
+        if (tableRef.current) {
+            const downloadConfig = {
+                columnHeaders: true,
+                columnGroups: true,
+                rowGroups: true,
+                columnCalcs: false,
+                dataTree: true
+            };
+
+            let list = tableRef.current.table.modules.export.generateExportList(downloadConfig, false, "visible", "download");
+            list = generateExportList(list);
+            return generateCsv(list);
+        }
+        return undefined;
+    }, [tableRef]);
+
     const table = useMemo(() => (
         <ReactTabulator
             ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(currentPortfolio.positions)}
@@ -102,22 +118,10 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     return (
         <div className={styles.container}>
-            <div className={styles.additionalHeader}>
-                <div className={styles.additionalHeaderPart}>
-                    {additionalHeaderPart}
-                </div>
-                <div>
-                    {currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO && (
-                        <Icon
-                            name="cog" link className={styles.additionalHeaderIcon}
-                            onClick={() => alert("Sunny India will provide model portfolio settings soon!")}
-                        />
-                    )}
-                    {currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
-                        <BrokerAccountSettingsModal trigger={<Icon name="cog" link className={styles.additionalHeaderIcon} />} />}
-                    <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
-                </div>
-            </div>
+            <AdditionalHeader
+                addGroup={addGroup} additionalHeaderPart={additionalHeaderPart} importTableToCsvText={importTableToCsvText}
+                currentPortfolioType={currentPortfolio.type}
+            />
             {table}
         </div>
     );

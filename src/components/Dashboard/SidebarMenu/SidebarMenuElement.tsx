@@ -9,7 +9,7 @@ import {
     renameElementInGroup,
     setActiveId
 } from "../../../store/sidebarMenu/sidebarMenuReducer";
-import { setCurrentPortfolio } from "../../../store/table/tableReducer";
+import { resetCurrentPortfolio, setCurrentPortfolio } from "../../../store/table/tableReducer";
 import styles from "./styles/SidebarMenuElement.scss";
 
 interface Props {
@@ -18,7 +18,10 @@ interface Props {
 
 export default function SidebarMenuElement(props: Props) {
     const dispatch = useAppDispatch();
+
     const activeFile = useAppSelector((state) => state.sidebarMenu.activeMenuElementId);
+    const currentPortfolio = useAppSelector((state) => state.tableData.currentPortfolio);
+
     const active = activeFile?.id === props.menuElement.id;
 
     const [currentEditValue, setCurrentEditValue] = useState<string>();
@@ -40,21 +43,26 @@ export default function SidebarMenuElement(props: Props) {
     }, [dispatch]);
 
     const deleteElement = useCallback((type: SidebarMenuElementsTypes, id: string) => {
+        if (currentPortfolio?.id === id) {
+            dispatch(resetCurrentPortfolio());
+        }
         dispatch(deleteElementFromGroup({
             type,
             id
         }));
-    }, [dispatch]);
+    }, [currentPortfolio?.id, dispatch]);
 
-    const setPortfolio = useCallback(() => {
+    const setPortfolio = useCallback((id: string) => {
         if (props.menuElement.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
             dispatch(setCurrentPortfolio({
+                id,
                 type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
                 positions: props.menuElement.data.positions,
                 totalTargetAmount: props.menuElement.data.totalTargetAmount
             }));
         } else {
             dispatch(setCurrentPortfolio({
+                id,
                 type: BrokeragePortfolioTypes.BROKER_ACCOUNT,
                 positions: props.menuElement.data
             }));
@@ -80,7 +88,7 @@ export default function SidebarMenuElement(props: Props) {
             aria-hidden className={styles.item}
             onClick={() => {
                 changeActiveId(props.menuElement.type, props.menuElement.id);
-                setPortfolio();
+                setPortfolio(props.menuElement.id);
             }}
         >
             <div className={styles.name}>

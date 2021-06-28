@@ -223,11 +223,9 @@ export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn
         field: "averagePrice",
         resizable: false,
         sorter: SortersValues.NUMBER,
-        formatter: FormattersValues.MONEY,
-        formatterParams: {
-            symbol: "₽",
-            symbolAfter: "р"
-        }
+        formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()} ₽</span>`,
+        editor: "input",
+        validator: "min:0"
     }, {
         title: "В портфеле",
         field: "quantity",

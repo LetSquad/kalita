@@ -26,11 +26,13 @@ export const tableSlice = createSlice({
         setCurrentPortfolio: (state, action: PayloadAction<CurrentPortfolio>) => {
             if (action.payload.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
                 state.currentPortfolio = {
+                    id: action.payload.id,
                     type: BrokeragePortfolioTypes.BROKER_ACCOUNT,
                     positions: recalculateBrokerAccountPercentage(action.payload.positions)
                 };
             } else if (action.payload.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
                 state.currentPortfolio = {
+                    id: action.payload.id,
                     type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
                     positions: recalculateModelPortfolioPercentage(action.payload.positions, action.payload.totalTargetAmount),
                     totalTargetAmount: action.payload.totalTargetAmount

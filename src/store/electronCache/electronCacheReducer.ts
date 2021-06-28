@@ -24,7 +24,7 @@ export const electronCacheSlice = createSlice({
                 : [[uuidv4(), action.payload], ...state.recentProjects];
         },
         removeRecentProject: ((state, action: PayloadAction<string>) => {
-            state.recentProjects = state.recentProjects.filter((recent) => recent[1] !== action.payload);
+            state.recentProjects = state.recentProjects.filter((recent) => recent[0] !== action.payload);
         })
     }
 });
