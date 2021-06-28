@@ -10,7 +10,9 @@ export const PATHS = {
     src: path.join(__dirname, "./src"),
     dist: path.join(__dirname, "./app/dist"),
     global: path.resolve(__dirname, "./src/styles/globals.scss"),
-    assets: "assets/"
+    assets: "assets/",
+    nodeModules: path.resolve(__dirname, "./node_modules"),
+    app: path.resolve(__dirname, "./app")
 };
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -110,7 +112,7 @@ module.exports = () => {
                 loader: "worker-loader"
             }, {
                 test: /\.tsx?$/,
-                exclude: /node_modules/,
+                exclude: [PATHS.nodeModules, PATHS.app],
                 use: [{
                     loader: "ts-loader",
                     options: {

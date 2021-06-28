@@ -1,6 +1,6 @@
 import React, { lazy } from "react";
-import kalitaImages from "../../static/images/kalita.png";
 import { useAppSelector } from "../../store/hooks";
+import { Kalita } from "../Kalita/Kalita";
 import { WithSuspense } from "../utils/WithSuspense";
 import styles from "./styles/DashboardContent.scss";
 
@@ -21,10 +21,7 @@ export default function DashboardContent() {
     }
     return (
         <div className={styles.content}>
-            <img src={kalitaImages} alt="Kalita" className={styles.contentImage} />
-            <span className={styles.contentTitle}>KALITA</span>
-            <div className={styles.separator} />
-            <span className={styles.contentText}>Светлое инвестиционное будущее</span>
+            <Kalita />
         </div>
     );
 }

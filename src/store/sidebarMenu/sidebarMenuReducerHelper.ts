@@ -1,8 +1,23 @@
 import { v4 as uuidv4 } from "uuid";
 import { SidebarMenuElementsTypes } from "../../model/menu/enums";
-import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../model/menu/types";
+import { BrokerAccountMenuElement, ModelPortfolioMenuElement, SidebarMenuGroupType } from "../../model/menu/types";
 
 const NEW_PORTFOLIO = "Новый портфель";
+
+export const baseSidebarMenuGroups: SidebarMenuGroupType[] = [
+    {
+        name: "Модельные портфели",
+        elements: [],
+        isOpen: true,
+        type: SidebarMenuElementsTypes.MODEL_PORTFOLIO
+    },
+    {
+        name: "Брокерские счета",
+        elements: [],
+        isOpen: true,
+        type: SidebarMenuElementsTypes.BROKER_ACCOUNT
+    }
+];
 
 export const defaultTotalTargetAmount = 1_000_000;
 

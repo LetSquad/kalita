@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid";
 import { SidebarMenuElementsTypes } from "../../model/menu/enums";
 import {
     BrokerAccountMenuElement,
@@ -8,7 +7,7 @@ import {
     SidebarMenuGroupType
 } from "../../model/menu/types";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../model/portfolios/types";
-import { defaultTotalTargetAmount, newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
+import { baseSidebarMenuGroups, newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
 
 type UpdateMenuData = {
     elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
@@ -27,117 +26,7 @@ export interface SidebarMenuState {
 }
 
 const initialState: SidebarMenuState = {
-    menuGroups: [
-        {
-            name: "Модельные портфели",
-            elements: [
-                {
-                    id: uuidv4(),
-                    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-                    name: "Портфель тинька",
-                    data: {
-                        totalTargetAmount: 1_000_000,
-                        positions: [
-                            {
-                                id: uuidv4(),
-                                groupName: "Финансы",
-                                ticker: "SBER",
-                                weight: 1,
-                                percentage: 0.92,
-                                targetAmount: 18_348.62,
-                                currentPrice: 303.02,
-                                targetQuantity: 61,
-                                quantity: 40,
-                                amount: 112_120.8
-                            },
-                            {
-                                id: uuidv4(),
-                                groupName: "Финансы",
-                                ticker: "SBERP",
-                                weight: 15,
-                                percentage: 13.76,
-                                targetAmount: 275_229.36,
-                                currentPrice: 281.01,
-                                targetQuantity: 980,
-                                quantity: 470,
-                                amount: 132_074.7
-                            },
-                            {
-                                id: uuidv4(),
-                                groupName: "Телекомы",
-                                ticker: "MTSS",
-                                weight: 4,
-                                percentage: 3.67,
-                                targetAmount: 73_394.5,
-                                currentPrice: 340.2,
-                                targetQuantity: 216,
-                                quantity: 120,
-                                amount: 40_824
-                            },
-                            {
-                                id: uuidv4(),
-                                groupName: "Телекомы",
-                                ticker: "MGTSP",
-                                weight: 1,
-                                percentage: 0.92,
-                                targetAmount: 18_348.62,
-                                currentPrice: 1712,
-                                targetQuantity: 11,
-                                quantity: 10,
-                                amount: 17_120
-                            }
-                        ]
-                    }
-                }, {
-                    id: uuidv4(),
-                    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-                    name: "Портфель ВТБ",
-                    data: { positions: [], totalTargetAmount: defaultTotalTargetAmount }
-                }
-            ],
-            isOpen: true,
-            type: SidebarMenuElementsTypes.MODEL_PORTFOLIO
-        },
-        {
-            name: "Брокерские счета",
-            elements: [
-                {
-                    id: uuidv4(),
-                    type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-                    name: "Новый счет",
-                    data: [
-                        {
-                            id: uuidv4(),
-                            groupName: "Финансы",
-                            ticker: "SBER",
-                            percentage: 0.92,
-                            averagePrice: 18_348.62,
-                            currentPrice: 303.02,
-                            quantity: 40,
-                            amount: 112_120.8
-                        },
-                        {
-                            id: uuidv4(),
-                            groupName: "Телекомы",
-                            ticker: "MTSS",
-                            percentage: 3.67,
-                            averagePrice: 73_394.5,
-                            currentPrice: 340.2,
-                            quantity: 120,
-                            amount: 40_824
-                        }
-                    ]
-                }, {
-                    id: uuidv4(),
-                    type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-                    name: "Главный счет",
-                    data: []
-                }
-            ],
-            isOpen: true,
-            type: SidebarMenuElementsTypes.BROKER_ACCOUNT
-        }
-    ],
+    menuGroups: baseSidebarMenuGroups,
     activeMenuElementId: undefined
 };
 
@@ -145,6 +34,9 @@ export const sidebarMenuSlice = createSlice({
     name: "sidebarMenu",
     initialState,
     reducers: {
+        setMenuGroups: (state, action: PayloadAction<SidebarMenuGroupType[]>) => {
+            state.menuGroups = action.payload;
+        },
         addNewElementToGroup: (state, action: PayloadAction<SidebarMenuElementsTypes>) => {
             state.menuGroups = state.menuGroups.map((menuGroup) => {
                 if (menuGroup.type === action.payload) {
@@ -225,6 +117,7 @@ export const sidebarMenuSlice = createSlice({
 });
 
 export const {
+    setMenuGroups,
     addNewElementToGroup,
     deleteElementFromGroup,
     renameElementInGroup,

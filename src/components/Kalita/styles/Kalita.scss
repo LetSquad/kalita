@@ -1,0 +1,52 @@
+$image-size: 400px;
+$content-separator-height: 1px;
+$dot-size: calc(6 * #{$content-separator-height});
+$dot-position-size: calc(#{$dot-size} / 2 * -1);
+
+%dot {
+  border: calc(#{$dot-size} / 2) solid;
+  border-radius: 50%;
+  content: '';
+  display: inline-block;
+  height: $dot-size;
+  position: absolute;
+  vertical-align: middle;
+  width: $dot-size;
+}
+
+.content {
+  &-image {
+    height: $image-size;
+    margin-bottom: 40px;
+    width: $image-size;
+  }
+
+  &-title {
+    font-size: 40px;
+    margin-bottom: 25px;
+  }
+
+  &-text {
+    font-size: 24px;
+  }
+}
+
+.separator {
+  border: $content-separator-height solid;
+  height: $content-separator-height;
+  margin-bottom: 15px;
+  position: relative;
+  width: 280px;
+
+  &::before {
+    @extend %dot;
+    left: $dot-position-size;
+    top: $dot-position-size;
+  }
+
+  &::after {
+    @extend %dot;
+    right: $dot-position-size;
+    top: $dot-position-size;
+  }
+}
