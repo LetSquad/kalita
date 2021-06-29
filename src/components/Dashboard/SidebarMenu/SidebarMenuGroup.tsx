@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Accordion, Icon } from "semantic-ui-react";
-import { SidebarMenuElementsTypes } from "../../../model/menu/enums";
-import { SidebarMenuGroupType } from "../../../model/menu/types";
+import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
+import { SidebarMenuGroupType } from "../../../models/menu/types";
 import { useAppDispatch } from "../../../store/hooks";
 import { addNewElementToGroup, changePortfolioTypeOpenState } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import SidebarMenuElement from "./SidebarMenuElement";

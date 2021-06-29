@@ -1,4 +1,4 @@
-import { BrokerReportData, BrokerReportDeal, BrokerReportPosition } from "../../model/table/types";
+import { BrokerReportData, BrokerReportDeal, BrokerReportPosition } from "../../models/table/types";
 
 const CHAPTER_ACCOUNT_NAME = "Подробности";
 const CHAPTER_DEALS = "Подробности9";
@@ -7,20 +7,19 @@ const CHAPTER_POSITIONS = "Подробности21";
 function parseVtbDeals(data: any): Map<string, Array<BrokerReportDeal>> {
     const dealsSection = data.Report.Tablix_b9[0];
     if (!dealsSection || dealsSection.length === 0) return new Map();
-    console.log(dealsSection);
 
     const deals: Array<BrokerReportDeal> = dealsSection[`${CHAPTER_DEALS}_Collection`][0][CHAPTER_DEALS]
-        .map((d) => ({
+        .map((d: any) => ({
             name: d.$.NameBeg9,
             price: Number.parseFloat(d.$.deal_price7),
             quantity: Number.parseInt(d.$.NameEnd9, 10)
         }));
     const dealsMap = new Map<string, Array<BrokerReportDeal>>();
     for (const deal of deals) {
-        if (dealsMap[deal.name]) {
-            dealsMap[deal.name].push(deal);
+        if (dealsMap.has(deal.name)) {
+            dealsMap.get(deal.name)?.push(deal);
         } else {
-            dealsMap[deal.name] = [deal];
+            dealsMap.set(deal.name, [deal]);
         }
     }
     return dealsMap;
@@ -41,14 +40,17 @@ export function parseVtbReport(data: any): BrokerReportData {
         .bond_type[0]
         .FinInstr_Collection[0]
         .FinInstr
-        .map((instrument) => {
+        .map((instrument: any) => {
             const fullName: string = instrument.$.FinInstr;
             let totalPrice = 0;
             let totalQuantity = 0;
-            if (dealsMap[fullName]) {
-                for (const deal of dealsMap[fullName]) {
-                    totalPrice += deal.price * deal.quantity;
-                    totalQuantity += deal.quantity;
+            if (dealsMap.get(fullName)) {
+                const deals = dealsMap.get(fullName);
+                if (deals) {
+                    for (const deal of deals) {
+                        totalPrice += deal.price * deal.quantity;
+                        totalQuantity += deal.quantity;
+                    }
                 }
             }
 

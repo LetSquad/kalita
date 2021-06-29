@@ -1,9 +1,9 @@
 import { reactFormatter } from "react-tabulator";
 import {
     FormattersValues, HorizontalAlignValues, SortersValues, VerticalAlignValues
-} from "../../model/libs/react-tabulator/enums";
-import { TabulatorColumn } from "../../model/libs/react-tabulator/types";
-import { ModelPortfolioPosition } from "../../model/portfolios/types";
+} from "../../models/libs/react-tabulator/enums";
+import { TabulatorColumn } from "../../models/libs/react-tabulator/types";
+import { ModelPortfolioPosition } from "../../models/portfolios/types";
 import styles from "./styles/columns.scss";
 
 const tickerValidator = (cell: any, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);
@@ -209,9 +209,9 @@ export const brokerAccountColumnsWidth = [
     { minWidth: 30, maxWidth: 30 },
     { minWidth: 90, maxWidth: 170, widthGrow: 3 },
     { minWidth: 85, maxWidth: 85 },
-    { minWidth: 145, widthGrow: 3 },
+    { minWidth: 145, widthGrow: 2 },
     { minWidth: 85, widthGrow: 2 },
-    { minWidth: 130, widthGrow: 1 },
+    { minWidth: 130, widthGrow: 2 },
     { minWidth: 130, widthGrow: 3 },
     { minWidth: 40, maxWidth: 40 }
 ];
@@ -223,11 +223,9 @@ export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn
         field: "averagePrice",
         resizable: false,
         sorter: SortersValues.NUMBER,
-        formatter: FormattersValues.MONEY,
-        formatterParams: {
-            symbol: "₽",
-            symbolAfter: "р"
-        }
+        formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()} ₽</span>`,
+        editor: "input",
+        validator: "min:0"
     }, {
         title: "В портфеле",
         field: "quantity",

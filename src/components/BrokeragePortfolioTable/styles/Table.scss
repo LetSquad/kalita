@@ -1,6 +1,6 @@
 @use 'src/styles/parts' as *;
+@use '../AdditionalHeader/styles/AdditionalHeader' as additionalHeader;
 
-$additional-header-height: 60px;
 $tabulator-header-height: 40px;
 $tabulator-top-calc-height: 50px;
 $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-top-calc-height});
@@ -60,32 +60,12 @@ $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-t
   }
 }
 
-.additional-header {
-  align-items: center;
-  display: flex;
-  height: $additional-header-height;
-  justify-content: space-between;
-  width: 100%;
-
-  &-icon {
-    font-size: 16px !important;
-    margin-right: 10px !important;
-  }
-
-  &-part {
-    align-items: center;
-    display: flex;
-    height: 100%;
-    width: 50%;
-  }
-}
-
 .container {
   @extend %base-container;
 }
 
 .table {
-  height: calc(100% - #{$additional-header-height});
+  height: calc(100% - #{additionalHeader.$additional-header-height});
 }
 
 .group- {

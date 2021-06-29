@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Input } from "semantic-ui-react";
-import { SidebarMenuElementsTypes } from "../../model/menu/enums";
-import { CurrentModelPortfolio } from "../../model/table/types";
+import { SidebarMenuElementsTypes } from "../../models/menu/enums";
+import { CurrentModelPortfolio } from "../../models/table/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { updateMenuElementData } from "../../store/sidebarMenu/sidebarMenuReducer";
 import { updateTotalTargetAmount } from "../../store/table/tableReducer";
 import { modelPortfolioColumns } from "./columns";
 import Table from "./Table";
 import styles from "./styles/ModelTable.scss";
-import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 
 interface Props {
     currentPortfolio: CurrentModelPortfolio

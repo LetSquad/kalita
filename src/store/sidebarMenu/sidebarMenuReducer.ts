@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SidebarMenuElementsTypes } from "../../model/menu/enums";
+import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import {
     BrokerAccountMenuElement,
     MenuElementIdentifier,
     ModelPortfolioMenuElement,
     SidebarMenuGroupType
-} from "../../model/menu/types";
-import { BrokerAccountPosition, ModelPortfolioPosition } from "../../model/portfolios/types";
+} from "../../models/menu/types";
+import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
 import { baseSidebarMenuGroups, newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
 
 type UpdateMenuData = {
@@ -20,7 +20,7 @@ type UpdateMenuData = {
     data: BrokerAccountPosition[]
 };
 
-export interface SidebarMenuState {
+interface SidebarMenuState {
     menuGroups: SidebarMenuGroupType[];
     activeMenuElementId?: MenuElementIdentifier
 }

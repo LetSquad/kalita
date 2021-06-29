@@ -5,12 +5,14 @@ import { EditableTableColumns } from "./enums";
 export type TableData = BrokerAccountPosition[] | ModelPortfolioPosition[];
 
 export interface CurrentModelPortfolio {
+    id: string,
     type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
     positions: ModelPortfolioPosition[],
     totalTargetAmount: number
 }
 
 export interface CurrentBrokerAccount {
+    id: string,
     type: BrokeragePortfolioTypes.BROKER_ACCOUNT,
     positions: BrokerAccountPosition[]
 }

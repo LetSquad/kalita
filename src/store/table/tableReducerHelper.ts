@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
-import { BrokerAccountPosition, ModelPortfolioPosition, PortfolioPosition } from "../../model/portfolios/types";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
+import { BrokerAccountPosition, ModelPortfolioPosition, PortfolioPosition } from "../../models/portfolios/types";
 import {
     BrokerReportPosition, CurrentPortfolio, TableData, TableUpdatePayload
-} from "../../model/table/types";
-import { EditableTableColumns } from "../../model/table/enums";
+} from "../../models/table/types";
+import { EditableTableColumns } from "../../models/table/enums";
 
 const NEW_ENTRY = "Новая запись";
 const NEW_GROUP = "Новая группа";
