@@ -1,12 +1,12 @@
 import { reactFormatter } from "react-tabulator";
 import {
     FormattersValues, HorizontalAlignValues, SortersValues, VerticalAlignValues
-} from "../../models/libs/react-tabulator/enums";
+} from "../../../custom_typings/react-tabulator/enums";
 import {
     BaseTabulatorColumn,
     BrokerAccountTabulatorColumn,
     ModelPortfolioTabulatorColumn
-} from "../../models/libs/react-tabulator/types";
+} from "../../../custom_typings/react-tabulator/types";
 import { ModelPortfolioPosition } from "../../models/portfolios/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import styles from "./styles/columns.scss";

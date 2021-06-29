@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
 import { $enum } from "ts-enum-util";
 import { getMoexQuotes } from "../../apis/moexApi";
-import { TabulatorColumn } from "../../models/libs/react-tabulator/types";
+import { TabulatorColumn } from "../../../custom_typings/react-tabulator/types";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { useAppDispatch } from "../../store/hooks";
