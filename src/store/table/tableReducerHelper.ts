@@ -26,7 +26,7 @@ export function generateNewPosition(currentPortfolio: CurrentPortfolio, groupNam
 export function mapPositionFromBrokerReport(groupName: string, position: BrokerReportPosition): BrokerAccountPosition {
     return {
         id: uuidv4(),
-        ticker: position.name,
+        ticker: position.code,
         percentage: 0,
         currentPrice: position.averagePrice,
         quantity: position.quantity,

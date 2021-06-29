@@ -16,7 +16,7 @@ export default function SettingsModal({ onClose, activeTab }: Props) {
 
     const brokerPanes = useMemo(() => [
         {
-            menuItem: "Загрузка отчёта брокера (ВТБ)",
+            menuItem: "Загрузка отчёта брокера",
             render: () => (
                 <Tab.Pane className={styles.vtbReportTabPane}>
                     <BrokerAccountReportParser />

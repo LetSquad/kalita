@@ -1,6 +1,6 @@
 import { BrokeragePortfolioTypes } from "../portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../portfolios/types";
-import { EditableTableColumns } from "./enums";
+import { BrokerReportFormat, EditableTableColumns } from "./enums";
 
 export type TableData = BrokerAccountPosition[] | ModelPortfolioPosition[];
 
@@ -25,19 +25,30 @@ export interface TableUpdatePayload {
     readonly newOrder?: string[]
 }
 
+export interface BrokerReportMetadata {
+    readonly brokerName: string,
+    readonly reportFormat: BrokerReportFormat,
+    readonly reportParser: (brokerName: string, data: any) => BrokerReportData
+}
+
+export interface BrokerReportPath {
+    readonly path: string,
+    readonly format: BrokerReportFormat
+}
+
 export interface BrokerReportData {
     readonly accountName: string,
-    readonly positions: Array<BrokerReportPosition>
+    readonly positions: BrokerReportPosition[]
 }
 
 export interface BrokerReportPosition {
-    readonly name: string,
+    readonly code: string,
     readonly averagePrice: number,
     readonly quantity: number
 }
 
 export interface BrokerReportDeal {
-    readonly name: string,
+    readonly code: string,
     readonly price: number,
     readonly quantity: number
 }
