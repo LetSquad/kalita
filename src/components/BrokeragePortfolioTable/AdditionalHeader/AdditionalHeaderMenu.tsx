@@ -20,7 +20,7 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
     const importToCsv = useCallback(() => {
         const path = dialog.showSaveDialogSync({
             title: "Сохранить CSV",
-            defaultPath: `${app.getPath("userData")}/portfolio.csv`,
+            defaultPath: `${app.getPath("home")}/portfolio.csv`,
             filters: [{
                 name: "csv",
                 extensions: ["csv"]
