@@ -33,6 +33,7 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
                 try {
                     fs.createFileSync(path);
                     fs.writeFileSync(path, content);
+                    addToast(`Портфель успешно экспортирован в файл ${path}`, { appearance: "success" });
                 } catch {
                     addToast("Произошла ошибка при сохранении таблицы в csv файл", { appearance: "error" });
                 }
@@ -44,7 +45,8 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
         <>
             <Dropdown item icon="cog" simple className={styles.additionalHeaderIcon} direction="left">
                 <Dropdown.Menu>
-                    <Dropdown.Item onClick={importToCsv}>Импорт в CSV...</Dropdown.Item>
+                    <Dropdown.Item onClick={importToCsv}>Экспорт в CSV...</Dropdown.Item>
+                    <Dropdown.Divider />
                     {
                         currentPortfolioType === BrokeragePortfolioTypes.BROKER_ACCOUNT
                             ? (

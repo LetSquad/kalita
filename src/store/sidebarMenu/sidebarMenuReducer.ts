@@ -20,7 +20,7 @@ type UpdateMenuData = {
     data: BrokerAccountPosition[]
 };
 
-export interface SidebarMenuState {
+interface SidebarMenuState {
     menuGroups: SidebarMenuGroupType[];
     activeMenuElementId?: MenuElementIdentifier
 }

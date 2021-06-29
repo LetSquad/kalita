@@ -11,7 +11,7 @@ import {
     recalculateRow
 } from "./tableReducerHelper";
 
-export interface TableDataState {
+interface TableDataState {
     currentPortfolio?: CurrentPortfolio
 }
 
