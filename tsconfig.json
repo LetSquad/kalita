@@ -16,7 +16,6 @@
         "jsx": "react",
         "sourceMap": true,
         "strict": true,
-        "noImplicitAny": false,
         "noStrictGenericChecks": false,
         "strictNullChecks": true,
         "noImplicitReturns": true,

@@ -1,18 +1,18 @@
-export function generateExportList(list) {
+export function generateExportList(list: any[]) {
     let updatedList: any[] = [];
 
     const groupsIndexes: number[] = list.map((row, id) => (row.type === "group"
         ? id
         : undefined))
-        .filter((index) => index !== undefined);
+        .filter((index) => index !== undefined) as number[];
 
     if (groupsIndexes.length > 0) {
         const header = list[0];
         const columnsToRemove = new Set(header.columns
-            .map((data, id) => (data.value === undefined
+            .map((data: any, id: number) => (data.value === undefined
                 ? id
                 : undefined))
-            .filter((index) => index !== undefined));
+            .filter((index: number) => index !== undefined));
         header.columns = [
             ...header.columns,
             {
@@ -33,7 +33,7 @@ export function generateExportList(list) {
 
             for (let i = startIndex; i < endIndex; i++) {
                 const row = list[i];
-                row.columns = [...row.columns.filter((data, _id) => !columnsToRemove.has(_id)), group.columns[0]];
+                row.columns = [...row.columns.filter((data: any, _id: number) => !columnsToRemove.has(_id)), group.columns[0]];
                 updatedList = [...updatedList, row];
             }
         }
@@ -44,7 +44,7 @@ export function generateExportList(list) {
     return list;
 }
 
-export function generateCsv(list, options?: { delimiter: "." | ",", bom?: boolean }) {
+export function generateCsv(list: any[], options?: { delimiter: "." | ",", bom?: boolean }) {
     const delimiter = options && options.delimiter
         ? options.delimiter
         : ",";

@@ -209,9 +209,9 @@ export const brokerAccountColumnsWidth = [
     { minWidth: 30, maxWidth: 30 },
     { minWidth: 90, maxWidth: 170, widthGrow: 3 },
     { minWidth: 85, maxWidth: 85 },
-    { minWidth: 145, widthGrow: 3 },
+    { minWidth: 145, widthGrow: 2 },
     { minWidth: 85, widthGrow: 2 },
-    { minWidth: 130, widthGrow: 1 },
+    { minWidth: 130, widthGrow: 2 },
     { minWidth: 130, widthGrow: 3 },
     { minWidth: 40, maxWidth: 40 }
 ];
