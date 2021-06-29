@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import React, { useCallback, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 import { Dropdown } from "semantic-ui-react";
-import { BrokeragePortfolioTypes } from "../../../model/portfolios/enums";
+import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
 import SettingsModal from "./SettingsModal/SettingsModal";
 import styles from "./styles/AdditionalHeader.scss";
 

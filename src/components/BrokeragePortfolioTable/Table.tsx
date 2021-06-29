@@ -2,9 +2,9 @@ import _ from "lodash";
 import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
 import { $enum } from "ts-enum-util";
-import { TabulatorColumn } from "../../model/libs/react-tabulator/types";
-import { EditableTableColumns } from "../../model/table/enums";
-import { CurrentPortfolio } from "../../model/table/types";
+import { TabulatorColumn } from "../../models/libs/react-tabulator/types";
+import { EditableTableColumns } from "../../models/table/enums";
+import { CurrentPortfolio } from "../../models/table/types";
 import { useAppDispatch } from "../../store/hooks";
 import {
     addNewGroup, addNewPosition, deleteRowById, update, updateGroupName

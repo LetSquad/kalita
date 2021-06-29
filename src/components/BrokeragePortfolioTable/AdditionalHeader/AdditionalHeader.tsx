@@ -1,6 +1,6 @@
 import React from "react";
 import { Icon } from "semantic-ui-react";
-import { BrokeragePortfolioTypes } from "../../../model/portfolios/enums";
+import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
 import { AdditionalHeaderMenu } from "./AdditionalHeaderMenu";
 import styles from "./styles/AdditionalHeader.scss";
 

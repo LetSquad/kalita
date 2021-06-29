@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
-import { BrokerAccountPosition, ModelPortfolioPosition } from "../../model/portfolios/types";
-import { EditableTableColumns } from "../../model/table/enums";
-import { BrokerReportData, CurrentPortfolio, TableUpdatePayload } from "../../model/table/types";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
+import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
+import { EditableTableColumns } from "../../models/table/enums";
+import { BrokerReportData, CurrentPortfolio, TableUpdatePayload } from "../../models/table/types";
 import {
     generateNewPosition,
     getNewGroupName, mapPositionFromBrokerReport,

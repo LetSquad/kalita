@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import { BrokeragePortfolioTypes } from "../../model/portfolios/enums";
-import { CurrentPortfolio } from "../../model/table/types";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
+import { CurrentPortfolio } from "../../models/table/types";
 import BrokerTable from "./BrokerTable";
 import ModelTable from "./ModelTable";
 

@@ -1,9 +1,9 @@
 import { reactFormatter } from "react-tabulator";
 import {
     FormattersValues, HorizontalAlignValues, SortersValues, VerticalAlignValues
-} from "../../model/libs/react-tabulator/enums";
-import { TabulatorColumn } from "../../model/libs/react-tabulator/types";
-import { ModelPortfolioPosition } from "../../model/portfolios/types";
+} from "../../models/libs/react-tabulator/enums";
+import { TabulatorColumn } from "../../models/libs/react-tabulator/types";
+import { ModelPortfolioPosition } from "../../models/portfolios/types";
 import styles from "./styles/columns.scss";
 
 const tickerValidator = (cell: any, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);

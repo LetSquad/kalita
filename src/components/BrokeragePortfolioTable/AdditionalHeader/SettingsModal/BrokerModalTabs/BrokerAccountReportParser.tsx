@@ -2,7 +2,7 @@ import { app, dialog } from "@electron/remote";
 import React, { useCallback, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 import { Button } from "semantic-ui-react";
-import { BrokerReportData } from "../../../../../model/table/types";
+import { BrokerReportData } from "../../../../../models/table/types";
 import { useAppDispatch } from "../../../../../store/hooks";
 import { addBrokerAccountPositions } from "../../../../../store/table/tableReducer";
 import { parseVtbReport } from "../../../../../utils/report/vtbBrokerReportUtils";
