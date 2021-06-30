@@ -51,7 +51,7 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
                         currentPortfolioType === BrokeragePortfolioTypes.BROKER_ACCOUNT
                             ? (
                                 <Dropdown.Item onClick={() => setBrokerAccountModelActiveTab(0)}>
-                                    Загрузка отчета брокера (ВТБ)
+                                    Загрузка отчета брокера
                                 </Dropdown.Item>
                             )
                             : null
