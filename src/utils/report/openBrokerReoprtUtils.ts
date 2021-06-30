@@ -14,7 +14,9 @@ export function parseOpenBrokerStocks(data: any): Map<string, string> {
 
 export function parseOpenBrokerDeals(data: any): Map<string, BrokerReportDeal[]> {
     const dealsSection = data.broker_report.spot_main_deals_conclusion.item;
-    if (!dealsSection || dealsSection.length === 0) return new Map();
+    if (!dealsSection || dealsSection.length === 0) {
+        return new Map();
+    }
 
     const deals: BrokerReportDeal[] = dealsSection.map((deal: any) => ({
         code: deal.$.security_grn_code,
@@ -42,23 +44,24 @@ export function parseOpenBrokerReport(brokerName: string, data: any): BrokerRepo
     for (const asset of data.broker_report.spot_assets.item) {
         const isinCode: string = asset.$.asset_code;
         const ticker = stocksMap.get(isinCode);
-        if (!ticker) continue;
 
-        let totalPrice = 0;
-        let totalQuantity = 0;
-        const deals = dealsMap.get(isinCode);
-        if (deals) {
-            for (const deal of deals) {
-                totalPrice += deal.price * deal.quantity;
-                totalQuantity += deal.quantity;
+        if (ticker) {
+            let totalPrice = 0;
+            let totalQuantity = 0;
+            const deals = dealsMap.get(isinCode);
+            if (deals) {
+                for (const deal of deals) {
+                    totalPrice += deal.price * deal.quantity;
+                    totalQuantity += deal.quantity;
+                }
             }
-        }
 
-        positions.push({
-            code: ticker,
-            averagePrice: Math.round((totalPrice / totalQuantity) * 100) / 100,
-            quantity: Number.parseInt(asset.$.closing_position_plan, 10)
-        });
+            positions.push({
+                code: ticker,
+                averagePrice: Math.round((totalPrice / totalQuantity) * 100) / 100,
+                quantity: Number.parseInt(asset.$.closing_position_plan, 10)
+            });
+        }
     }
 
     return { accountName, positions };

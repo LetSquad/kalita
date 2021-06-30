@@ -6,7 +6,9 @@ const CHAPTER_POSITIONS = "Подробности21";
 
 function parseVtbDeals(data: any): Map<string, BrokerReportDeal[]> {
     const dealsSection = data.Report.Tablix_b9;
-    if (!dealsSection || dealsSection.length === 0) return new Map();
+    if (!dealsSection || dealsSection.length === 0) {
+        return new Map();
+    }
 
     const deals: BrokerReportDeal[] = dealsSection[`${CHAPTER_DEALS}_Collection`][CHAPTER_DEALS]
         .map((deal: any) => ({
@@ -32,7 +34,9 @@ export function parseVtbReport(brokerName: string, data: any): BrokerReportData 
     const accountName = `${brokerName}: ${accountNumber}`;
 
     const positionsSection = data.Report.Tablix6;
-    if (positionsSection === null || positionsSection.length === 0) return { accountName, positions: [] };
+    if (positionsSection === null || positionsSection.length === 0) {
+        return { accountName, positions: [] };
+    }
 
     const dealsMap = parseVtbDeals(data);
     const positions: BrokerReportPosition[] = data.Report

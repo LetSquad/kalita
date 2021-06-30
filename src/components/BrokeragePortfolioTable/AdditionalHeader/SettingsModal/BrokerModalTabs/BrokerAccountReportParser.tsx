@@ -1,5 +1,10 @@
 import { app, dialog } from "@electron/remote";
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useState
+} from "react";
 import { useToasts } from "react-toast-notifications";
 import { Button, Dropdown } from "semantic-ui-react";
 import { BrokerReportData, BrokerReportMetadata } from "../../../../../models/table/types";
@@ -23,6 +28,7 @@ export default function BrokerAccountReportParser() {
     const [chosenBrokerIndex, setChosenBrokerIndex] = useState<number>();
     const [chosenReportPath, setChosenReportPath] = useState<string>();
     const [isReportLoading, setReportLoading] = useState<boolean>(false);
+    const [reportLoader, setReportLoader] = useState<Worker>();
 
     const chooseBrokerReport = useCallback(() => {
         const path = dialog.showOpenDialogSync({
@@ -39,33 +45,53 @@ export default function BrokerAccountReportParser() {
         } else {
             setChosenReportPath(path);
         }
-    }, [setChosenReportPath]);
+    }, []);
 
     const brokersOptions = useMemo(() => brokers.map((b, i) => ({ key: i, value: i, text: b.brokerName })), []);
 
+    const onBrokerReportLoaded = useCallback((e: MessageEvent) => {
+        if (chosenBrokerIndex === undefined || chosenReportPath === undefined) {
+            return;
+        }
+        const chosenBroker = brokers[chosenBrokerIndex];
+
+        try {
+            const reportData: BrokerReportData = chosenBroker.reportParser(chosenBroker.brokerName, e.data);
+            dispatch(addBrokerAccountPositions(reportData));
+        } catch {
+            addToast("Произошла ошибка при загрузке отчета", { appearance: "error" });
+        } finally {
+            setChosenBrokerIndex(undefined);
+            setChosenReportPath(undefined);
+            setReportLoading(false);
+            if (reportLoader) {
+                reportLoader.terminate();
+                setReportLoader(undefined);
+            }
+        }
+    }, [dispatch, addToast, chosenBrokerIndex, chosenReportPath, reportLoader, setReportLoading]);
+
     const loadBrokerReport = useCallback(() => {
-        if (chosenBrokerIndex === undefined || chosenReportPath === undefined) return;
+        if (chosenBrokerIndex === undefined || chosenReportPath === undefined) {
+            return;
+        }
         const chosenBroker = brokers[chosenBrokerIndex];
 
         setReportLoading(true);
 
-        const reportLoader = new BrokerReportLoaderWorker();
-        reportLoader.postMessage({ path: chosenReportPath, format: chosenBroker.reportFormat });
+        const loader = new BrokerReportLoaderWorker();
+        setReportLoader(loader);
+        loader.postMessage({ path: chosenReportPath, format: chosenBroker.reportFormat });
 
-        reportLoader.addEventListener("message", (e: MessageEvent) => {
-            try {
-                const reportData: BrokerReportData = chosenBroker.reportParser(chosenBroker.brokerName, e.data);
-                dispatch(addBrokerAccountPositions(reportData));
-            } catch {
-                addToast("Произошла ошибка при загрузке отчета", { appearance: "error" });
-            } finally {
-                setChosenBrokerIndex(undefined);
-                setChosenReportPath(undefined);
-                setReportLoading(false);
-                reportLoader.terminate();
-            }
-        });
-    }, [chosenBrokerIndex, chosenReportPath, dispatch, addToast]);
+        loader.addEventListener("message", onBrokerReportLoaded);
+    }, [chosenBrokerIndex, chosenReportPath, onBrokerReportLoaded]);
+
+    useEffect(() => () => {
+        if (reportLoader) {
+            reportLoader.removeEventListener("message", onBrokerReportLoaded);
+            reportLoader.terminate();
+        }
+    });
 
     return (
         <>
