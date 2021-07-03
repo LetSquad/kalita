@@ -43,16 +43,18 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
 
     return (
         <>
-            <Dropdown item icon="cog" simple className={styles.additionalHeaderIcon} direction="left">
+            <Dropdown item icon="cog" simple closeOnChange className={styles.additionalHeaderIcon} direction="left">
                 <Dropdown.Menu>
                     <Dropdown.Item onClick={importToCsv}>Экспорт в CSV...</Dropdown.Item>
-                    <Dropdown.Divider />
                     {
                         currentPortfolioType === BrokeragePortfolioTypes.BROKER_ACCOUNT
                             ? (
-                                <Dropdown.Item onClick={() => setBrokerAccountModelActiveTab(0)}>
-                                    Загрузка отчета брокера
-                                </Dropdown.Item>
+                                <>
+                                    <Dropdown.Divider />
+                                    <Dropdown.Item onClick={() => setBrokerAccountModelActiveTab(0)}>
+                                        Загрузка отчета брокера (ВТБ)
+                                    </Dropdown.Item>
+                                </>
                             )
                             : null
                     }
