@@ -74,6 +74,10 @@ export default function SidebarMenuElement(props: Props) {
             value={_currentEditValue} fluid className={styles.renameInput}
             placeholder="Введите имя"
             onChange={(event, data) => setCurrentEditValue(data.value)}
+            onBlur={
+                (event: FocusEvent) =>
+                    renameElement(props.menuElement.type, props.menuElement.id, (event.target as HTMLInputElement).value)
+            }
             icon={(
                 <Icon
                     name="save" link={_currentEditValue !== ""} disabled={_currentEditValue === ""}
@@ -98,7 +102,7 @@ export default function SidebarMenuElement(props: Props) {
     ), [changeActiveId, props.menuElement.id, props.menuElement.name, props.menuElement.type, setPortfolio]);
 
     const elementTitle = useMemo(() => (
-        currentEditValue
+        currentEditValue !== undefined
             ? elementRenameInput(currentEditValue)
             : elementNameBlock
     ), [currentEditValue, elementNameBlock, elementRenameInput]);

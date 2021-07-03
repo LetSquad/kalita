@@ -1,24 +1,52 @@
 @use 'src/styles/parts' as *;
 
-$menu-width: 250px;
+$menu-width-open: 250px;
+$menu-width-close: 30px;
 
 .pushable-segment {
   @extend %base-container;
   border: 0 !important;
   border-radius: 0 !important;
+  display: flex;
+  flex-direction: row;
 }
 
 .sidebar {
-  align-items: flex-start;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow-x: hidden;
-  overflow-y: auto;
-  width: $menu-width !important;
+  &-open {
+    align-items: flex-start;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: $menu-width-open !important;
+  }
+
+  &-close {
+    align-items: flex-end;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    box-shadow: 0 0 20px rgb(34 36 38 / 15%);
+    display: flex;
+    justify-content: center;
+    width: $menu-width-close !important;
+
+    &-icon {
+      font-size: 18px !important;
+      margin-bottom: 10px !important;
+    }
+  }
 }
 
-.pusher {
+.pusher,
+%pusher {
   height: 100%;
-  transform: translate3d($menu-width, 0, 0) !important;
-  width: calc(100% - #{$menu-width});
+
+  &-open {
+    transform: translate3d($menu-width-open, 0, 0) !important;
+    width: calc(100% - #{$menu-width-open});
+  }
+
+  &-close {
+    transform: translate3d($menu-width-close, 0, 0) !important;
+    width: calc(100% - #{$menu-width-close});
+  }
 }
