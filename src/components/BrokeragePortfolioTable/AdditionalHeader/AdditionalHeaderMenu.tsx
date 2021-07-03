@@ -52,7 +52,7 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
                                 <>
                                     <Dropdown.Divider />
                                     <Dropdown.Item onClick={() => setBrokerAccountModelActiveTab(0)}>
-                                        Загрузка отчета брокера (ВТБ)
+                                        Загрузка отчета брокера
                                     </Dropdown.Item>
                                 </>
                             )
