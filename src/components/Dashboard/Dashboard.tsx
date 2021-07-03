@@ -48,11 +48,13 @@ export default function Dashboard() {
 
     useEffect(() => {
         const folderPath = decodeURI(history.location.search.replace("?currentProject=", ""));
-        const filePath = `${folderPath}/${saveProjectFileName}`;
-        fs.writeJson(filePath, menuGroups)
-            .catch(() => {
-                addToast(`Ошибка сохранения проекта "${folderPath}"`, { appearance: "error" });
-            });
+        if (folderPath !== "") {
+            const filePath = `${folderPath}/${saveProjectFileName}`;
+            fs.writeJson(filePath, menuGroups)
+                .catch(() => {
+                    addToast(`Ошибка сохранения проекта "${folderPath}"`, { appearance: "error" });
+                });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [menuGroups]);
 
