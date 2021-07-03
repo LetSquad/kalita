@@ -4,6 +4,7 @@ import React, { useCallback, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { Button, Icon } from "semantic-ui-react";
+import nodePath from "path";
 import { saveProjectFileName } from "../../models/constants";
 import { addRecentProject, removeRecentProject } from "../../store/electronCache/electronCacheReducer";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -59,9 +60,14 @@ export default function StartScreen() {
     }, [addRecent, addToast, history]);
 
     const openProjectByPath = useCallback((path: string) => {
-        addRecent(path);
-        history.push(`/dashboard?currentProject=${path}`);
-    }, [addRecent, history]);
+        if (fs.existsSync(`${path}${nodePath.sep}${saveProjectFileName}`)) {
+            addRecent(path);
+            history.push(`/dashboard?currentProject=${path}`);
+        } else {
+            addToast(`Проект "${path}" сломан`, { appearance: "error" });
+            removeRecent(path);
+        }
+    }, [addRecent, addToast, history, removeRecent]);
 
     const openRecentProject = useCallback((path: string) => {
         if (fs.existsSync(path)) {

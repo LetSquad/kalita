@@ -10,3 +10,9 @@ body {
   padding: 0;
   user-select: none;
 }
+
+/* stylelint-disable */
+.react-toast-notifications__container {
+  /* stylelint-enable */
+  z-index: 9999 !important;
+}
