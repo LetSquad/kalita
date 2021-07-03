@@ -1,4 +1,6 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+    useCallback, useEffect, useMemo, useRef, useState
+} from "react";
 import { Icon, Input } from "semantic-ui-react";
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../models/menu/types";
@@ -18,6 +20,8 @@ interface Props {
 
 export default function SidebarMenuElement(props: Props) {
     const dispatch = useAppDispatch();
+
+    const inputRef = useRef<Input>(null);
 
     const activeFile = useAppSelector((state) => state.sidebarMenu.activeMenuElementId);
     const currentPortfolio = useAppSelector((state) => state.tableData.currentPortfolio);
@@ -71,19 +75,12 @@ export default function SidebarMenuElement(props: Props) {
 
     const elementRenameInput = useCallback((_currentEditValue) => (
         <Input
-            value={_currentEditValue} fluid className={styles.renameInput}
-            placeholder="Введите имя"
+            value={_currentEditValue} fluid className={styles.renameInput} ref={inputRef} placeholder="Введите имя"
             onChange={(event, data) => setCurrentEditValue(data.value)}
             onBlur={
                 (event: FocusEvent) =>
                     renameElement(props.menuElement.type, props.menuElement.id, (event.target as HTMLInputElement).value)
             }
-            icon={(
-                <Icon
-                    name="save" link={_currentEditValue !== ""} disabled={_currentEditValue === ""}
-                    onClick={() => renameElement(props.menuElement.type, props.menuElement.id, _currentEditValue)}
-                />
-            )}
         />
     ), [props.menuElement.id, props.menuElement.type, renameElement]);
 
@@ -106,6 +103,12 @@ export default function SidebarMenuElement(props: Props) {
             ? elementRenameInput(currentEditValue)
             : elementNameBlock
     ), [currentEditValue, elementNameBlock, elementRenameInput]);
+
+    useEffect(() => {
+        if (currentEditValue) {
+            inputRef.current?.focus();
+        }
+    }, [currentEditValue]);
 
     return (
         <div className={active

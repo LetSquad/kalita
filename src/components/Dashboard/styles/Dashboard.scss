@@ -46,7 +46,7 @@ $menu-width-close: 30px;
   }
 
   &-close {
-    transform: translate3d($menu-width-close, 0, 0) !important;
-    width: calc(100% - #{$menu-width-close});
+    transform: translate3d(0, 0, 0) !important;
+    width: 100%;
   }
 }
