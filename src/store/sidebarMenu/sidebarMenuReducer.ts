@@ -43,11 +43,13 @@ export const sidebarMenuSlice = createSlice({
                     if (menuGroup.type === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
                         return {
                             ...menuGroup,
+                            isOpen: true,
                             elements: [...menuGroup.elements, newBrokerGroupMenuElement()]
                         };
                     }
                     return {
                         ...menuGroup,
+                        isOpen: true,
                         elements: [...menuGroup.elements, newModelGroupMenuElement()]
                     };
                 }
