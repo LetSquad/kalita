@@ -70,6 +70,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         columnCalcs: "both",
         reactiveData: true,
         layout: "fitColumns",
+        resizableColumns: false,
         groupHeader: (value: any, count: any, data: any, group: any) => {
             const elem = document.createElement("div");
             elem.className = styles.groupContainer;
