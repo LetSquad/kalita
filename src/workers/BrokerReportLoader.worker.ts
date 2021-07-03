@@ -1,7 +1,8 @@
 import * as fs from "fs-extra";
 import * as xml2js from "xml2js";
+import * as XLSXL from "xlsx";
 import { BrokerReportPath } from "../models/table/types";
-import { BrokerReportFormat } from "../models/table/enums";
+import { BrokerReportEncoding, BrokerReportFormat } from "../models/table/enums";
 
 // eslint-disable-next-line no-restricted-globals
 const ctx: Worker = self as any;
@@ -11,8 +12,16 @@ const decoder = new TextDecoder("windows-1251");
 ctx.addEventListener("message", (event: MessageEvent<BrokerReportPath>) => {
     fs.readFile(event.data.path)
         .then((file) => {
-            const decodedFile = event.data.format === BrokerReportFormat.XML_WIN1251 ? decoder.decode(file) : file;
-            return xml2js.parseStringPromise(decodedFile, { explicitArray: false });
+            switch (event.data.format) {
+                case BrokerReportFormat.XML: {
+                    const decodedFile = event.data.encoding === BrokerReportEncoding.WIN1251 ? decoder.decode(file) : file;
+                    return xml2js.parseStringPromise(decodedFile, { explicitArray: false });
+                }
+                case BrokerReportFormat.XLSX: {
+                    const workBook: XLSXL.WorkBook = XLSXL.read(file);
+                    return XLSXL.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]]);
+                }
+            }
         })
         .then((data) => ctx.postMessage(data));
 });
