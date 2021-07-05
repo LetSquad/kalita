@@ -95,7 +95,6 @@ export default function BrokerAccountReportParser() {
         } catch {
             addToast("Произошла ошибка при загрузке отчёта", { appearance: "error" });
         } finally {
-            setChosenBrokerIndex(undefined);
             setChosenReportPath(undefined);
             setReportLoading(false);
             if (reportLoader) {
