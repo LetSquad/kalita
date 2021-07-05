@@ -42,7 +42,6 @@ export function parseTinkoffReport(brokerName: string, data: any[]): BrokerRepor
                 price: Number.parseFloat(row[DEAL_PRICE_INDEX].replace(",", ".")),
                 quantity: Number.parseInt(row[DEAL_QUANTITY_INDEX], 10)
             };
-            console.log(row, deal);
             if (dealsMap.has(deal.code)) {
                 dealsMap.get(deal.code)?.push(deal);
             } else {
@@ -59,7 +58,6 @@ export function parseTinkoffReport(brokerName: string, data: any[]): BrokerRepor
                     totalQuantity += deal.quantity;
                 }
             }
-            console.log(ticker, totalPrice, totalQuantity);
             positions.push({
                 code: ticker,
                 averagePrice: Math.round((totalPrice / totalQuantity) * 100) / 100,
