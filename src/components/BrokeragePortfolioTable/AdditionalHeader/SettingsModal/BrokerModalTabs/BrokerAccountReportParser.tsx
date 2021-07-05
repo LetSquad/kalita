@@ -74,15 +74,13 @@ export default function BrokerAccountReportParser() {
         }
     }, [chosenBrokerIndex]);
 
-    const brokersOptions = useMemo(() => brokers.map((b, i) => (
-        {
-            key: i,
-            value: i,
-            image: { src: b.icon, size: "mini" },
-            text:
-            b.brokerName
-        })), []
-    );
+    const brokersOptions = useMemo(() => brokers.map((b, i) => ({
+        key: i,
+        value: i,
+        image: { src: b.icon, size: "mini" },
+        text:
+        b.brokerName
+    })), []);
 
     const onBrokerReportLoaded = useCallback((e: MessageEvent) => {
         if (chosenBrokerIndex === undefined || chosenReportPath === undefined) {
