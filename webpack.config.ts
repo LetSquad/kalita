@@ -123,7 +123,7 @@ module.exports = () => {
                     }
                 }]
             }, {
-                test: /\.(ignore|zip|png|ttf|otf|eot|svg|woff(2)?)(\?[\da-z]+)?$/,
+                test: /\.(ignore|zip|png|ico|ttf|otf|eot|svg|woff(2)?)(\?[\da-z]+)?$/,
                 use: [{
                     loader: "file-loader",
                     options: {

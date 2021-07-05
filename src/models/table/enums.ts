@@ -7,6 +7,11 @@ export enum EditableTableColumns {
 }
 
 export enum BrokerReportFormat {
-    XML_UTF8 = "xmlUtf8",
-    XML_WIN1251 = "xmlWin1251"
+    XML = "xml",
+    XLSX = "xlsx"
+}
+
+export enum BrokerReportEncoding {
+    UTF8 = "utf8",
+    WIN1251 = "win1251"
 }

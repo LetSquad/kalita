@@ -13,12 +13,35 @@ import { addBrokerAccountPositions } from "../../../../../store/table/tableReduc
 import BrokerReportLoaderWorker from "../../../../../workers/BrokerReportLoader.worker";
 import styles from "./styles/BrokerAccountReportParser.scss";
 import { parseOpenBrokerReport } from "../../../../../utils/report/openBrokerReoprtUtils";
-import { BrokerReportFormat } from "../../../../../models/table/enums";
+import { BrokerReportEncoding, BrokerReportFormat } from "../../../../../models/table/enums";
 import { parseVtbReport } from "../../../../../utils/report/vtbBrokerReportUtils";
+import vtbBrokerIcon from "../../../../../static/icons/vtb-broker.png";
+import openBrokerIcon from "../../../../../static/icons/open-broker.ico";
+import tinkoffBrokerIcon from "../../../../../static/icons/tinkoff-broker.png";
+import { parseTinkoffReport } from "../../../../../utils/report/tinkoffBrokerReportUtils";
 
 const brokers: BrokerReportMetadata[] = [
-    { brokerName: "ВТБ Брокер", reportFormat: BrokerReportFormat.XML_UTF8, reportParser: parseVtbReport },
-    { brokerName: "Открытие Брокер", reportFormat: BrokerReportFormat.XML_WIN1251, reportParser: parseOpenBrokerReport }
+    {
+        brokerName: "ВТБ Брокер",
+        icon: vtbBrokerIcon,
+        reportFormat: BrokerReportFormat.XML,
+        reportEncoding: BrokerReportEncoding.UTF8,
+        reportParser: parseVtbReport
+    },
+    {
+        brokerName: "Открытие Брокер",
+        icon: openBrokerIcon,
+        reportFormat: BrokerReportFormat.XML,
+        reportEncoding: BrokerReportEncoding.WIN1251,
+        reportParser: parseOpenBrokerReport
+    },
+    {
+        brokerName: "Тинькофф Инвестиции",
+        icon: tinkoffBrokerIcon,
+        reportFormat: BrokerReportFormat.XLSX,
+        reportEncoding: BrokerReportEncoding.UTF8,
+        reportParser: parseTinkoffReport
+    }
 ];
 
 export default function BrokerAccountReportParser() {
@@ -31,11 +54,15 @@ export default function BrokerAccountReportParser() {
     const [reportLoader, setReportLoader] = useState<Worker>();
 
     const chooseBrokerReport = useCallback(() => {
+        if (chosenBrokerIndex === undefined) {
+            return;
+        }
+
         const path = dialog.showOpenDialogSync({
             defaultPath: `${app.getPath("home")}`,
             title: "Выберите брокерский отчёт",
             filters: [
-                { name: "xml", extensions: ["xml"] }
+                { name: brokers[chosenBrokerIndex].reportFormat, extensions: [brokers[chosenBrokerIndex].reportFormat] }
             ],
             properties: ["openFile"]
         })?.[0];
@@ -45,9 +72,15 @@ export default function BrokerAccountReportParser() {
         } else {
             setChosenReportPath(path);
         }
-    }, []);
+    }, [chosenBrokerIndex]);
 
-    const brokersOptions = useMemo(() => brokers.map((b, i) => ({ key: i, value: i, text: b.brokerName })), []);
+    const brokersOptions = useMemo(() => brokers.map((b, i) => ({
+        key: i,
+        value: i,
+        image: { src: b.icon, size: "mini" },
+        text:
+        b.brokerName
+    })), []);
 
     const onBrokerReportLoaded = useCallback((e: MessageEvent) => {
         if (chosenBrokerIndex === undefined || chosenReportPath === undefined) {
@@ -58,8 +91,9 @@ export default function BrokerAccountReportParser() {
         try {
             const reportData: BrokerReportData = chosenBroker.reportParser(chosenBroker.brokerName, e.data);
             dispatch(addBrokerAccountPositions(reportData));
+            addToast(`Отчёт ${reportData.accountName} успешно загружен`, { appearance: "success" });
         } catch {
-            addToast("Произошла ошибка при загрузке отчета", { appearance: "error" });
+            addToast("Произошла ошибка при загрузке отчёта", { appearance: "error" });
         } finally {
             setChosenBrokerIndex(undefined);
             setChosenReportPath(undefined);
@@ -81,7 +115,7 @@ export default function BrokerAccountReportParser() {
 
         const loader = new BrokerReportLoaderWorker();
         setReportLoader(loader);
-        loader.postMessage({ path: chosenReportPath, format: chosenBroker.reportFormat });
+        loader.postMessage({ path: chosenReportPath, format: chosenBroker.reportFormat, encoding: chosenBroker.reportEncoding });
 
         loader.addEventListener("message", onBrokerReportLoaded);
     }, [chosenBrokerIndex, chosenReportPath, onBrokerReportLoaded]);

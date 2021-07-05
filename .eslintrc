@@ -143,7 +143,7 @@
         "no-await-in-loop": "off",
         "unicorn/consistent-function-scoping": "off",
         "unicorn/no-reduce": "off",
-        "default-case": ["error", { "commentPattern": "^skip\\sdefault$" }],
+        "default-case": ["off"],
         "consistent-return": "off",
         "jsx-a11y/anchor-is-valid": "off",
         "unicorn/prefer-node-protocol": "off",
