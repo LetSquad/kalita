@@ -7,7 +7,7 @@ import { EditableTableColumns } from "../../models/table/enums";
 import { CurrentPortfolio } from "../../models/table/types";
 import { useAppDispatch } from "../../store/hooks";
 import {
-    addNewGroup, addNewPosition, deleteRowById, update, updateGroupName
+    addNewPosition, deleteRowById, update, updateGroupName
 } from "../../store/table/tableReducer";
 import { ActionBlock } from "./ActionBlock";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
@@ -45,10 +45,6 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const addRowToGroup = useCallback((groupName) => {
         dispatch(addNewPosition(groupName));
-    }, [dispatch]);
-
-    const addGroup = useCallback(() => {
-        dispatch(addNewGroup());
     }, [dispatch]);
 
     const updateGroup = useCallback((oldGroupName, newGroupName) => {
@@ -120,7 +116,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     return (
         <div className={styles.container}>
             <AdditionalHeader
-                addGroup={addGroup} additionalHeaderPart={additionalHeaderPart} importTableToCsvText={importTableToCsvText}
+                additionalHeaderPart={additionalHeaderPart} importTableToCsvText={importTableToCsvText}
                 currentPortfolioType={currentPortfolio.type}
             />
             {table}

@@ -22,7 +22,7 @@ export const store = configureStore({
         electronCache: electronCachePersistedReducer
     },
     devTools: process.env.NODE_ENV !== "production",
-    middleware: [promise, thunk]
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend([promise, thunk])
 });
 
 export const persistor = persistStore(store);
