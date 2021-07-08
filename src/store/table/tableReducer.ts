@@ -10,6 +10,8 @@ import {
     recalculateModelPortfolioPercentage,
     recalculateRow
 } from "./tableReducerHelper";
+import { getMoexQuotes } from "../../apis/moexApi";
+import { Quote } from "../../models/apis/types";
 
 interface TableDataState {
     currentPortfolio?: CurrentPortfolio
@@ -118,6 +120,18 @@ export const tableSlice = createSlice({
         resetCurrentPortfolio: (state) => {
             state.currentPortfolio = undefined;
         }
+    },
+    extraReducers: (builder) => {
+        builder.addCase(getMoexQuotes.fulfilled, (state, action: PayloadAction<Quote[]>) => {
+            if (state.currentPortfolio) {
+                for (const row of state.currentPortfolio.positions) {
+                    const quote = action.payload.find((el: Quote) => el.ticker === row.ticker);
+                    if (quote) {
+                        row.currentPrice = quote.price;
+                    }
+                }
+            }
+        });
     }
 });
 
