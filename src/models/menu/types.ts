@@ -1,27 +1,27 @@
 import { SidebarMenuElementsTypes } from "./enums";
 
 export interface SidebarMenuElement {
-    id: string,
-    name: string
+    id: string;
+    name: string;
 }
 
 export interface BrokerAccountMenuElement extends SidebarMenuElement {
-    type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
+    type: SidebarMenuElementsTypes.BROKER_ACCOUNT;
 }
 
 export interface ModelPortfolioMenuElement extends SidebarMenuElement {
-    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
+    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO;
 }
 
 export interface MenuElementIdentifier {
-    id: string,
-    type: SidebarMenuElementsTypes,
+    id: string;
+    type: SidebarMenuElementsTypes;
 }
 
 export interface SidebarMenuGroupType {
     name: string;
     isOpen: boolean;
-    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO | SidebarMenuElementsTypes.BROKER_ACCOUNT;
+    type: SidebarMenuElementsTypes;
     elements: ModelPortfolioMenuElement[] | BrokerAccountMenuElement[];
 }
 
@@ -36,6 +36,6 @@ export interface BrokerAccountMenuGroup extends SidebarMenuGroupType {
 }
 
 export interface SidebarMenuGroupData {
-    modelPortfolios: ModelPortfolioMenuGroup,
-    brokerAccounts: BrokerAccountMenuGroup
+    modelPortfolios: ModelPortfolioMenuGroup;
+    brokerAccounts: BrokerAccountMenuGroup;
 }

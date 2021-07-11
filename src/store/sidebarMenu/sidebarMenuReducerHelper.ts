@@ -1,5 +1,6 @@
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { BrokerAccountMenuElement, ModelPortfolioMenuElement, SidebarMenuGroupData } from "../../models/menu/types";
+import { ModelPortfolioQuantityMode } from "../../models/portfolios/enums";
 
 const NEW_PORTFOLIO = "Новый портфель";
 

@@ -47,16 +47,21 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
                 <Dropdown.Menu>
                     <Dropdown.Item onClick={importToCsv}>Экспорт в CSV...</Dropdown.Item>
                     {
-                        currentPortfolioType === BrokeragePortfolioTypes.BROKER_ACCOUNT
-                            ? (
-                                <>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item onClick={() => setBrokerAccountModelActiveTab(0)}>
-                                        Загрузка отчета брокера
-                                    </Dropdown.Item>
-                                </>
-                            )
-                            : null
+                        currentPortfolioType === BrokeragePortfolioTypes.MODEL_PORTFOLIO ? (
+                            <>
+                                <Dropdown.Divider />
+                                <Dropdown.Item onClick={() => setBrokerAccountModelActiveTab(0)}>
+                                    Источники данных
+                                </Dropdown.Item>
+                            </>
+                        ) : (
+                            <>
+                                <Dropdown.Divider />
+                                <Dropdown.Item onClick={() => setBrokerAccountModelActiveTab(0)}>
+                                    Загрузка отчёта брокера
+                                </Dropdown.Item>
+                            </>
+                        )
                     }
                 </Dropdown.Menu>
             </Dropdown>
@@ -64,7 +69,9 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
                 brokerAccountModelActiveTab !== undefined
                     ? (
                         <SettingsModal
-                            onClose={() => setBrokerAccountModelActiveTab(undefined)} activeTab={brokerAccountModelActiveTab}
+                            currentPortfolioType={currentPortfolioType}
+                            onClose={() => setBrokerAccountModelActiveTab(undefined)}
+                            activeTab={brokerAccountModelActiveTab}
                         />
                     )
                     : null

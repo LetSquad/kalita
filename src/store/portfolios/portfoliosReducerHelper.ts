@@ -1,15 +1,19 @@
 import { v4 as uuidv4 } from "uuid";
 import { Quote } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
-import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
+import { BrokeragePortfolioTypes, ModelPortfolioQuantityMode } from "../../models/portfolios/enums";
 import {
     BrokerAccount,
     BrokerAccountIdentifier,
-    BrokerAccountPosition, BrokerReportPosition,
+    BrokerAccountPosition,
+    BrokerReportPosition,
     ModelPortfolio,
-    ModelPortfolioIdentifier, ModelPortfolioPosition,
+    ModelPortfolioIdentifier,
+    ModelPortfolioPosition,
     Portfolio,
-    PortfolioIdentifier, PortfolioPosition, PortfolioUpdatePayload
+    PortfolioIdentifier,
+    PortfolioPosition,
+    PortfolioUpdatePayload
 } from "../../models/portfolios/types";
 import { EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
@@ -35,7 +39,8 @@ export const newModelPortfolio: (id: string) => ModelPortfolio = (id: string) =>
     id,
     type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
     positions: [],
-    totalTargetAmount: defaultTotalTargetAmount
+    totalTargetAmount: defaultTotalTargetAmount,
+    settings: { quantityMode: ModelPortfolioQuantityMode.MANUAL_INPUT, quantitySources: [] }
 });
 
 export function getCurrentPortfolio(currentTable: ModelPortfolioIdentifier,
@@ -71,6 +76,14 @@ export function getCurrentPortfolioIndex(
     }
 
     return brokerAccounts.findIndex((account) => account.id === currentTable.id);
+}
+
+export function getBrokerAccountsPositionsByIds(
+    brokerAccounts: BrokerAccount[],
+    brokerAccountsIds: string[]
+): BrokerAccountPosition[] {
+    return brokerAccounts.filter((ba) => brokerAccountsIds.includes(ba.id))
+        .flatMap((ba) => ba.positions);
 }
 
 export function generateNewPosition(currentPortfolio: Portfolio, groupName: string) {
@@ -180,6 +193,20 @@ export function recalculateModelPortfolioPercentage(
             targetQuantity: targetAmount ? Math.floor(targetAmount / position.currentPrice) : 0
         };
     });
+}
+
+export function recalculateModelPortfolioQuantity(modelPortfolioPositions: ModelPortfolioPosition[], sources: PortfolioPosition[]) {
+    const quantityMap = new Map<string, number>();
+    for (const source of sources) {
+        const currentQuantity = quantityMap.get(source.ticker);
+        if (currentQuantity) {
+            quantityMap.set(source.ticker, currentQuantity + source.quantity);
+        } else {
+            quantityMap.set(source.ticker, source.quantity);
+        }
+    }
+
+    return modelPortfolioPositions.map((p) => recalculatePositionAmountByQuantity(p, quantityMap.get(p.ticker) || 0));
 }
 
 export function recalculateBrokerAccountPercentage(brokerAccountPositions: BrokerAccountPosition[]) {

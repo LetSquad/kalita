@@ -78,8 +78,7 @@ export default function BrokerAccountReportParser() {
         key: i,
         value: i,
         image: { src: b.icon, size: "mini" },
-        text:
-        b.brokerName
+        text: b.brokerName
     })), []);
 
     const onBrokerReportLoaded = useCallback((e: MessageEvent) => {
