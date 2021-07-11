@@ -8,7 +8,8 @@ import {
     getNewGroupName, mapPositionFromBrokerReport,
     recalculateBrokerAccountPercentage,
     recalculateModelPortfolioPercentage,
-    recalculateRow
+    recalculateRow,
+    recalculateRowsPrice
 } from "./tableReducerHelper";
 import { getMoexQuotes } from "../../apis/moexApi";
 import { Quote } from "../../models/apis/types";
@@ -124,12 +125,14 @@ export const tableSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getMoexQuotes.fulfilled, (state, action: PayloadAction<Quote[]>) => {
             if (state.currentPortfolio) {
-                for (const row of state.currentPortfolio.positions) {
-                    const quote = action.payload.find((el: Quote) => el.ticker === row.ticker);
-                    if (quote) {
-                        row.currentPrice = quote.price;
-                    }
+                const updatedPortfolio = recalculateRowsPrice(state.currentPortfolio, action);
+                if (
+                    updatedPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
+                    state.currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT
+                ) {
+                    updatedPortfolio.positions = recalculateBrokerAccountPercentage(updatedPortfolio.positions);
                 }
+                state.currentPortfolio = updatedPortfolio;
             }
         });
     }

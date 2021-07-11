@@ -6,6 +6,7 @@ import {
     BrokerReportPosition, CurrentPortfolio, TableData, TableUpdatePayload
 } from "../../models/table/types";
 import { EditableTableColumns } from "../../models/table/enums";
+import { Quote } from "../../models/apis/types";
 
 const NEW_ENTRY = "Новая запись";
 const NEW_GROUP = "Новая группа";
@@ -75,6 +76,25 @@ export function recalculateRow(portfolio: CurrentPortfolio, action: PayloadActio
             return {
                 ...row,
                 [action.payload.valueKey]: action.payload.newValue
+            };
+        }
+        return row;
+    }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+    return portfolio;
+}
+
+export function recalculateRowsPrice(portfolio: CurrentPortfolio, action: PayloadAction<Quote[]>) {
+    const priceMap = new Map<string, number>();
+    for (const quote of action.payload) {
+        priceMap.set(quote.ticker, quote.price);
+    }
+    portfolio.positions = portfolio.positions.map((row) => {
+        const newPrice = priceMap.get(row.ticker);
+        if (newPrice) {
+            return {
+                ...row,
+                currentPrice: newPrice,
+                amount: newPrice * row.quantity
             };
         }
         return row;
