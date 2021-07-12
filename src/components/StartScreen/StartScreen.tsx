@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { Button, Icon } from "semantic-ui-react";
 import nodePath from "path";
-import { saveProjectFileName } from "../../models/constants";
+import { currentSaveFileVersion, saveProjectFileName } from "../../models/constants";
 import { addRecentProject, removeRecentProject } from "../../store/electronCache/electronCacheReducer";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { baseSidebarMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducerHelper";
@@ -48,7 +48,7 @@ export default function StartScreen() {
                     fs.mkdirpSync(path);
                     const filePath = `${path}/${saveProjectFileName}`;
                     fs.createFileSync(filePath);
-                    fs.writeJsonSync(filePath, baseSidebarMenuGroups);
+                    fs.writeJsonSync(filePath, { version: currentSaveFileVersion, content: baseSidebarMenuGroups });
                     addRecent(path);
                     history.push(`/dashboard?currentProject=${path}`);
                 } catch {

@@ -5,7 +5,7 @@ import { useToasts } from "react-toast-notifications";
 import {
     Icon, Menu, Segment, Sidebar
 } from "semantic-ui-react";
-import { saveProjectFileName } from "../../models/constants";
+import { currentSaveFileVersion, saveProjectFileName } from "../../models/constants";
 import { SidebarMenuGroupType } from "../../models/menu/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
@@ -33,8 +33,8 @@ export default function Dashboard() {
 
         if (fs.existsSync(filePath)) {
             try {
-                const firstMenuGroupsState: SidebarMenuGroupType[] = fs.readJSONSync(filePath);
-                setStartState(firstMenuGroupsState);
+                const saveFile: { version: string, content: SidebarMenuGroupType[] } = fs.readJSONSync(filePath);
+                setStartState(saveFile.content);
             } catch {
                 addToast(`Ошибка открытия проекта "${folderPath}"`, { appearance: "error" });
                 history.push("/");
@@ -50,7 +50,7 @@ export default function Dashboard() {
         const folderPath = decodeURI(history.location.search.replace("?currentProject=", ""));
         if (folderPath !== "") {
             const filePath = `${folderPath}/${saveProjectFileName}`;
-            fs.writeJson(filePath, menuGroups)
+            fs.writeJson(filePath, { version: currentSaveFileVersion, content: menuGroups })
                 .catch(() => {
                     addToast(`Ошибка сохранения проекта "${folderPath}"`, { appearance: "error" });
                 });
