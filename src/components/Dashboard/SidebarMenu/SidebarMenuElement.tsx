@@ -77,6 +77,10 @@ export default function SidebarMenuElement(props: Props) {
         <Input
             value={_currentEditValue} fluid className={styles.renameInput} ref={inputRef} placeholder="Введите имя"
             onChange={(event, data) => setCurrentEditValue(data.value)}
+            onKeyPress={(event: KeyboardEvent) =>
+                (event.key === "Enter"
+                    ? renameElement(props.menuElement.type, props.menuElement.id, (event.target as HTMLInputElement).value)
+                    : undefined)}
             onBlur={
                 (event: FocusEvent) =>
                     renameElement(props.menuElement.type, props.menuElement.id, (event.target as HTMLInputElement).value)
