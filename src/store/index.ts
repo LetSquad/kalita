@@ -1,5 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
+import {
+    FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE
+} from "redux-persist/es/constants";
 import persistStore from "redux-persist/es/persistStore";
 import storage from "redux-persist/lib/storage";
 import promise from "redux-promise-middleware";
@@ -22,7 +25,11 @@ export const store = configureStore({
         electronCache: electronCachePersistedReducer
     },
     devTools: process.env.NODE_ENV !== "production",
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend([promise, thunk])
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: {
+            ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
+        }
+    }).prepend([promise, thunk])
 });
 
 export const persistor = persistStore(store);
