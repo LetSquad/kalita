@@ -9,13 +9,13 @@
   align-items: center;
   cursor: default !important;
   display: flex;
-  padding: 2px 0 !important;
+  padding: 0 !important;
   width: 100%;
   z-index: 2;
 
   &-empty {
     @extend %item;
-    padding: 0 0 0 17px !important;
+    padding: 0 0 0 21px !important;
   }
 }
 
