@@ -62,7 +62,7 @@ export const tableSlice = createSlice({
         },
         update: (state, action: PayloadAction<TableUpdatePayload>) => {
             if (state.currentPortfolio) {
-                const updatedPortfolio = recalculateRow(state.currentPortfolio, action);
+                const updatedPortfolio = recalculateRow(state.currentPortfolio, action.payload);
 
                 if (updatedPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
                     state.currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
@@ -125,7 +125,7 @@ export const tableSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getMoexQuotes.fulfilled, (state, action: PayloadAction<Quote[]>) => {
             if (state.currentPortfolio) {
-                const updatedPortfolio = recalculateRowsPrice(state.currentPortfolio, action);
+                const updatedPortfolio = recalculateRowsPrice(state.currentPortfolio, action.payload);
                 if (
                     updatedPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
                     state.currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT

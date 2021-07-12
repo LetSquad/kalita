@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from "uuid";
-import { PayloadAction } from "@reduxjs/toolkit";
 import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition, PortfolioPosition } from "../../models/portfolios/types";
 import {
@@ -61,21 +60,21 @@ export const newBrokerAccountRow: (groupName: string) => BrokerAccountPosition =
     amount: 0
 });
 
-export function recalculateRow(portfolio: CurrentPortfolio, action: PayloadAction<TableUpdatePayload>): CurrentPortfolio {
+export function recalculateRow(portfolio: CurrentPortfolio, tableUpdate: TableUpdatePayload): CurrentPortfolio {
     portfolio.positions = portfolio.positions.map((row) => {
-        if (row.id === action.payload.id) {
-            if (action.payload.valueKey === EditableTableColumns.QUANTITY) {
-                return recalculatePositionAmountByQuantity(row, Number.parseInt(action.payload.newValue, 10));
+        if (row.id === tableUpdate.id) {
+            if (tableUpdate.valueKey === EditableTableColumns.QUANTITY) {
+                return recalculatePositionAmountByQuantity(row, Number.parseInt(tableUpdate.newValue, 10));
             }
-            if (action.payload.valueKey === EditableTableColumns.WEIGHT) {
+            if (tableUpdate.valueKey === EditableTableColumns.WEIGHT) {
                 return {
                     ...row,
-                    [action.payload.valueKey]: Number.parseInt(action.payload.newValue, 10)
+                    [tableUpdate.valueKey]: Number.parseInt(tableUpdate.newValue, 10)
                 };
             }
             return {
                 ...row,
-                [action.payload.valueKey]: action.payload.newValue
+                [tableUpdate.valueKey]: tableUpdate.newValue
             };
         }
         return row;
@@ -83,9 +82,9 @@ export function recalculateRow(portfolio: CurrentPortfolio, action: PayloadActio
     return portfolio;
 }
 
-export function recalculateRowsPrice(portfolio: CurrentPortfolio, action: PayloadAction<Quote[]>) {
+export function recalculateRowsPrice(portfolio: CurrentPortfolio, quotes: Quote[]) {
     const priceMap = new Map<string, number>();
-    for (const quote of action.payload) {
+    for (const quote of quotes) {
         priceMap.set(quote.ticker, quote.price);
     }
     portfolio.positions = portfolio.positions.map((row) => {
