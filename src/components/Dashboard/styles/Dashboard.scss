@@ -11,8 +11,12 @@ $menu-width-close: 30px;
   flex-direction: row;
 }
 
-.sidebar {
+.sidebar,
+%sidebar {
+  background-color: #ececec !important;
+
   &-open {
+    @extend %sidebar;
     align-items: flex-start;
     display: flex !important;
     flex-direction: column !important;
@@ -22,6 +26,7 @@ $menu-width-close: 30px;
   }
 
   &-close {
+    @extend %sidebar;
     align-items: flex-end;
     border: 1px solid rgba(34, 36, 38, 0.15);
     box-shadow: 0 0 20px rgb(34 36 38 / 15%);
