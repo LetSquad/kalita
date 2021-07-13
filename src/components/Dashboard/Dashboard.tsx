@@ -1,5 +1,8 @@
 import fs from "fs-extra";
-import React, { useCallback, useEffect, useState } from "react";
+import nodePath from "path";
+import React, {
+    useCallback, useEffect, useMemo, useState
+} from "react";
 import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import {
@@ -8,7 +11,7 @@ import {
 import { currentSaveFileVersion, saveProjectFileName } from "../../models/constants";
 import { SidebarMenuGroupType } from "../../models/menu/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
+import { setCurrentProjectName, setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
 import partsStyles from "../../styles/parts.scss";
 import DashboardContent from "./DashboardContent";
 import SidebarMenu from "./SidebarMenu/SidebarMenu";
@@ -20,12 +23,16 @@ export default function Dashboard() {
     const { addToast } = useToasts();
 
     const menuGroups = useAppSelector((state) => state.sidebarMenu.menuGroups);
+    const projectName = useAppSelector((state) => state.sidebarMenu.currentProjectName);
+    const portfolioName = useAppSelector((state) => state.sidebarMenu.currentPortfolioName);
 
     const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
 
     const setStartState = useCallback((savedData: SidebarMenuGroupType[]) => {
         dispatch(setMenuGroups(savedData));
     }, [dispatch]);
+
+    const closeSidebarTitle = useMemo(() => `${projectName}${portfolioName ? `: ${portfolioName}` : ""}`, [portfolioName, projectName]);
 
     useEffect(() => {
         const folderPath = decodeURI(history.location.search.replace("?currentProject=", ""));
@@ -58,6 +65,12 @@ export default function Dashboard() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [menuGroups]);
 
+    useEffect(() => {
+        const path = decodeURI(history.location.search);
+        dispatch(setCurrentProjectName(path.slice(path.lastIndexOf(nodePath.sep) + 1)));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [history.location.search]);
+
     return (
         <div className={partsStyles.baseContainer}>
             <Sidebar.Pushable as={Segment} className={styles.pushableSegment}>
@@ -73,11 +86,14 @@ export default function Dashboard() {
                                 visible
                                 className={sidebarVisible ? styles.sidebarOpen : styles.sidebarClose}
                             >
-                                <SidebarMenu onSidebarClose={() => setSidebarVisible(false)} />
+                                <SidebarMenu projectName={projectName} onSidebarClose={() => setSidebarVisible(false)} />
                             </Sidebar>
                         )
                         : (
                             <div className={styles.sidebarClose}>
+                                <div className={styles.sidebarCloseTitleContainer}>
+                                    <span className={styles.sidebarCloseTitle}>{closeSidebarTitle}</span>
+                                </div>
                                 <Icon
                                     className={styles.sidebarCloseIcon} name="angle double right" link
                                     onClick={() => setSidebarVisible(true)}

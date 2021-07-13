@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
     deleteElementFromGroup,
     renameElementInGroup,
-    setActiveId
+    setActiveId, setCurrentPortfolioName
 } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import { resetCurrentPortfolio, setCurrentPortfolio } from "../../../store/table/tableReducer";
 import styles from "./styles/SidebarMenuElement.scss";
@@ -43,12 +43,14 @@ export default function SidebarMenuElement(props: Props) {
             id,
             newName
         }));
+        dispatch(setCurrentPortfolioName(newName));
         setCurrentEditValue(undefined);
     }, [dispatch]);
 
     const deleteElement = useCallback((type: SidebarMenuElementsTypes, id: string) => {
         if (currentPortfolio?.id === id) {
             dispatch(resetCurrentPortfolio());
+            dispatch(setCurrentPortfolioName(undefined));
         }
         dispatch(deleteElementFromGroup({
             type,
@@ -57,6 +59,7 @@ export default function SidebarMenuElement(props: Props) {
     }, [currentPortfolio?.id, dispatch]);
 
     const setPortfolio = useCallback((id: string) => {
+        dispatch(setCurrentPortfolioName(props.menuElement.name));
         if (props.menuElement.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
             dispatch(setCurrentPortfolio({
                 id,

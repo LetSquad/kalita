@@ -2,17 +2,18 @@ import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
-import { setMenuGroups } from "../../../store/sidebarMenu/sidebarMenuReducer";
+import { setCurrentProjectName, setMenuGroups } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import { baseSidebarMenuGroups } from "../../../store/sidebarMenu/sidebarMenuReducerHelper";
 import { resetCurrentPortfolio } from "../../../store/table/tableReducer";
 import SidebarMenuGroup from "./SidebarMenuGroup";
 import styles from "./styles/SidebarMenu.scss";
 
 interface SidebarMenuProps {
+    projectName: string | undefined;
     onSidebarClose: () => void;
 }
 
-export default function SidebarMenu({ onSidebarClose }: SidebarMenuProps) {
+export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenuProps) {
     const dispatch = useAppDispatch();
     const history = useHistory();
 
@@ -20,6 +21,7 @@ export default function SidebarMenu({ onSidebarClose }: SidebarMenuProps) {
 
     const setDefaultState = useCallback(() => {
         dispatch(resetCurrentPortfolio());
+        dispatch(setCurrentProjectName(undefined));
         dispatch(setMenuGroups(baseSidebarMenuGroups));
     }, [dispatch]);
 
@@ -30,8 +32,8 @@ export default function SidebarMenu({ onSidebarClose }: SidebarMenuProps) {
 
     return (
         <>
-            <div className={styles.title}>
-                Меню
+            <div className={styles.titleContainer}>
+                <span className={styles.title}>{projectName}</span>
                 <Icon name="log out" link onClick={closeProject} />
             </div>
             <div className={styles.separator} />
