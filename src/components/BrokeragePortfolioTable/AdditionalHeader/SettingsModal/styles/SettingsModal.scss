@@ -1,5 +1,25 @@
-.modal {
+:global {
+  .ui.grid {
+    margin: -1.5rem !important;
+
+    .four.wide.column {
+      box-shadow: 0 0 20px rgb(34 36 38 / 15%) !important;
+    }
+  }
+}
+
+.modal,
+%settings-modal {
   user-select: none;
+
+  &-header {
+    @extend %settings-modal;
+    background-color: #ececec !important;
+  }
+
+  &-content {
+    @extend %settings-modal;
+  }
 }
 
 .vtb-report-tab-pane {

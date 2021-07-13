@@ -43,8 +43,8 @@ function loadMain() {
     remoteInitialize();
 
     const mainWindow = new BrowserWindow({
-        width: 1366,
-        height: 768,
+        width: 1600,
+        height: 900,
         minWidth: 1366,
         minHeight: 768,
         show: false,

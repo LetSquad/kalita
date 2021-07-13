@@ -31,8 +31,8 @@ export default function SettingsModal({ onClose, activeTab }: Props) {
             onClose={onClose}
             open
         >
-            <Modal.Header className={styles.modal}>Параметры брокерского счёта</Modal.Header>
-            <Modal.Content className={styles.modal}>
+            <Modal.Header className={styles.modalHeader}>Параметры брокерского счёта</Modal.Header>
+            <Modal.Content className={styles.modalContent}>
                 <WithSuspense>
                     <Tab
                         menu={{ fluid: true, vertical: true, tabular: true }} panes={brokerPanes} activeIndex={activeIndex}
