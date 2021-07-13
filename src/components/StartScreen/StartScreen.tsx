@@ -48,7 +48,10 @@ export default function StartScreen() {
                     fs.mkdirpSync(path);
                     const filePath = `${path}/${saveProjectFileName}`;
                     fs.createFileSync(filePath);
-                    fs.writeJsonSync(filePath, { version: currentSaveFileVersion, content: baseSidebarMenuGroups });
+                    fs.writeJsonSync(filePath, {
+                        version: currentSaveFileVersion,
+                        content: baseSidebarMenuGroups
+                    });
                     addRecent(path);
                     history.push(`/dashboard?currentProject=${path}`);
                 } catch {
@@ -126,13 +129,18 @@ export default function StartScreen() {
                                 <span className={styles.recentTitle}>Recent: </span>
                                 {recentProjects.map((recent) => (
                                     <div className={styles.recentProject} key={recent[0]}>
-                                        <span
-                                            aria-hidden onClick={() => openRecentProject(recent[1])}
-                                            className={styles.recentProjectTitle}
-                                        >
-                                            {recent[1]}
-                                        </span>
-                                        <Icon name="close" link onClick={() => removeRecent(recent[0])} />
+                                        <div className={styles.recentProjectTitle}>
+                                            <span
+                                                aria-hidden onClick={() => openRecentProject(recent[1])}
+                                                className={styles.reverseEllipsisContent}
+                                            >
+                                                {recent[1]}
+                                            </span>
+                                        </div>
+                                        <Icon
+                                            name="close" link className={styles.recentProjectCloseLink}
+                                            onClick={() => removeRecent(recent[0])}
+                                        />
                                     </div>
                                 ))}
                             </div>

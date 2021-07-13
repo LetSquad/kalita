@@ -39,12 +39,17 @@ $recent-project-color: #4c74b9;
   }
 
   &-project {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
     font-size: 16px;
     margin-bottom: 5px;
 
     &-title {
+      @extend %reverse-ellipsis;
       color: $recent-project-color;
       cursor: pointer;
+      width: 90%;
 
       &:hover {
         color: lighten($recent-project-color, 10);
@@ -55,6 +60,50 @@ $recent-project-color: #4c74b9;
         color: darken($recent-project-color, 10);
         cursor: pointer;
       }
+    }
+
+    &-close-link {
+      width: 10% !important;
+    }
+  }
+}
+
+.reverse-ellipsis,
+%reverse-ellipsis {
+  background-color: #fff;
+  overflow: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &::before {
+    background-color: #fff;
+    content: '\02026';
+    left: -14px;
+    margin-left: 7px;
+    padding-left: 14px;
+    position: absolute;
+    z-index: 1;
+  }
+
+  &-content {
+    background-color: inherit;
+    display: inline-block;
+    float: right;
+    min-width: 100%;
+    overflow: visible;
+    position: relative;
+    text-indent: 20px;
+
+    &::before {
+      background-color: inherit;
+      content: '';
+      display: inline-block;
+      height: 16px;
+      left: 7px;
+      position: absolute;
+      width: 13px;
+      z-index: 200;
     }
   }
 }
