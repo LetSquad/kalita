@@ -32,7 +32,7 @@ export default function Dashboard() {
         dispatch(setMenuGroups(savedData));
     }, [dispatch]);
 
-    const closeSidebarTitle = useMemo(() => `${projectName}${portfolioName ? `:: ${portfolioName}` : ""}`, [portfolioName, projectName]);
+    const closeSidebarTitle = useMemo(() => `${projectName}${portfolioName ? ` :: ${portfolioName}` : ""}`, [portfolioName, projectName]);
 
     useEffect(() => {
         const folderPath = decodeURI(history.location.search.replace("?currentProject=", ""));
