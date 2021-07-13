@@ -21,11 +21,15 @@ type UpdateMenuData = {
 };
 
 interface SidebarMenuState {
+    currentProjectName?: string;
+    currentPortfolioName?: string;
     menuGroups: SidebarMenuGroupType[];
     activeMenuElementId?: MenuElementIdentifier
 }
 
 const initialState: SidebarMenuState = {
+    currentProjectName: undefined,
+    currentPortfolioName: undefined,
     menuGroups: baseSidebarMenuGroups,
     activeMenuElementId: undefined
 };
@@ -34,6 +38,12 @@ export const sidebarMenuSlice = createSlice({
     name: "sidebarMenu",
     initialState,
     reducers: {
+        setCurrentProjectName: (state, action: PayloadAction<string | undefined>) => {
+            state.currentProjectName = action.payload;
+        },
+        setCurrentPortfolioName: (state, action: PayloadAction<string | undefined>) => {
+            state.currentPortfolioName = action.payload;
+        },
         setMenuGroups: (state, action: PayloadAction<SidebarMenuGroupType[]>) => {
             state.menuGroups = action.payload;
         },
@@ -119,6 +129,8 @@ export const sidebarMenuSlice = createSlice({
 });
 
 export const {
+    setCurrentProjectName,
+    setCurrentPortfolioName,
     setMenuGroups,
     addNewElementToGroup,
     deleteElementFromGroup,

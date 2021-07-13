@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { Button, Icon } from "semantic-ui-react";
 import nodePath from "path";
-import { saveProjectFileName } from "../../models/constants";
+import { currentSaveFileVersion, saveProjectFileName } from "../../models/constants";
 import { addRecentProject, removeRecentProject } from "../../store/electronCache/electronCacheReducer";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { baseSidebarMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducerHelper";
@@ -48,7 +48,10 @@ export default function StartScreen() {
                     fs.mkdirpSync(path);
                     const filePath = `${path}/${saveProjectFileName}`;
                     fs.createFileSync(filePath);
-                    fs.writeJsonSync(filePath, baseSidebarMenuGroups);
+                    fs.writeJsonSync(filePath, {
+                        version: currentSaveFileVersion,
+                        content: baseSidebarMenuGroups
+                    });
                     addRecent(path);
                     history.push(`/dashboard?currentProject=${path}`);
                 } catch {
@@ -126,13 +129,18 @@ export default function StartScreen() {
                                 <span className={styles.recentTitle}>Recent: </span>
                                 {recentProjects.map((recent) => (
                                     <div className={styles.recentProject} key={recent[0]}>
-                                        <span
-                                            aria-hidden onClick={() => openRecentProject(recent[1])}
-                                            className={styles.recentProjectTitle}
-                                        >
-                                            {recent[1]}
-                                        </span>
-                                        <Icon name="close" link onClick={() => removeRecent(recent[0])} />
+                                        <div className={styles.recentProjectTitle}>
+                                            <span
+                                                aria-hidden onClick={() => openRecentProject(recent[1])}
+                                                className={styles.reverseEllipsisContent}
+                                            >
+                                                {recent[1]}
+                                            </span>
+                                        </div>
+                                        <Icon
+                                            name="close" link className={styles.recentProjectCloseLink}
+                                            onClick={() => removeRecent(recent[0])}
+                                        />
                                     </div>
                                 ))}
                             </div>

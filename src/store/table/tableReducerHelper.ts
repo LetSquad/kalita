@@ -103,7 +103,7 @@ export function recalculateRowsPrice(portfolio: CurrentPortfolio, quotes: Quote[
 
 export function recalculateModelPortfolioPercentage(
     modelPortfolio: ModelPortfolioPosition[],
-    totalTargetAmount: number
+    totalTargetAmount?: number
 ): ModelPortfolioPosition[] {
     let totalWeight = 0;
     for (const position of modelPortfolio) {
@@ -111,12 +111,12 @@ export function recalculateModelPortfolioPercentage(
     }
     return modelPortfolio.map((position) => {
         const proportion = position.weight / totalWeight;
-        const targetAmount = totalTargetAmount * proportion;
+        const targetAmount = totalTargetAmount ? (totalTargetAmount * proportion) : 0;
         return {
             ...position,
             percentage: proportion * 100,
             targetAmount,
-            targetQuantity: Math.floor(targetAmount / position.currentPrice)
+            targetQuantity: targetAmount ? Math.floor(targetAmount / position.currentPrice) : 0
         };
     });
 }

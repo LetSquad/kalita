@@ -77,6 +77,7 @@ $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-t
   }
 
   &add-button {
+    font-size: 16px !important;
     margin: 0 5px !important;
     opacity: 0.8 !important;
 

@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
     deleteElementFromGroup,
     renameElementInGroup,
-    setActiveId
+    setActiveId, setCurrentPortfolioName
 } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import { resetCurrentPortfolio, setCurrentPortfolio } from "../../../store/table/tableReducer";
 import styles from "./styles/SidebarMenuElement.scss";
@@ -43,12 +43,14 @@ export default function SidebarMenuElement(props: Props) {
             id,
             newName
         }));
+        dispatch(setCurrentPortfolioName(newName));
         setCurrentEditValue(undefined);
     }, [dispatch]);
 
     const deleteElement = useCallback((type: SidebarMenuElementsTypes, id: string) => {
         if (currentPortfolio?.id === id) {
             dispatch(resetCurrentPortfolio());
+            dispatch(setCurrentPortfolioName(undefined));
         }
         dispatch(deleteElementFromGroup({
             type,
@@ -57,6 +59,7 @@ export default function SidebarMenuElement(props: Props) {
     }, [currentPortfolio?.id, dispatch]);
 
     const setPortfolio = useCallback((id: string) => {
+        dispatch(setCurrentPortfolioName(props.menuElement.name));
         if (props.menuElement.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
             dispatch(setCurrentPortfolio({
                 id,
@@ -77,6 +80,10 @@ export default function SidebarMenuElement(props: Props) {
         <Input
             value={_currentEditValue} fluid className={styles.renameInput} ref={inputRef} placeholder="Введите имя"
             onChange={(event, data) => setCurrentEditValue(data.value)}
+            onKeyPress={(event: KeyboardEvent) =>
+                (event.key === "Enter"
+                    ? renameElement(props.menuElement.type, props.menuElement.id, (event.target as HTMLInputElement).value)
+                    : undefined)}
             onBlur={
                 (event: FocusEvent) =>
                     renameElement(props.menuElement.type, props.menuElement.id, (event.target as HTMLInputElement).value)
