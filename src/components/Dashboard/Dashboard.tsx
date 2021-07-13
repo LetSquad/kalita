@@ -74,33 +74,31 @@ export default function Dashboard() {
     return (
         <div className={partsStyles.baseContainer}>
             <Sidebar.Pushable as={Segment} className={styles.pushableSegment}>
-                {
-                    sidebarVisible
-                        ? (
-                            <Sidebar
-                                as={Menu}
-                                animation="push"
-                                icon="labeled"
-                                direction="left"
-                                vertical
-                                visible
-                                className={sidebarVisible ? styles.sidebarOpen : styles.sidebarClose}
-                            >
-                                <SidebarMenu projectName={projectName} onSidebarClose={() => setSidebarVisible(false)} />
-                            </Sidebar>
-                        )
-                        : (
-                            <div className={styles.sidebarClose}>
-                                <div className={styles.sidebarCloseTitleContainer}>
-                                    <span className={styles.sidebarCloseTitle}>{closeSidebarTitle}</span>
-                                </div>
-                                <Icon
-                                    className={styles.sidebarCloseIcon} name="angle double right" link
-                                    onClick={() => setSidebarVisible(true)}
-                                />
-                            </div>
-                        )
-                }
+                <Sidebar
+                    as={Menu}
+                    animation="push"
+                    icon="labeled"
+                    direction="left"
+                    vertical
+                    visible
+                    className={sidebarVisible ? styles.sidebarOpen : styles.sidebarClose}
+                >
+                    {
+                        sidebarVisible
+                            ? <SidebarMenu projectName={projectName} onSidebarClose={() => setSidebarVisible(false)} />
+                            : (
+                                <>
+                                    <div className={styles.sidebarCloseTitleContainer}>
+                                        <span className={styles.sidebarCloseTitle}>{closeSidebarTitle}</span>
+                                    </div>
+                                    <Icon
+                                        className={styles.sidebarCloseIcon} name="angle double right" link
+                                        onClick={() => setSidebarVisible(true)}
+                                    />
+                                </>
+                            )
+                    }
+                </Sidebar>
                 <Sidebar.Pusher className={sidebarVisible ? styles.pusherOpen : styles.pusherClose}>
                     <DashboardContent />
                 </Sidebar.Pusher>

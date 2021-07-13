@@ -14,12 +14,13 @@ $menu-width-close: 30px;
 .sidebar,
 %sidebar {
   background-color: #ececec !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: all 0.5s ease 0s !important;
 
   &-open {
     @extend %sidebar;
     align-items: flex-start;
-    display: flex !important;
-    flex-direction: column !important;
     overflow-x: hidden;
     overflow-y: auto;
     width: $menu-width-open !important;
@@ -27,12 +28,8 @@ $menu-width-close: 30px;
 
   &-close {
     @extend %sidebar;
-    align-items: flex-end;
-    border: 1px solid rgba(34, 36, 38, 0.15);
-    box-shadow: 0 0 20px rgb(34 36 38 / 15%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    align-items: flex-end !important;
+    justify-content: center !important;
     width: $menu-width-close !important;
 
     &-title {
@@ -74,11 +71,13 @@ $menu-width-close: 30px;
 
   &-open {
     transform: translate3d($menu-width-open, 0, 0) !important;
+    transition: all 0.5s ease 0s !important;
     width: calc(100% - #{$menu-width-open});
   }
 
   &-close {
     transform: translate3d(0, 0, 0) !important;
+    transition: all 0.5s ease 0s !important;
     width: 100%;
   }
 }
