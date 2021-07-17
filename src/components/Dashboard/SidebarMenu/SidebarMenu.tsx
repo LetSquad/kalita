@@ -17,7 +17,8 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
     const dispatch = useAppDispatch();
     const history = useHistory();
 
-    const portfoliosTypes = useAppSelector((state) => state.sidebarMenu.menuGroups);
+    const modelPortfolios = useAppSelector((state) => state.sidebarMenu.modelPortfolios);
+    const brokerAccounts = useAppSelector((state) => state.sidebarMenu.brokerAccounts);
 
     const setDefaultState = useCallback(() => {
         dispatch(resetCurrentPortfolio());
@@ -39,9 +40,8 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
             </div>
             <div className={styles.separator} />
             <div className={styles.menuGroupContainer}>
-                {portfoliosTypes.map((portfolioType) => (
-                    <SidebarMenuGroup key={portfolioType.type} sidebarMenuGroupType={portfolioType} />
-                ))}
+                <SidebarMenuGroup key={modelPortfolios.type} sidebarMenuGroupType={modelPortfolios} />
+                <SidebarMenuGroup key={brokerAccounts.type} sidebarMenuGroupType={brokerAccounts} />
             </div>
             <div className={styles.iconContainer}>
                 <Icon className={styles.icon} name="angle double left" onClick={onSidebarClose} link />

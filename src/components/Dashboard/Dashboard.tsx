@@ -9,7 +9,7 @@ import {
     Icon, Menu, Segment, Sidebar
 } from "semantic-ui-react";
 import { currentSaveFileVersion, saveProjectFileName } from "../../models/constants";
-import { SidebarMenuGroupType } from "../../models/menu/types";
+import { SidebarMenuGroupData } from "../../models/menu/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setCurrentProjectName, setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
 import partsStyles from "../../styles/parts.scss";
@@ -22,17 +22,21 @@ export default function Dashboard() {
     const history = useHistory();
     const { addToast } = useToasts();
 
-    const menuGroups = useAppSelector((state) => state.sidebarMenu.menuGroups);
+    const modelPortfolios = useAppSelector((state) => state.sidebarMenu.modelPortfolios);
+    const brokerAccounts = useAppSelector((state) => state.sidebarMenu.brokerAccounts);
     const projectName = useAppSelector((state) => state.sidebarMenu.currentProjectName);
     const portfolioName = useAppSelector((state) => state.sidebarMenu.currentPortfolioName);
 
     const [sidebarVisible, setSidebarVisible] = useState<boolean>(true);
 
-    const setStartState = useCallback((savedData: SidebarMenuGroupType[]) => {
+    const setStartState = useCallback((savedData: SidebarMenuGroupData) => {
         dispatch(setMenuGroups(savedData));
     }, [dispatch]);
 
-    const closeSidebarTitle = useMemo(() => `${projectName}${portfolioName ? ` :: ${portfolioName}` : ""}`, [portfolioName, projectName]);
+    const closeSidebarTitle = useMemo(
+        () => `${projectName}${portfolioName ? ` :: ${portfolioName}` : ""}`,
+        [portfolioName, projectName]
+    );
 
     useEffect(() => {
         const folderPath = decodeURI(history.location.search.replace("?currentProject=", ""));
@@ -40,7 +44,7 @@ export default function Dashboard() {
 
         if (fs.existsSync(filePath)) {
             try {
-                const saveFile: { version: string, content: SidebarMenuGroupType[] } = fs.readJSONSync(filePath);
+                const saveFile: { version: string, content: SidebarMenuGroupData } = fs.readJSONSync(filePath);
                 setStartState(saveFile.content);
             } catch {
                 addToast(`Ошибка открытия проекта "${folderPath}"`, { appearance: "error" });
@@ -57,13 +61,13 @@ export default function Dashboard() {
         const folderPath = decodeURI(history.location.search.replace("?currentProject=", ""));
         if (folderPath !== "") {
             const filePath = `${folderPath}/${saveProjectFileName}`;
-            fs.writeJson(filePath, { version: currentSaveFileVersion, content: menuGroups })
+            fs.writeJson(filePath, { version: currentSaveFileVersion, content: { modelPortfolios, brokerAccounts } })
                 .catch(() => {
                     addToast(`Ошибка сохранения проекта "${folderPath}"`, { appearance: "error" });
                 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [menuGroups]);
+    }, [modelPortfolios, brokerAccounts]);
 
     useEffect(() => {
         const path = decodeURI(history.location.search);
