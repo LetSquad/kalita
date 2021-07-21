@@ -1,10 +1,13 @@
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../portfolios/types";
 import { SidebarMenuElementsTypes } from "./enums";
 
-export interface BrokerAccountMenuElement {
+export interface SidebarMenuElement {
     id: string,
+    name: string
+}
+
+export interface BrokerAccountMenuElement extends SidebarMenuElement {
     type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-    name: string,
     data: BrokerAccountPosition[]
 }
 
@@ -13,10 +16,8 @@ export interface ModelPortfolioMenuElementData {
     totalTargetAmount: number | string;
 }
 
-export interface ModelPortfolioMenuElement {
-    id: string,
+export interface ModelPortfolioMenuElement extends SidebarMenuElement {
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-    name: string,
     data: ModelPortfolioMenuElementData
 }
 
@@ -25,17 +26,24 @@ export interface MenuElementIdentifier {
     type: SidebarMenuElementsTypes,
 }
 
-export type MenuElementData = BrokerAccountPosition[] | ModelPortfolioPosition[];
-
-export type SidebarMenuGroupType = {
+export interface SidebarMenuGroupType {
     name: string,
-    isOpen: boolean
-} & (
-    {
-        type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-        elements: ModelPortfolioMenuElement[]
-    } | {
-        type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-        elements: BrokerAccountMenuElement[]
-    }
-);
+    isOpen: boolean,
+    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO | SidebarMenuElementsTypes.BROKER_ACCOUNT,
+    elements: ModelPortfolioMenuElement[] | BrokerAccountMenuElement[]
+}
+
+export interface ModelPortfolioMenuGroup extends SidebarMenuGroupType {
+    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
+    elements: ModelPortfolioMenuElement[]
+}
+
+export interface BrokerAccountMenuGroup extends SidebarMenuGroupType {
+    type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
+    elements: BrokerAccountMenuElement[]
+}
+
+export interface SidebarMenuGroupData {
+    modelPortfolios: ModelPortfolioMenuGroup,
+    brokerAccounts: BrokerAccountMenuGroup
+}

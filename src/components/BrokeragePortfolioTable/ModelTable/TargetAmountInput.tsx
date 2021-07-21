@@ -2,9 +2,8 @@ import React, {
     useCallback, useEffect, useMemo, useState
 } from "react";
 import { Icon, Input, Popup } from "semantic-ui-react";
-import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
-import { updateMenuElementData } from "../../../store/sidebarMenu/sidebarMenuReducer";
+import { updateModelPortfolioTargetAmount } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import { updateTotalTargetAmount } from "../../../store/table/tableReducer";
 import styles from "./styles/TargetAmountInput.scss";
 import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
@@ -23,8 +22,7 @@ export default function TargetAmountInput() {
     const [questionOpen, setQuestionOpen] = useState(false);
 
     const updateMenuElementTotalTargetAmount = useCallback((newTotalTargetAmount: number | string) => {
-        dispatch(updateMenuElementData({
-            elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
+        dispatch(updateModelPortfolioTargetAmount({
             totalTargetAmount: newTotalTargetAmount
         }));
     }, [dispatch]);

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { CurrentModelPortfolio } from "../../../models/table/types";
 import { useAppDispatch } from "../../../store/hooks";
-import { updateMenuElementData } from "../../../store/sidebarMenu/sidebarMenuReducer";
+import { updateMenuElementPositions } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import { modelPortfolioColumns } from "../columns";
 import Table from "../Table";
 import TargetAmountInput from "./TargetAmountInput";
@@ -15,9 +15,9 @@ export default function ModelTable({ currentPortfolio }: Props) {
     const dispatch = useAppDispatch();
 
     const updateMenuElementContent = useCallback((_currentPortfolio: CurrentModelPortfolio) => {
-        dispatch(updateMenuElementData({
+        dispatch(updateMenuElementPositions({
             elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-            content: _currentPortfolio.positions
+            data: _currentPortfolio.positions
         }));
     }, [dispatch]);
 
