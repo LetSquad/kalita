@@ -37,7 +37,12 @@ export const tableSlice = createSlice({
                 state.currentPortfolio = {
                     id: action.payload.id,
                     type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
-                    positions: recalculateModelPortfolioPercentage(action.payload.positions, action.payload.totalTargetAmount),
+                    positions: recalculateModelPortfolioPercentage(
+                        action.payload.positions,
+                        typeof action.payload.totalTargetAmount === "number"
+                            ? action.payload.totalTargetAmount
+                            : 0
+                    ),
                     totalTargetAmount: action.payload.totalTargetAmount
                 };
             }
@@ -70,7 +75,9 @@ export const tableSlice = createSlice({
                 ) {
                     updatedPortfolio.positions = recalculateModelPortfolioPercentage(
                         updatedPortfolio.positions,
-                        state.currentPortfolio.totalTargetAmount
+                        typeof state.currentPortfolio.totalTargetAmount === "number"
+                            ? state.currentPortfolio.totalTargetAmount
+                            : 0
                     );
                 } else if (
                     updatedPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
@@ -109,12 +116,12 @@ export const tableSlice = createSlice({
                         .filter((row) => row.id !== action.payload) as ModelPortfolioPosition[] | BrokerAccountPosition[];
             }
         },
-        updateTotalTargetAmount: (state, action: PayloadAction<number>) => {
+        updateTotalTargetAmount: (state, action: PayloadAction<string | number>) => {
             if (state.currentPortfolio && state.currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
                 state.currentPortfolio.totalTargetAmount = action.payload;
                 state.currentPortfolio.positions = recalculateModelPortfolioPercentage(
                     state.currentPortfolio.positions,
-                    state.currentPortfolio.totalTargetAmount
+                    typeof action.payload === "number" ? action.payload : 0
                 );
             }
         },

@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { SidebarMenuElementsTypes } from "../../models/menu/enums";
-import { CurrentBrokerAccount } from "../../models/table/types";
-import { useAppDispatch } from "../../store/hooks";
-import { updateMenuElementData } from "../../store/sidebarMenu/sidebarMenuReducer";
-import { brokerAccountColumns } from "./columns";
-import Table from "./Table";
+import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
+import { CurrentBrokerAccount } from "../../../models/table/types";
+import { useAppDispatch } from "../../../store/hooks";
+import { updateMenuElementData } from "../../../store/sidebarMenu/sidebarMenuReducer";
+import { brokerAccountColumns } from "../columns";
+import Table from "../Table";
 
 interface Props {
     currentPortfolio: CurrentBrokerAccount

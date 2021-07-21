@@ -15,7 +15,7 @@ export function generateNewPosition(currentPortfolio: CurrentPortfolio, groupNam
         currentPortfolio.positions.push(newModelPortfolioRow(groupName));
         currentPortfolio.positions = recalculateModelPortfolioPercentage(
             currentPortfolio.positions,
-            currentPortfolio.totalTargetAmount
+            typeof currentPortfolio.totalTargetAmount === "number" ? currentPortfolio.totalTargetAmount : 0
         );
     } else {
         currentPortfolio.positions.push(newBrokerAccountRow(groupName));

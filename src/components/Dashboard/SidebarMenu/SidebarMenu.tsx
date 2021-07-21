@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
-import { setCurrentProjectName, setMenuGroups } from "../../../store/sidebarMenu/sidebarMenuReducer";
+import { setCurrentPortfolioName, setCurrentProjectName, setMenuGroups } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import { baseSidebarMenuGroups } from "../../../store/sidebarMenu/sidebarMenuReducerHelper";
 import { resetCurrentPortfolio } from "../../../store/table/tableReducer";
 import SidebarMenuGroup from "./SidebarMenuGroup";
@@ -22,6 +22,7 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
     const setDefaultState = useCallback(() => {
         dispatch(resetCurrentPortfolio());
         dispatch(setCurrentProjectName(undefined));
+        dispatch(setCurrentPortfolioName(undefined));
         dispatch(setMenuGroups(baseSidebarMenuGroups));
     }, [dispatch]);
 

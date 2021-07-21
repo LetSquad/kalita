@@ -8,7 +8,7 @@ export interface CurrentModelPortfolio {
     id: string,
     type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
     positions: ModelPortfolioPosition[],
-    totalTargetAmount: number
+    totalTargetAmount: string | number
 }
 
 export interface CurrentBrokerAccount {

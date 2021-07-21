@@ -10,7 +10,7 @@ export interface BrokerAccountMenuElement {
 
 export interface ModelPortfolioMenuElementData {
     positions: ModelPortfolioPosition[];
-    totalTargetAmount: number;
+    totalTargetAmount: number | string;
 }
 
 export interface ModelPortfolioMenuElement {
