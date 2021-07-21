@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 import { CurrentPortfolio } from "../../models/table/types";
-import BrokerTable from "./BrokerTable";
-import ModelTable from "./ModelTable";
+import BrokerTable from "./BrokerTable/BrokerTable";
+import ModelTable from "./ModelTable/ModelTable";
 
 interface Props {
     currentPortfolio: CurrentPortfolio

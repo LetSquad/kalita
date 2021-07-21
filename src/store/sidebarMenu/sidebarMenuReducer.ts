@@ -14,7 +14,7 @@ type UpdateMenuData = {
     content: ModelPortfolioPosition[]
 } | {
     elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-    totalTargetAmount: number
+    totalTargetAmount: number | string
 } | {
     elementType: SidebarMenuElementsTypes.BROKER_ACCOUNT,
     data: BrokerAccountPosition[]
