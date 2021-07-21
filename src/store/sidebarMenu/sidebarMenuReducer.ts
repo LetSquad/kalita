@@ -4,12 +4,13 @@ import { MenuElementIdentifier, SidebarMenuElement, SidebarMenuGroupData } from 
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
 import { baseSidebarMenuGroups, newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
 
-type UpdateMenuData = {
+interface UpdateModelPortfolioTargetAmount {
+    totalTargetAmount: number | string
+}
+
+type UpdateMenuPositions = {
     elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
     data: ModelPortfolioPosition[]
-} | {
-    elementType: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-    totalTargetAmount: number | string
 } | {
     elementType: SidebarMenuElementsTypes.BROKER_ACCOUNT,
     data: BrokerAccountPosition[]
@@ -85,17 +86,20 @@ export const sidebarMenuSlice = createSlice({
         setActiveId: (state: SidebarMenuState, action: PayloadAction<MenuElementIdentifier>) => {
             state.activeMenuElementId = action.payload;
         },
-        updateMenuElementData: (state: SidebarMenuState, action: PayloadAction<UpdateMenuData>) => {
+        updateModelPortfolioTargetAmount: (state: SidebarMenuState, action: PayloadAction<UpdateModelPortfolioTargetAmount>) => {
+            const menuElement = state.modelPortfolios.elements.find((elem) => elem.id === state.activeMenuElementId?.id);
+            if (!menuElement) {
+                return;
+            }
+            menuElement.data.totalTargetAmount = action.payload.totalTargetAmount;
+        },
+        updateMenuElementPositions: (state: SidebarMenuState, action: PayloadAction<UpdateMenuPositions>) => {
             if (action.payload.elementType === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
                 const menuElement = state.modelPortfolios.elements.find((elem) => elem.id === state.activeMenuElementId?.id);
                 if (!menuElement) {
                     return;
                 }
-                if ("data" in action.payload) {
-                    menuElement.data.positions = action.payload.data;
-                } else if ("totalTargetAmount" in action.payload) {
-                    menuElement.data.totalTargetAmount = action.payload.totalTargetAmount;
-                }
+                menuElement.data.positions = action.payload.data;
             } else if (action.payload.elementType === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
                 const menuElement = state.brokerAccounts.elements.find((elem) => elem.id === state.activeMenuElementId?.id);
                 if (!menuElement) {
@@ -116,7 +120,8 @@ export const {
     renameElementInGroup,
     changePortfolioTypeOpenState,
     setActiveId,
-    updateMenuElementData
+    updateModelPortfolioTargetAmount,
+    updateMenuElementPositions
 } = sidebarMenuSlice.actions;
 
 export default sidebarMenuSlice.reducer;
