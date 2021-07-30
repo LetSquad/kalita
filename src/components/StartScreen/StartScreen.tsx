@@ -50,7 +50,13 @@ export default function StartScreen() {
                     fs.createFileSync(filePath);
                     fs.writeJsonSync(filePath, {
                         version: currentSaveFileVersion,
-                        content: baseSidebarMenuGroups
+                        content: {
+                            menu: baseSidebarMenuGroups,
+                            portfolios: {
+                                modelPortfolios: [],
+                                brokerAccounts: []
+                            }
+                        }
                     });
                     addRecent(path);
                     history.push(`/dashboard?currentProject=${path}`);

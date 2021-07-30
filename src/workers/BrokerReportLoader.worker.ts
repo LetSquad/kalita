@@ -1,8 +1,8 @@
 import * as fs from "fs-extra";
 import * as xml2js from "xml2js";
 import * as XLSXL from "xlsx";
-import { BrokerReportPath } from "../models/table/types";
-import { BrokerReportEncoding, BrokerReportFormat } from "../models/table/enums";
+import { BrokerReportEncoding, BrokerReportFormat } from "../models/portfolios/enums";
+import { BrokerReportPath } from "../models/portfolios/types";
 
 // eslint-disable-next-line no-restricted-globals
 const ctx: Worker = self as any;

@@ -1,4 +1,4 @@
-import { BrokerReportData, BrokerReportDeal, BrokerReportPosition } from "../../models/table/types";
+import { BrokerReportData, BrokerReportDeal, BrokerReportPosition } from "../../models/portfolios/types";
 
 const SECURITY_TYPE_STOCK = "Акции";
 

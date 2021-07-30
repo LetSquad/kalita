@@ -2,9 +2,7 @@ import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
-import { setCurrentPortfolioName, setCurrentProjectName, setMenuGroups } from "../../../store/sidebarMenu/sidebarMenuReducer";
-import { baseSidebarMenuGroups } from "../../../store/sidebarMenu/sidebarMenuReducerHelper";
-import { resetCurrentPortfolio } from "../../../store/table/tableReducer";
+import { setDefault } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import SidebarMenuGroup from "./SidebarMenuGroup";
 import styles from "./styles/SidebarMenu.scss";
 
@@ -20,17 +18,10 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
     const modelPortfolios = useAppSelector((state) => state.sidebarMenu.modelPortfolios);
     const brokerAccounts = useAppSelector((state) => state.sidebarMenu.brokerAccounts);
 
-    const setDefaultState = useCallback(() => {
-        dispatch(resetCurrentPortfolio());
-        dispatch(setCurrentProjectName(undefined));
-        dispatch(setCurrentPortfolioName(undefined));
-        dispatch(setMenuGroups(baseSidebarMenuGroups));
-    }, [dispatch]);
-
     const closeProject = useCallback(() => {
-        setDefaultState();
+        dispatch(setDefault());
         history.push("/");
-    }, [history, setDefaultState]);
+    }, [dispatch, history]);
 
     return (
         <>

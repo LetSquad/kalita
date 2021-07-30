@@ -1,10 +1,11 @@
+import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../table/enums";
 import {
     FormattersValues, HorizontalAlignValues, SortersValues, VerticalAlignValues
 } from "./enums";
 
 export interface TabulatorColumn {
     title?: string,
-    field: string,
+    field: BaseColumnNames | ModelPortfolioColumnNames | BrokerAccountColumnNames,
     visible?: boolean,
     hozAlign?: HorizontalAlignValues,
     vertAlign?: VerticalAlignValues,
@@ -33,4 +34,16 @@ export interface TabulatorColumn {
     validator?: ((cell: any, value: any, parameters: any) => boolean) | string,
     editor?: string,
     [key: string]: any
+}
+
+export interface BaseTabulatorColumn extends TabulatorColumn {
+    field: BaseColumnNames,
+}
+
+export interface ModelPortfolioTabulatorColumn extends TabulatorColumn {
+    field: BaseColumnNames | ModelPortfolioColumnNames,
+}
+
+export interface BrokerAccountTabulatorColumn extends TabulatorColumn {
+    field: BaseColumnNames | BrokerAccountColumnNames,
 }

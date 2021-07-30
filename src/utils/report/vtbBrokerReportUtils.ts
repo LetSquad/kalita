@@ -1,4 +1,4 @@
-import { BrokerReportData, BrokerReportDeal, BrokerReportPosition } from "../../models/table/types";
+import { BrokerReportData, BrokerReportDeal, BrokerReportPosition } from "../../models/portfolios/types";
 
 const CHAPTER_ACCOUNT_NAME = "Подробности";
 const CHAPTER_DEALS = "Подробности9";

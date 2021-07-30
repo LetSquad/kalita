@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { BrokerAccountMenuElement, ModelPortfolioMenuElement, SidebarMenuGroupData } from "../../models/menu/types";
 
@@ -19,18 +18,14 @@ export const baseSidebarMenuGroups: SidebarMenuGroupData = {
     }
 };
 
-export const defaultTotalTargetAmount = 1_000_000;
-
-export const newBrokerGroupMenuElement: () => BrokerAccountMenuElement = () => ({
-    id: uuidv4(),
+export const newBrokerGroupMenuElement: (id: string) => BrokerAccountMenuElement = (id: string) => ({
+    id,
     type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-    name: NEW_PORTFOLIO,
-    data: []
+    name: NEW_PORTFOLIO
 });
 
-export const newModelGroupMenuElement: () => ModelPortfolioMenuElement = () => ({
-    id: uuidv4(),
+export const newModelGroupMenuElement: (id: string) => ModelPortfolioMenuElement = (id: string) => ({
+    id,
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-    name: NEW_PORTFOLIO,
-    data: { positions: [], totalTargetAmount: defaultTotalTargetAmount }
+    name: NEW_PORTFOLIO
 });

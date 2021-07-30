@@ -6,12 +6,23 @@ export enum EditableTableColumns {
     AVERAGE_PRICE = "averagePrice"
 }
 
-export enum BrokerReportFormat {
-    XML = "xml",
-    XLSX = "xlsx"
+export enum BaseColumnNames {
+    HANDLE = "handle",
+    TICKER = "ticker",
+    PERCENTAGE = "percentage",
+    CURRENT_PRICE = "currentPrice",
+    AMOUNT = "amount",
+    ACTION = "action"
 }
 
-export enum BrokerReportEncoding {
-    UTF8 = "utf8",
-    WIN1251 = "win1251"
+export enum ModelPortfolioColumnNames {
+    WEIGHT = "weight",
+    TARGET_AMOUNT = "targetAmount",
+    TARGET_QUANTITY = "targetQuantity",
+    QUANTITY = "quantity"
+}
+
+export enum BrokerAccountColumnNames {
+    AVERAGE_PRICE = "averagePrice",
+    QUANTITY = "quantity"
 }

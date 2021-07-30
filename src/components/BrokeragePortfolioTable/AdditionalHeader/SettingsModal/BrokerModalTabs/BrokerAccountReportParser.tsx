@@ -7,13 +7,13 @@ import React, {
 } from "react";
 import { useToasts } from "react-toast-notifications";
 import { Button, Dropdown } from "semantic-ui-react";
-import { BrokerReportData, BrokerReportMetadata } from "../../../../../models/table/types";
+import { BrokerReportEncoding, BrokerReportFormat } from "../../../../../models/portfolios/enums";
+import { BrokerReportData, BrokerReportMetadata } from "../../../../../models/portfolios/types";
 import { useAppDispatch } from "../../../../../store/hooks";
-import { addBrokerAccountPositions } from "../../../../../store/table/tableReducer";
+import { addBrokerAccountPositions } from "../../../../../store/portfolios/portfoliosReducer";
 import BrokerReportLoaderWorker from "../../../../../workers/BrokerReportLoader.worker";
 import styles from "./styles/BrokerAccountReportParser.scss";
 import { parseOpenBrokerReport } from "../../../../../utils/report/openBrokerReoprtUtils";
-import { BrokerReportEncoding, BrokerReportFormat } from "../../../../../models/table/enums";
 import { parseVtbReport } from "../../../../../utils/report/vtbBrokerReportUtils";
 import vtbBrokerIcon from "../../../../../static/icons/vtb-broker.png";
 import openBrokerIcon from "../../../../../static/icons/open-broker.ico";

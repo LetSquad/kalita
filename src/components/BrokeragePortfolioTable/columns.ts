@@ -2,22 +2,27 @@ import { reactFormatter } from "react-tabulator";
 import {
     FormattersValues, HorizontalAlignValues, SortersValues, VerticalAlignValues
 } from "../../models/libs/react-tabulator/enums";
-import { TabulatorColumn } from "../../models/libs/react-tabulator/types";
+import {
+    BaseTabulatorColumn,
+    BrokerAccountTabulatorColumn,
+    ModelPortfolioTabulatorColumn
+} from "../../models/libs/react-tabulator/types";
 import { ModelPortfolioPosition } from "../../models/portfolios/types";
+import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import styles from "./styles/columns.scss";
 
 const tickerValidator = (cell: any, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);
 
-export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
+export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumn[] = (actionBlock: JSX.Element) => [
     {
-        field: "handle",
+        field: BaseColumnNames.HANDLE,
         rowHandle: true,
         formatter: FormattersValues.HANDLE,
         headerSort: false,
         frozen: true
     }, {
         title: "Инструмент",
-        field: "ticker",
+        field: BaseColumnNames.TICKER,
         sorter: SortersValues.STRING,
         formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
         visible: true,
@@ -27,7 +32,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
         validator: tickerValidator
     }, {
         title: "Доля",
-        field: "percentage",
+        field: BaseColumnNames.PERCENTAGE,
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
@@ -45,7 +50,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
         }
     }, {
         title: "Цена",
-        field: "currentPrice",
+        field: BaseColumnNames.CURRENT_PRICE,
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
@@ -58,7 +63,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
         headerHozAlign: HorizontalAlignValues.LEFT
     }, {
         title: "Сумма",
-        field: "amount",
+        field: BaseColumnNames.AMOUNT,
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
@@ -75,7 +80,7 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
             symbolAfter: "р"
         }
     }, {
-        field: "action",
+        field: BaseColumnNames.ACTION,
         formatter: reactFormatter(actionBlock),
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
@@ -85,16 +90,16 @@ export const commonColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (a
 ];
 
 export const modelPortfolioColumnsOrder = [
-    "handle",
-    "ticker",
-    "weight",
-    "percentage",
-    "targetAmount",
-    "currentPrice",
-    "targetQuantity",
-    "quantity",
-    "amount",
-    "action"
+    BaseColumnNames.HANDLE,
+    BaseColumnNames.TICKER,
+    ModelPortfolioColumnNames.WEIGHT,
+    BaseColumnNames.PERCENTAGE,
+    ModelPortfolioColumnNames.TARGET_AMOUNT,
+    BaseColumnNames.CURRENT_PRICE,
+    ModelPortfolioColumnNames.TARGET_QUANTITY,
+    ModelPortfolioColumnNames.QUANTITY,
+    BaseColumnNames.AMOUNT,
+    BaseColumnNames.ACTION
 ];
 
 export const modelPortfolioColumnsWidth = [
@@ -110,12 +115,12 @@ export const modelPortfolioColumnsWidth = [
     { minWidth: 40, maxWidth: 40 }
 ];
 
-export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionBlock: JSX.Element) => TabulatorColumn[] =
+export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionBlock: JSX.Element) => ModelPortfolioTabulatorColumn[] =
     (data: ModelPortfolioPosition[]) => (actionBlock: JSX.Element) => [
         ...commonColumns(actionBlock),
         {
             title: "Вес",
-            field: "weight",
+            field: ModelPortfolioColumnNames.WEIGHT,
             sorter: SortersValues.NUMBER,
             formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
             visible: true,
@@ -128,7 +133,7 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
             topCalcFormatter: FormattersValues.PLAINTEXT
         }, {
             title: "Целевая сумма",
-            field: "targetAmount",
+            field: ModelPortfolioColumnNames.TARGET_AMOUNT,
             sorter: SortersValues.NUMBER,
             formatter: FormattersValues.MONEY,
             formatterParams: {
@@ -146,7 +151,7 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
             }
         }, {
             title: "Целевое количество",
-            field: "targetQuantity",
+            field: ModelPortfolioColumnNames.TARGET_QUANTITY,
             sorter: SortersValues.NUMBER,
             formatter: FormattersValues.PLAINTEXT,
             visible: true,
@@ -155,7 +160,7 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
             headerHozAlign: HorizontalAlignValues.LEFT
         }, {
             title: "В портфеле",
-            field: "quantity",
+            field: ModelPortfolioColumnNames.QUANTITY,
             sorter: SortersValues.NUMBER,
             formatter: (cell: any) => {
                 const quantity = cell.getValue();
@@ -185,14 +190,14 @@ export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionB
             }));
 
 export const brokerAccountColumnsOrder = [
-    "handle",
-    "ticker",
-    "percentage",
-    "averagePrice",
-    "currentPrice",
-    "quantity",
-    "amount",
-    "action"
+    BaseColumnNames.HANDLE,
+    BaseColumnNames.TICKER,
+    BaseColumnNames.PERCENTAGE,
+    BrokerAccountColumnNames.AVERAGE_PRICE,
+    BaseColumnNames.CURRENT_PRICE,
+    BrokerAccountColumnNames.QUANTITY,
+    BaseColumnNames.AMOUNT,
+    BaseColumnNames.ACTION
 ];
 
 export const brokerAccountColumnsWidth = [
@@ -206,18 +211,18 @@ export const brokerAccountColumnsWidth = [
     { minWidth: 40, maxWidth: 40 }
 ];
 
-export const brokerAccountColumns: (actionBlock: JSX.Element) => TabulatorColumn[] = (actionBlock: JSX.Element) => [
+export const brokerAccountColumns: (actionBlock: JSX.Element) => BrokerAccountTabulatorColumn[] = (actionBlock: JSX.Element) => [
     ...commonColumns(actionBlock),
     {
         title: "Цена покупки",
-        field: "averagePrice",
+        field: BrokerAccountColumnNames.AVERAGE_PRICE,
         sorter: SortersValues.NUMBER,
         formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()} ₽</span>`,
         editor: "input",
         validator: "min:0"
     }, {
         title: "В портфеле",
-        field: "quantity",
+        field: BrokerAccountColumnNames.QUANTITY,
         sorter: SortersValues.NUMBER,
         formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
         visible: true,

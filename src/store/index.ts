@@ -9,7 +9,7 @@ import promise from "redux-promise-middleware";
 import thunk from "redux-thunk";
 import electronCacheReducer from "./electronCache/electronCacheReducer";
 import sidebarMenuReducer from "./sidebarMenu/sidebarMenuReducer";
-import tableReducer from "./table/tableReducer";
+import portfoliosReducer from "./portfolios/portfoliosReducer";
 
 const electronCachePersistConfig = {
     key: "electronCache",
@@ -20,7 +20,7 @@ const electronCachePersistedReducer = persistReducer(electronCachePersistConfig,
 
 export const store = configureStore({
     reducer: {
-        tableData: tableReducer,
+        portfolios: portfoliosReducer,
         sidebarMenu: sidebarMenuReducer,
         electronCache: electronCachePersistedReducer
     },

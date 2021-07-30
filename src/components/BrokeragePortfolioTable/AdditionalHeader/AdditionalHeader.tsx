@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
 import { Icon } from "semantic-ui-react";
 import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
+import { addNewGroup } from "../../../store/portfolios/portfoliosReducer";
 import { AdditionalHeaderMenu } from "./AdditionalHeaderMenu";
 import styles from "./styles/AdditionalHeader.scss";
 import { getMoexQuotes } from "../../../apis/moexApi";
 import { useAppDispatch } from "../../../store/hooks";
-import { addNewGroup } from "../../../store/table/tableReducer";
 
 interface Props {
     currentPortfolioType: BrokeragePortfolioTypes,

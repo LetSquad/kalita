@@ -3,29 +3,17 @@ import React, {
 } from "react";
 import { Icon, Input, Popup } from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
-import { updateModelPortfolioTargetAmount } from "../../../store/sidebarMenu/sidebarMenuReducer";
-import { updateTotalTargetAmount } from "../../../store/table/tableReducer";
+import { updateTotalTargetAmount } from "../../../store/portfolios/portfoliosReducer";
+import { currentTargetAmountSelector } from "../../../store/portfolios/selectors";
 import styles from "./styles/TargetAmountInput.scss";
-import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
 
 export default function TargetAmountInput() {
     const dispatch = useAppDispatch();
 
-    const totalTargetAmount = useAppSelector((state) => {
-        if (!state.tableData.currentPortfolio || state.tableData.currentPortfolio.type !== BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-            return undefined;
-        }
-        return state.tableData.currentPortfolio.totalTargetAmount;
-    });
+    const totalTargetAmount = useAppSelector(currentTargetAmountSelector);
 
     const [targetAmountError, setTargetAmountError] = useState(false);
     const [questionOpen, setQuestionOpen] = useState(false);
-
-    const updateMenuElementTotalTargetAmount = useCallback((newTotalTargetAmount: number | string) => {
-        dispatch(updateModelPortfolioTargetAmount({
-            totalTargetAmount: newTotalTargetAmount
-        }));
-    }, [dispatch]);
 
     const validateTargetAmount = useCallback((value: number | string | undefined) => {
         if (typeof value === "string" && (value === "" || value.length > 12 || !/^\d+$/.test(value))) {
@@ -49,9 +37,8 @@ export default function TargetAmountInput() {
         validateTargetAmount(newTotalTargetAmount);
         if (value.length <= 12) {
             dispatch(updateTotalTargetAmount(newTotalTargetAmount));
-            updateMenuElementTotalTargetAmount(newTotalTargetAmount);
         }
-    }, [dispatch, updateMenuElementTotalTargetAmount, validateTargetAmount]);
+    }, [dispatch, validateTargetAmount]);
 
     useEffect(() => {
         validateTargetAmount(totalTargetAmount);

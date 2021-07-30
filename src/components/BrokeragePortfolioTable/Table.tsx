@@ -2,13 +2,14 @@ import _ from "lodash";
 import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
 import { $enum } from "ts-enum-util";
+import { getMoexQuotes } from "../../apis/moexApi";
 import { TabulatorColumn } from "../../models/libs/react-tabulator/types";
-import { EditableTableColumns } from "../../models/table/enums";
-import { CurrentPortfolio } from "../../models/table/types";
+import { Portfolio } from "../../models/portfolios/types";
+import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { useAppDispatch } from "../../store/hooks";
 import {
     addNewPosition, deleteRowById, update, updateGroupName
-} from "../../store/table/tableReducer";
+} from "../../store/portfolios/portfoliosReducer";
 import { ActionBlock } from "./ActionBlock";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import { generateCsv, generateExportList } from "./utils/utils";
@@ -16,7 +17,7 @@ import styles from "./styles/Table.scss";
 
 interface Props {
     columns: (actionBlock: JSX.Element) => TabulatorColumn[],
-    currentPortfolio: CurrentPortfolio,
+    currentPortfolio: Portfolio,
     additionalHeaderPart?: JSX.Element
 }
 
@@ -26,19 +27,22 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const cellUpdated = useCallback((cell: any) => {
         dispatch(update({
-            id: cell._cell.row.data.id,
+            id: cell.getRow().getData().id,
             valueKey: $enum(EditableTableColumns)
-                .asValueOrThrow(cell._cell.column.field),
-            newValue: cell._cell.value
+                .asValueOrThrow(cell.getField()),
+            newValue: cell.getValue()
         }));
+        if (cell.getField() === BaseColumnNames.TICKER) {
+            dispatch(getMoexQuotes());
+        }
     }, [dispatch]);
 
     const rowMoved = useCallback((row: any) => {
-        const newOrder = row.getTable().rowManager.activeRows.map((_row: any) => _row.data.id);
+        const newOrder = row.getTable().getRows().map((_row: any) => _row.getData().id);
         dispatch(update({
-            id: row._row.data.id,
+            id: row.getData().id,
             valueKey: EditableTableColumns.GROUP_NAME,
-            newValue: row._row.data.groupName,
+            newValue: row.getData().groupName,
             newOrder
         }));
     }, [dispatch]);
@@ -71,15 +75,15 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
             const elem = document.createElement("div");
             elem.className = styles.groupContainer;
             const input = document.createElement("input");
-            input.value = group._group.key;
+            input.value = group.getKey();
             input.className = styles.groupInput;
             input.addEventListener("blur", (ev) => {
-                updateGroup(group._group.key, (ev.target as HTMLInputElement).value);
+                updateGroup(group.getKey(), (ev.target as HTMLInputElement).value);
             });
             elem.append(input);
             const plus = document.createElement("i");
             plus.className = `plus icon ${styles.groupAddButton}`;
-            plus.addEventListener("click", () => addRowToGroup(group._group.key));
+            plus.addEventListener("click", () => addRowToGroup(group.getKey()));
             elem.append(plus);
             return elem;
         }
