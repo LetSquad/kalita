@@ -10,12 +10,14 @@ import {
     ModelPortfolioIdentifier,
     ModelPortfolioPosition,
     PortfolioIdentifier,
-    Portfolios, PortfolioUpdatePayload
+    Portfolios,
+    PortfolioUpdatePayload
 } from "../../models/portfolios/types";
 import { EditableTableColumns } from "../../models/table/enums";
 import { addNewElementToGroup, deleteElementFromGroup, setActiveId } from "../sidebarMenu/sidebarMenuReducer";
 import {
     generateNewPosition,
+    getBrokerAccountsPositionsByIds,
     getCurrentPortfolio,
     getNewGroupName,
     getPortfolioTypeFromSidebarType,
@@ -24,9 +26,11 @@ import {
     newModelPortfolio,
     recalculateBrokerAccountPercentage,
     recalculateModelPortfolioPercentage,
+    recalculateModelPortfolioQuantity,
     recalculateRow,
     recalculateRowsPrice
 } from "./portfoliosReducerHelper";
+import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 export interface PortfoliosState extends Portfolios {
     currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier;
@@ -42,11 +46,11 @@ export const portfoliosSlice = createSlice({
     name: "portfolios",
     initialState,
     reducers: {
-        setPortfolios: (state, action: PayloadAction<Portfolios>) => {
+        setPortfolios: (state: PortfoliosState, action: PayloadAction<Portfolios>) => {
             state.modelPortfolios = action.payload.modelPortfolios;
             state.brokerAccounts = action.payload.brokerAccounts;
         },
-        addNewPortfolio: (state, action: PayloadAction<PortfolioIdentifier>) => {
+        addNewPortfolio: (state: PortfoliosState, action: PayloadAction<PortfolioIdentifier>) => {
             if (action.payload.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
                 state.modelPortfolios = [
                     ...state.modelPortfolios,
@@ -59,14 +63,14 @@ export const portfoliosSlice = createSlice({
                 ];
             }
         },
-        deletePortfolio: (state, action: PayloadAction<PortfolioIdentifier>) => {
+        deletePortfolio: (state: PortfoliosState, action: PayloadAction<PortfolioIdentifier>) => {
             if (action.payload.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
                 state.modelPortfolios.filter((portfolio) => portfolio.id !== action.payload.id);
             } else if (action.payload.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
                 state.brokerAccounts.filter((account) => account.id !== action.payload.id);
             }
         },
-        setCurrentPortfolio: (state, action: PayloadAction<PortfolioIdentifier>) => {
+        setCurrentPortfolio: (state: PortfoliosState, action: PayloadAction<PortfolioIdentifier>) => {
             state.currentTable = action.payload;
             const currentPortfolio = getCurrentPortfolio(action.payload, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
@@ -82,7 +86,7 @@ export const portfoliosSlice = createSlice({
                 }
             }
         },
-        addNewPosition: (state, action: PayloadAction<string>) => {
+        addNewPosition: (state: PortfoliosState, action: PayloadAction<string>) => {
             if (state.currentTable) {
                 const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                 if (currentPortfolio) {
@@ -90,7 +94,7 @@ export const portfoliosSlice = createSlice({
                 }
             }
         },
-        addBrokerAccountPositions: (state, action: PayloadAction<BrokerReportData>) => {
+        addBrokerAccountPositions: (state: PortfoliosState, action: PayloadAction<BrokerReportData>) => {
             if (state.currentTable && state.currentTable.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
                 const currentAccount = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                 if (currentAccount) {
@@ -101,7 +105,7 @@ export const portfoliosSlice = createSlice({
                 }
             }
         },
-        addNewGroup: (state) => {
+        addNewGroup: (state: PortfoliosState) => {
             if (state.currentTable) {
                 const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                 if (currentPortfolio) {
@@ -109,21 +113,28 @@ export const portfoliosSlice = createSlice({
                 }
             }
         },
-        update: (state, action: PayloadAction<PortfolioUpdatePayload>) => {
+        update: (state: PortfoliosState, action: PayloadAction<PortfolioUpdatePayload>) => {
             if (state.currentTable) {
                 const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                 if (currentPortfolio) {
                     recalculateRow(currentPortfolio, action.payload);
 
-                    if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
-                        action.payload.valueKey === EditableTableColumns.WEIGHT
-                    ) {
-                        currentPortfolio.positions = recalculateModelPortfolioPercentage(
-                            currentPortfolio.positions,
-                            typeof currentPortfolio.totalTargetAmount === "number"
-                                ? currentPortfolio.totalTargetAmount
-                                : 0
-                        );
+                    if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                        if (action.payload.valueKey === EditableTableColumns.TICKER &&
+                            currentPortfolio.settings.quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT
+                        ) {
+                            currentPortfolio.positions = recalculateModelPortfolioQuantity(
+                                currentPortfolio.positions,
+                                getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)
+                            );
+                        } else if (action.payload.valueKey === EditableTableColumns.WEIGHT) {
+                            currentPortfolio.positions = recalculateModelPortfolioPercentage(
+                                currentPortfolio.positions,
+                                typeof currentPortfolio.totalTargetAmount === "number"
+                                    ? currentPortfolio.totalTargetAmount
+                                    : 0
+                            );
+                        }
                     } else if (
                         currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
                         action.payload.valueKey === EditableTableColumns.QUANTITY
@@ -139,7 +150,7 @@ export const portfoliosSlice = createSlice({
                 }
             }
         },
-        updateGroupName: (state, action: PayloadAction<{ oldGroupName: string, newGroupName: string }>) => {
+        updateGroupName: (state: PortfoliosState, action: PayloadAction<{ oldGroupName: string, newGroupName: string }>) => {
             if (state.currentTable) {
                 const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                 if (currentPortfolio) {
@@ -155,7 +166,7 @@ export const portfoliosSlice = createSlice({
                 }
             }
         },
-        deleteRowById: (state, action: PayloadAction<string>) => {
+        deleteRowById: (state: PortfoliosState, action: PayloadAction<string>) => {
             if (state.currentTable) {
                 const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                 if (currentPortfolio) {
@@ -176,7 +187,7 @@ export const portfoliosSlice = createSlice({
                 }
             }
         },
-        updateTotalTargetAmount: (state, action: PayloadAction<string | number>) => {
+        updateTotalTargetAmount: (state: PortfoliosState, action: PayloadAction<string | number>) => {
             if (state.currentTable && state.currentTable.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
                 const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                 if (currentPortfolio) {
@@ -190,13 +201,45 @@ export const portfoliosSlice = createSlice({
                 }
             }
         },
+        updateModelPortfolioQuantityMode: (state: PortfoliosState, action: PayloadAction<ModelPortfolioQuantityMode>) => {
+            if (!state.currentTable) {
+                return;
+            }
+
+            const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
+            if (currentPortfolio && currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                currentPortfolio.settings.quantityMode = action.payload;
+                if (action.payload === ModelPortfolioQuantityMode.BROKER_ACCOUNT) {
+                    currentPortfolio.positions = recalculateModelPortfolioQuantity(
+                        currentPortfolio.positions,
+                        getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)
+                    );
+                }
+            }
+        },
+        updateModelPortfolioQuantitySources: (state: PortfoliosState, action: PayloadAction<string[]>) => {
+            if (!state.currentTable) {
+                return;
+            }
+
+            const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
+            if (currentPortfolio && currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                currentPortfolio.settings.quantitySources = action.payload;
+                if (currentPortfolio.settings.quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT) {
+                    currentPortfolio.positions = recalculateModelPortfolioQuantity(
+                        currentPortfolio.positions,
+                        getBrokerAccountsPositionsByIds(state.brokerAccounts, action.payload)
+                    );
+                }
+            }
+        },
         resetCurrentPortfolio: (state) => {
             state.currentTable = undefined;
         }
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getMoexQuotes.fulfilled, (state, action: PayloadAction<Quote[]>) => {
+            .addCase(getMoexQuotes.fulfilled, (state: PortfoliosState, action: PayloadAction<Quote[]>) => {
                 if (state.currentTable) {
                     const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                     if (currentPortfolio) {
@@ -214,13 +257,13 @@ export const portfoliosSlice = createSlice({
                     }
                 }
             })
-            .addCase(addNewElementToGroup, (state, action: PayloadAction<MenuElementIdentifier>) => {
+            .addCase(addNewElementToGroup, (state: PortfoliosState, action: PayloadAction<MenuElementIdentifier>) => {
                 portfoliosSlice.caseReducers.addNewPortfolio(
                     state,
                     { ...action, payload: { ...action.payload, type: getPortfolioTypeFromSidebarType(action.payload.type) } }
                 );
             })
-            .addCase(deleteElementFromGroup, (state, action: PayloadAction<MenuElementIdentifier>) => {
+            .addCase(deleteElementFromGroup, (state: PortfoliosState, action: PayloadAction<MenuElementIdentifier>) => {
                 portfoliosSlice.caseReducers.deletePortfolio(
                     state,
                     { ...action, payload: { ...action.payload, type: getPortfolioTypeFromSidebarType(action.payload.type) } }
@@ -229,7 +272,7 @@ export const portfoliosSlice = createSlice({
                     portfoliosSlice.caseReducers.resetCurrentPortfolio(state);
                 }
             })
-            .addCase(setActiveId, (state, action: PayloadAction<MenuElementIdentifier>) => {
+            .addCase(setActiveId, (state: PortfoliosState, action: PayloadAction<MenuElementIdentifier>) => {
                 portfoliosSlice.caseReducers.setCurrentPortfolio(
                     state,
                     { ...action, payload: { ...action.payload, type: getPortfolioTypeFromSidebarType(action.payload.type) } }
@@ -246,7 +289,9 @@ export const {
     update,
     updateGroupName,
     deleteRowById,
-    updateTotalTargetAmount
+    updateTotalTargetAmount,
+    updateModelPortfolioQuantityMode,
+    updateModelPortfolioQuantitySources
 } = portfoliosSlice.actions;
 
 export default portfoliosSlice.reducer;

@@ -28,17 +28,17 @@ export const sidebarMenuSlice = createSlice({
     name: "sidebarMenu",
     initialState,
     reducers: {
-        setCurrentProjectName: (state, action: PayloadAction<string | undefined>) => {
+        setCurrentProjectName: (state: SidebarMenuState, action: PayloadAction<string | undefined>) => {
             state.currentProjectName = action.payload;
         },
-        setCurrentPortfolioName: (state, action: PayloadAction<string | undefined>) => {
+        setCurrentPortfolioName: (state: SidebarMenuState, action: PayloadAction<string | undefined>) => {
             state.currentPortfolioName = action.payload;
         },
-        setMenuGroups: (state, action: PayloadAction<SidebarMenuGroupData>) => {
+        setMenuGroups: (state: SidebarMenuState, action: PayloadAction<SidebarMenuGroupData>) => {
             state.modelPortfolios = action.payload.modelPortfolios;
             state.brokerAccounts = action.payload.brokerAccounts;
         },
-        addNewElementToGroup: (state, action: PayloadAction<MenuElementIdentifier>) => {
+        addNewElementToGroup: (state: SidebarMenuState, action: PayloadAction<MenuElementIdentifier>) => {
             if (action.payload.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
                 state.modelPortfolios = {
                     ...state.modelPortfolios,
@@ -53,14 +53,14 @@ export const sidebarMenuSlice = createSlice({
                 };
             }
         },
-        deleteElementFromGroup: (state, action: PayloadAction<MenuElementIdentifier>) => {
+        deleteElementFromGroup: (state: SidebarMenuState, action: PayloadAction<MenuElementIdentifier>) => {
             if (action.payload.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
                 state.modelPortfolios.elements.filter((e) => e.id !== action.payload.id);
             } else if (action.payload.type === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
                 state.brokerAccounts.elements.filter((e) => e.id !== action.payload.id);
             }
         },
-        renameElementInGroup: (state, action: PayloadAction<MenuElementIdentifier & { newName: string }>) => {
+        renameElementInGroup: (state: SidebarMenuState, action: PayloadAction<MenuElementIdentifier & { newName: string }>) => {
             let menuElement: SidebarMenuElement | undefined;
             if (action.payload.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
                 menuElement = state.modelPortfolios.elements.find((e) => e.id === action.payload.id);
@@ -71,14 +71,14 @@ export const sidebarMenuSlice = createSlice({
                 menuElement.name = action.payload.newName;
             }
         },
-        changePortfolioTypeOpenState: (state, action: PayloadAction<SidebarMenuElementsTypes>) => {
+        changePortfolioTypeOpenState: (state: SidebarMenuState, action: PayloadAction<SidebarMenuElementsTypes>) => {
             if (action.payload === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
                 state.modelPortfolios.isOpen = !state.modelPortfolios.isOpen;
             } else if (action.payload === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
                 state.brokerAccounts.isOpen = !state.brokerAccounts.isOpen;
             }
         },
-        setActiveId: (state, action: PayloadAction<MenuElementIdentifier>) => {
+        setActiveId: (state: SidebarMenuState, action: PayloadAction<MenuElementIdentifier>) => {
             state.activeMenuElementId = action.payload;
         },
         setDefault: () => initialState
