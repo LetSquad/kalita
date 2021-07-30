@@ -1,4 +1,4 @@
-import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../table/enums";
+import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../src/models/table/enums";
 import {
     FormattersValues, HorizontalAlignValues, SortersValues, VerticalAlignValues
 } from "./enums";
