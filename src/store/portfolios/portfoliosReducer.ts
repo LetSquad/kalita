@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getMoexQuotes } from "../../apis/moexApi";
 import { Quote } from "../../models/apis/types";
 import { MenuElementIdentifier } from "../../models/menu/types";
-import { BrokeragePortfolioTypes, ModelPortfolioQuantityMode } from "../../models/portfolios/enums";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 import {
     BrokerAccountIdentifier,
     BrokerAccountPosition,
@@ -30,6 +30,7 @@ import {
     recalculateRow,
     recalculateRowsPrice
 } from "./portfoliosReducerHelper";
+import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 export interface PortfoliosState extends Portfolios {
     currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier;

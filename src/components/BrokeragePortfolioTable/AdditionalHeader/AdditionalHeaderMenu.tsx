@@ -15,7 +15,7 @@ interface Props {
 export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvText }: Props) {
     const { addToast } = useToasts();
 
-    const [brokerAccountModelActiveTab, setBrokerAccountModelActiveTab] = useState<number>();
+    const [settingsModalActiveTab, setSettingsModalActiveTab] = useState<number>();
 
     const importToCsv = useCallback(() => {
         const path = dialog.showSaveDialogSync({
@@ -50,14 +50,14 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
                         currentPortfolioType === BrokeragePortfolioTypes.MODEL_PORTFOLIO ? (
                             <>
                                 <Dropdown.Divider />
-                                <Dropdown.Item onClick={() => setBrokerAccountModelActiveTab(0)}>
+                                <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
                                     Источники данных
                                 </Dropdown.Item>
                             </>
                         ) : (
                             <>
                                 <Dropdown.Divider />
-                                <Dropdown.Item onClick={() => setBrokerAccountModelActiveTab(0)}>
+                                <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
                                     Загрузка отчёта брокера
                                 </Dropdown.Item>
                             </>
@@ -66,12 +66,12 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
                 </Dropdown.Menu>
             </Dropdown>
             {
-                brokerAccountModelActiveTab !== undefined
+                settingsModalActiveTab !== undefined
                     ? (
                         <SettingsModal
                             currentPortfolioType={currentPortfolioType}
-                            onClose={() => setBrokerAccountModelActiveTab(undefined)}
-                            activeTab={brokerAccountModelActiveTab}
+                            onClose={() => setSettingsModalActiveTab(undefined)}
+                            activeTab={settingsModalActiveTab}
                         />
                     )
                     : null

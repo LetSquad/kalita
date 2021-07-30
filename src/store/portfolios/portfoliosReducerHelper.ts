@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { Quote } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
-import { BrokeragePortfolioTypes, ModelPortfolioQuantityMode } from "../../models/portfolios/enums";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 import {
     BrokerAccount,
     BrokerAccountIdentifier,
@@ -17,6 +17,7 @@ import {
 } from "../../models/portfolios/types";
 import { EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
+import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 export const defaultTotalTargetAmount = 1_000_000;
 

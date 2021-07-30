@@ -10,10 +10,11 @@ import {
     BrokerAccountTabulatorColumn,
     ModelPortfolioTabulatorColumn
 } from "../../models/libs/react-tabulator/types";
-import { ModelPortfolioPosition, ModelPortfolioSettings } from "../../models/portfolios/types";
+import { ModelPortfolioPosition } from "../../models/portfolios/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import styles from "./styles/columns.scss";
-import { ModelPortfolioQuantityMode } from "../../models/portfolios/enums";
+import { ModelPortfolioSettings } from "../../models/settings/types";
+import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 const tickerValidator = (cell: any, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);
 

@@ -1,10 +1,6 @@
 import { EditableTableColumns } from "../table/enums";
-import {
-    BrokeragePortfolioTypes,
-    BrokerReportEncoding,
-    BrokerReportFormat,
-    ModelPortfolioQuantityMode
-} from "./enums";
+import { BrokeragePortfolioTypes, BrokerReportEncoding, BrokerReportFormat } from "./enums";
+import { ModelPortfolioSettings } from "../settings/types";
 
 export interface ModelPortfolioIdentifier {
     id: string;
@@ -31,11 +27,6 @@ export interface ModelPortfolio {
     positions: ModelPortfolioPosition[];
     totalTargetAmount: number | string;
     settings: ModelPortfolioSettings;
-}
-
-export interface ModelPortfolioSettings {
-    quantityMode: ModelPortfolioQuantityMode;
-    quantitySources: string[];
 }
 
 export interface BrokerAccount {
