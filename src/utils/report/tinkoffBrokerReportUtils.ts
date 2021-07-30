@@ -1,4 +1,4 @@
-import { BrokerReportData, BrokerReportDeal, BrokerReportPosition } from "../../models/table/types";
+import { BrokerReportData, BrokerReportDeal, BrokerReportPosition } from "../../models/portfolios/types";
 
 const DEALS_CHAPTER_NUMBER = "1.1";
 const DEALS_CHAPTER_SUBHEADER = "Номер сделки";

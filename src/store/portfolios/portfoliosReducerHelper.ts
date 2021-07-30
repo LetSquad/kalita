@@ -1,16 +1,79 @@
 import { v4 as uuidv4 } from "uuid";
-import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
-import { BrokerAccountPosition, ModelPortfolioPosition, PortfolioPosition } from "../../models/portfolios/types";
-import {
-    BrokerReportPosition, CurrentPortfolio, TableData, TableUpdatePayload
-} from "../../models/table/types";
-import { EditableTableColumns } from "../../models/table/enums";
 import { Quote } from "../../models/apis/types";
+import { SidebarMenuElementsTypes } from "../../models/menu/enums";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
+import {
+    BrokerAccount,
+    BrokerAccountIdentifier,
+    BrokerAccountPosition, BrokerReportPosition,
+    ModelPortfolio,
+    ModelPortfolioIdentifier, ModelPortfolioPosition,
+    Portfolio,
+    PortfolioIdentifier, PortfolioPosition, PortfolioUpdatePayload
+} from "../../models/portfolios/types";
+import { EditableTableColumns } from "../../models/table/enums";
+import { TableData } from "../../models/table/types";
+
+export const defaultTotalTargetAmount = 1_000_000;
 
 const NEW_ENTRY = "Новая запись";
 const NEW_GROUP = "Новая группа";
 
-export function generateNewPosition(currentPortfolio: CurrentPortfolio, groupName: string) {
+export function getPortfolioTypeFromSidebarType(sidebarType: SidebarMenuElementsTypes): BrokeragePortfolioTypes {
+    return sidebarType === SidebarMenuElementsTypes.MODEL_PORTFOLIO
+        ? BrokeragePortfolioTypes.MODEL_PORTFOLIO
+        : BrokeragePortfolioTypes.BROKER_ACCOUNT;
+}
+
+export const newBrokerAccount: (id: string) => BrokerAccount = (id: string) => ({
+    id,
+    type: BrokeragePortfolioTypes.BROKER_ACCOUNT,
+    positions: []
+});
+
+export const newModelPortfolio: (id: string) => ModelPortfolio = (id: string) => ({
+    id,
+    type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
+    positions: [],
+    totalTargetAmount: defaultTotalTargetAmount
+});
+
+export function getCurrentPortfolio(currentTable: ModelPortfolioIdentifier,
+    modelPortfolios: ModelPortfolio[],
+    brokerAccounts: BrokerAccount[]) : ModelPortfolio | undefined;
+export function getCurrentPortfolio(currentTable: BrokerAccountIdentifier,
+    modelPortfolios: ModelPortfolio[],
+    brokerAccounts: BrokerAccount[]) : BrokerAccount | undefined;
+export function getCurrentPortfolio(
+    currentTable: PortfolioIdentifier,
+    modelPortfolios: ModelPortfolio[],
+    brokerAccounts: BrokerAccount[]
+): ModelPortfolio | BrokerAccount | undefined;
+export function getCurrentPortfolio(
+    currentTable: PortfolioIdentifier,
+    modelPortfolios: ModelPortfolio[],
+    brokerAccounts: BrokerAccount[]
+): ModelPortfolio | BrokerAccount | undefined {
+    if (currentTable.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+        return modelPortfolios.find((portfolio) => portfolio.id === currentTable.id);
+    }
+
+    return brokerAccounts.find((account) => account.id === currentTable.id);
+}
+
+export function getCurrentPortfolioIndex(
+    currentTable: PortfolioIdentifier,
+    modelPortfolios: ModelPortfolio[],
+    brokerAccounts: BrokerAccount[]
+): number {
+    if (currentTable.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+        return modelPortfolios.findIndex((portfolio) => portfolio.id === currentTable.id);
+    }
+
+    return brokerAccounts.findIndex((account) => account.id === currentTable.id);
+}
+
+export function generateNewPosition(currentPortfolio: Portfolio, groupName: string) {
     if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
         currentPortfolio.positions.push(newModelPortfolioRow(groupName));
         currentPortfolio.positions = recalculateModelPortfolioPercentage(
@@ -60,7 +123,7 @@ export const newBrokerAccountRow: (groupName: string) => BrokerAccountPosition =
     amount: 0
 });
 
-export function recalculateRow(portfolio: CurrentPortfolio, tableUpdate: TableUpdatePayload): CurrentPortfolio {
+export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdatePayload) {
     portfolio.positions = portfolio.positions.map((row) => {
         if (row.id === tableUpdate.id) {
             if (tableUpdate.valueKey === EditableTableColumns.QUANTITY) {
@@ -79,10 +142,9 @@ export function recalculateRow(portfolio: CurrentPortfolio, tableUpdate: TableUp
         }
         return row;
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
-    return portfolio;
 }
 
-export function recalculateRowsPrice(portfolio: CurrentPortfolio, quotes: Quote[]) {
+export function recalculateRowsPrice(portfolio: Portfolio, quotes: Quote[]) {
     const priceMap = new Map<string, number>();
     for (const quote of quotes) {
         priceMap.set(quote.ticker, quote.price);
@@ -98,18 +160,17 @@ export function recalculateRowsPrice(portfolio: CurrentPortfolio, quotes: Quote[
         }
         return row;
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
-    return portfolio;
 }
 
 export function recalculateModelPortfolioPercentage(
-    modelPortfolio: ModelPortfolioPosition[],
+    modelPortfolioPositions: ModelPortfolioPosition[],
     totalTargetAmount?: number
 ): ModelPortfolioPosition[] {
     let totalWeight = 0;
-    for (const position of modelPortfolio) {
+    for (const position of modelPortfolioPositions) {
         totalWeight += position.weight;
     }
-    return modelPortfolio.map((position) => {
+    return modelPortfolioPositions.map((position) => {
         const proportion = position.weight / totalWeight;
         const targetAmount = totalTargetAmount ? (totalTargetAmount * proportion) : 0;
         return {
@@ -121,14 +182,14 @@ export function recalculateModelPortfolioPercentage(
     });
 }
 
-export function recalculateBrokerAccountPercentage(brokerAccount: BrokerAccountPosition[]) {
+export function recalculateBrokerAccountPercentage(brokerAccountPositions: BrokerAccountPosition[]) {
     let totalAmount = 0;
-    for (const position of brokerAccount) {
+    for (const position of brokerAccountPositions) {
         totalAmount += position.amount;
     }
-    return brokerAccount.map((position) => ({
+    return brokerAccountPositions.map((position) => ({
         ...position,
-        percentage: (position.amount / totalAmount) * 100
+        percentage: totalAmount > 0 ? (position.amount / totalAmount) * 100 : 0
     }));
 }
 

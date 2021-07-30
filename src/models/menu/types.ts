@@ -1,4 +1,3 @@
-import { BrokerAccountPosition, ModelPortfolioPosition } from "../portfolios/types";
 import { SidebarMenuElementsTypes } from "./enums";
 
 export interface SidebarMenuElement {
@@ -8,17 +7,10 @@ export interface SidebarMenuElement {
 
 export interface BrokerAccountMenuElement extends SidebarMenuElement {
     type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-    data: BrokerAccountPosition[]
-}
-
-export interface ModelPortfolioMenuElementData {
-    positions: ModelPortfolioPosition[];
-    totalTargetAmount: number | string;
 }
 
 export interface ModelPortfolioMenuElement extends SidebarMenuElement {
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-    data: ModelPortfolioMenuElementData
 }
 
 export interface MenuElementIdentifier {
@@ -27,20 +19,20 @@ export interface MenuElementIdentifier {
 }
 
 export interface SidebarMenuGroupType {
-    name: string,
-    isOpen: boolean,
-    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO | SidebarMenuElementsTypes.BROKER_ACCOUNT,
-    elements: ModelPortfolioMenuElement[] | BrokerAccountMenuElement[]
+    name: string;
+    isOpen: boolean;
+    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO | SidebarMenuElementsTypes.BROKER_ACCOUNT;
+    elements: ModelPortfolioMenuElement[] | BrokerAccountMenuElement[];
 }
 
 export interface ModelPortfolioMenuGroup extends SidebarMenuGroupType {
-    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO,
-    elements: ModelPortfolioMenuElement[]
+    type: SidebarMenuElementsTypes.MODEL_PORTFOLIO;
+    elements: ModelPortfolioMenuElement[];
 }
 
 export interface BrokerAccountMenuGroup extends SidebarMenuGroupType {
-    type: SidebarMenuElementsTypes.BROKER_ACCOUNT,
-    elements: BrokerAccountMenuElement[]
+    type: SidebarMenuElementsTypes.BROKER_ACCOUNT;
+    elements: BrokerAccountMenuElement[];
 }
 
 export interface SidebarMenuGroupData {

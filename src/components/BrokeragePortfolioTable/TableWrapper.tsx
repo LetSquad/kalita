@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
-import { CurrentPortfolio } from "../../models/table/types";
+import { Portfolio } from "../../models/portfolios/types";
 import BrokerTable from "./BrokerTable/BrokerTable";
 import ModelTable from "./ModelTable/ModelTable";
 
 interface Props {
-    currentPortfolio: CurrentPortfolio
+    currentPortfolio: Portfolio
 }
 
 export default function TableWrapper({ currentPortfolio }: Props) {

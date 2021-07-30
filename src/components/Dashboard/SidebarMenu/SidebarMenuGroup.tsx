@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { Accordion, Icon } from "semantic-ui-react";
+import { v4 as uuidv4 } from "uuid";
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { SidebarMenuGroupType } from "../../../models/menu/types";
 import { useAppDispatch } from "../../../store/hooks";
@@ -19,7 +20,7 @@ export default function SidebarMenuGroup(props: Props) {
     }, [dispatch]);
 
     const addElement = useCallback((type: SidebarMenuElementsTypes) => {
-        dispatch(addNewElementToGroup(type));
+        dispatch(addNewElementToGroup({ type, id: uuidv4() }));
     }, [dispatch]);
 
     return (

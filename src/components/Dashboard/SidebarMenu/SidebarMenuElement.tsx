@@ -4,14 +4,13 @@ import React, {
 import { Icon, Input } from "semantic-ui-react";
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../models/menu/types";
-import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { currentPortfolioSelector } from "../../../store/portfolios/selectors";
 import {
     deleteElementFromGroup,
     renameElementInGroup,
     setActiveId, setCurrentPortfolioName
 } from "../../../store/sidebarMenu/sidebarMenuReducer";
-import { resetCurrentPortfolio, setCurrentPortfolio } from "../../../store/table/tableReducer";
 import styles from "./styles/SidebarMenuElement.scss";
 
 interface Props {
@@ -24,18 +23,11 @@ export default function SidebarMenuElement(props: Props) {
     const inputRef = useRef<Input>(null);
 
     const activeFile = useAppSelector((state) => state.sidebarMenu.activeMenuElementId);
-    const currentPortfolio = useAppSelector((state) => state.tableData.currentPortfolio);
+    const currentPortfolio = useAppSelector(currentPortfolioSelector);
 
     const active = activeFile?.id === props.menuElement.id;
 
     const [currentEditValue, setCurrentEditValue] = useState<string>();
-
-    const changeActiveId = useCallback((type: SidebarMenuElementsTypes, id: string) => {
-        dispatch(setActiveId({
-            type,
-            id
-        }));
-    }, [dispatch]);
 
     const renameElement = useCallback((type: SidebarMenuElementsTypes, id: string, newName: string) => {
         dispatch(renameElementInGroup({
@@ -49,7 +41,6 @@ export default function SidebarMenuElement(props: Props) {
 
     const deleteElement = useCallback((type: SidebarMenuElementsTypes, id: string) => {
         if (currentPortfolio?.id === id) {
-            dispatch(resetCurrentPortfolio());
             dispatch(setCurrentPortfolioName(undefined));
         }
         dispatch(deleteElementFromGroup({
@@ -58,22 +49,12 @@ export default function SidebarMenuElement(props: Props) {
         }));
     }, [currentPortfolio?.id, dispatch]);
 
-    const setPortfolio = useCallback((id: string) => {
+    const setPortfolio = useCallback((type: SidebarMenuElementsTypes, id: string) => {
+        dispatch(setActiveId({
+            type,
+            id
+        }));
         dispatch(setCurrentPortfolioName(props.menuElement.name));
-        if (props.menuElement.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
-            dispatch(setCurrentPortfolio({
-                id,
-                type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
-                positions: props.menuElement.data.positions,
-                totalTargetAmount: props.menuElement.data.totalTargetAmount
-            }));
-        } else {
-            dispatch(setCurrentPortfolio({
-                id,
-                type: BrokeragePortfolioTypes.BROKER_ACCOUNT,
-                positions: props.menuElement.data
-            }));
-        }
     }, [dispatch, props.menuElement]);
 
     const elementRenameInput = useCallback((_currentEditValue) => (
@@ -95,15 +76,14 @@ export default function SidebarMenuElement(props: Props) {
         <div
             aria-hidden className={styles.item}
             onClick={() => {
-                changeActiveId(props.menuElement.type, props.menuElement.id);
-                setPortfolio(props.menuElement.id);
+                setPortfolio(props.menuElement.type, props.menuElement.id);
             }}
         >
             <div className={styles.name}>
                 {props.menuElement.name}
             </div>
         </div>
-    ), [changeActiveId, props.menuElement.id, props.menuElement.name, props.menuElement.type, setPortfolio]);
+    ), [props.menuElement.id, props.menuElement.name, props.menuElement.type, setPortfolio]);
 
     const elementTitle = useMemo(() => (
         currentEditValue !== undefined
