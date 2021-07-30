@@ -17,7 +17,7 @@ const BrokerAccountReportParser = lazy(/* webpackChunkName: "brokerAccountReport
 export default function SettingsModal({ currentPortfolioType, onClose, activeTab }: Props) {
     const [activeIndex, setActiveIndex] = useState<number>(activeTab);
 
-    const settingsPanes = useMemo(() => (currentPortfolioType === BrokeragePortfolioTypes.MODEL_PORTFOLIO ? [
+    const modelPortfolioPanes = useMemo(() => [
         {
             menuItem: "Источники данных",
             render: () => (
@@ -28,7 +28,8 @@ export default function SettingsModal({ currentPortfolioType, onClose, activeTab
                 </>
             )
         }
-    ] : [
+    ], []);
+    const brokerAccountPanes = useMemo(() => [
         {
             menuItem: "Загрузка отчёта брокера",
             render: () => (
@@ -37,7 +38,11 @@ export default function SettingsModal({ currentPortfolioType, onClose, activeTab
                 </Tab.Pane>
             )
         }
-    ]), [currentPortfolioType]);
+    ], []);
+    const settingsPanes = useMemo(
+        () => (currentPortfolioType === BrokeragePortfolioTypes.MODEL_PORTFOLIO ? modelPortfolioPanes : brokerAccountPanes),
+        [currentPortfolioType, modelPortfolioPanes, brokerAccountPanes]
+    );
 
     return (
         <Modal
