@@ -78,6 +78,6 @@ $menu-width-close: 30px;
   &-close {
     transform: translate3d($menu-width-close, 0, 0) !important;
     transition: all 0.5s ease 0s !important;
-    width: 100%;
+    width: calc(100% - #{$menu-width-close});
   }
 }
