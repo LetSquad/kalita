@@ -126,71 +126,71 @@ export const modelPortfolioColumnsWidth = [
 export const modelPortfolioColumns: (
     data: ModelPortfolioPosition[],
     portfolioSettings: ModelPortfolioSettings
-) => (actionBlock: JSX.Element) =>
-ModelPortfolioTabulatorColumnsDefinition[] = (data: ModelPortfolioPosition[], portfolioSettings: ModelPortfolioSettings) => (actionBlock: JSX.Element) => [
-    ...commonColumns(actionBlock),
-    {
-        title: "Вес",
-        field: ModelPortfolioColumnNames.WEIGHT,
-        sorter: SortersValues.NUMBER,
-        formatter: (cell: CellComponent) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
-        visible: true,
-        vertAlign: VerticalAlignValues.MIDDLE,
-        hozAlign: HorizontalAlignValues.LEFT,
-        headerHozAlign: HorizontalAlignValues.LEFT,
-        editor: EditorsValues.INPUT,
-        validator: "min:1",
-        topCalc: CalcsValues.SUM,
-        topCalcFormatter: FormattersValues.PLAINTEXT
-    }, {
-        title: "Целевая сумма",
-        field: ModelPortfolioColumnNames.TARGET_AMOUNT,
-        sorter: SortersValues.NUMBER,
-        formatter: FormattersValues.MONEY,
-        formatterParams: {
-            symbol: "₽",
-            symbolAfter: "р"
-        },
-        visible: true,
-        vertAlign: VerticalAlignValues.MIDDLE,
-        headerHozAlign: HorizontalAlignValues.LEFT,
-        topCalc: CalcsValues.SUM,
-        topCalcFormatter: FormattersValues.MONEY,
-        topCalcFormatterParams: {
-            symbol: "₽",
-            symbolAfter: "р"
-        }
-    }, {
-        title: "Целевое количество",
-        field: ModelPortfolioColumnNames.TARGET_QUANTITY,
-        sorter: SortersValues.NUMBER,
-        formatter: FormattersValues.PLAINTEXT,
-        visible: true,
-        vertAlign: VerticalAlignValues.MIDDLE,
-        hozAlign: HorizontalAlignValues.LEFT,
-        headerHozAlign: HorizontalAlignValues.LEFT
-    }, {
-        title: "В портфеле",
-        field: ModelPortfolioColumnNames.QUANTITY,
-        sorter: SortersValues.NUMBER,
-        formatter: (cell: CellComponent) => {
-            const quantity = cell.getValue() as number;
-            const rowIndex = cell.getRow().getIndex();
-            const targetQuantity = data.find((row) => row.id === rowIndex)?.targetQuantity;
-            if (targetQuantity !== undefined && quantity < targetQuantity) {
-                cell.getElement()?.classList?.add(styles.errorQuantity);
-            }
-
-            return portfolioSettings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT
-                ? `<span class="${styles.editCell}">${cell.getValue()}</span>`
-                : cell.getValue();
+) => (actionBlock: JSX.Element) => ModelPortfolioTabulatorColumnsDefinition[] =
+    (data: ModelPortfolioPosition[], portfolioSettings: ModelPortfolioSettings) => (actionBlock: JSX.Element) => [
+        ...commonColumns(actionBlock),
+        {
+            title: "Вес",
+            field: ModelPortfolioColumnNames.WEIGHT,
+            sorter: SortersValues.NUMBER,
+            formatter: (cell: CellComponent) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
+            visible: true,
+            vertAlign: VerticalAlignValues.MIDDLE,
+            hozAlign: HorizontalAlignValues.LEFT,
+            headerHozAlign: HorizontalAlignValues.LEFT,
+            editor: EditorsValues.INPUT,
+            validator: "min:1",
+            topCalc: CalcsValues.SUM,
+            topCalcFormatter: FormattersValues.PLAINTEXT
+        }, {
+            title: "Целевая сумма",
+            field: ModelPortfolioColumnNames.TARGET_AMOUNT,
+            sorter: SortersValues.NUMBER,
+            formatter: FormattersValues.MONEY,
+            formatterParams: {
+                symbol: "₽",
+                symbolAfter: "р"
             },
-        visible: true,
-        vertAlign: VerticalAlignValues.MIDDLE,
-        hozAlign: HorizontalAlignValues.LEFT,
-        headerHozAlign: HorizontalAlignValues.LEFT,
-        editor: portfolioSettings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT ? EditorsValues.INPUT : undefined,
-        validator: "min:0"
+            visible: true,
+            vertAlign: VerticalAlignValues.MIDDLE,
+            headerHozAlign: HorizontalAlignValues.LEFT,
+            topCalc: CalcsValues.SUM,
+            topCalcFormatter: FormattersValues.MONEY,
+            topCalcFormatterParams: {
+                symbol: "₽",
+                symbolAfter: "р"
+            }
+        }, {
+            title: "Целевое количество",
+            field: ModelPortfolioColumnNames.TARGET_QUANTITY,
+            sorter: SortersValues.NUMBER,
+            formatter: FormattersValues.PLAINTEXT,
+            visible: true,
+            vertAlign: VerticalAlignValues.MIDDLE,
+            hozAlign: HorizontalAlignValues.LEFT,
+            headerHozAlign: HorizontalAlignValues.LEFT
+        }, {
+            title: "В портфеле",
+            field: ModelPortfolioColumnNames.QUANTITY,
+            sorter: SortersValues.NUMBER,
+            formatter: (cell: CellComponent) => {
+                const quantity = cell.getValue() as number;
+                const rowIndex = cell.getRow().getIndex();
+                const targetQuantity = data.find((row) => row.id === rowIndex)?.targetQuantity;
+                if (targetQuantity !== undefined && quantity < targetQuantity) {
+                    cell.getElement()?.classList?.add(styles.errorQuantity);
+                }
+
+                return portfolioSettings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT
+                    ? `<span class="${styles.editCell}">${cell.getValue()}</span>`
+                    : cell.getValue();
+            },
+            visible: true,
+            vertAlign: VerticalAlignValues.MIDDLE,
+            hozAlign: HorizontalAlignValues.LEFT,
+            headerHozAlign: HorizontalAlignValues.LEFT,
+            editor: portfolioSettings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT ? EditorsValues.INPUT : undefined,
+            validator: "min:0"
         }
     ].sort((columnA, columnB) =>
         modelPortfolioColumnsOrder.indexOf(columnA.field) - modelPortfolioColumnsOrder.indexOf(columnB.field))

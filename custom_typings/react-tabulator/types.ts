@@ -849,7 +849,7 @@ type Formatter = (
         cell: CellComponent,
         formatterParams: { [key: string]: any },
         onRendered: (callback: () => void) => void
-    ) => string
+    ) => DataTypes
 ) |
 FormattersValues.PLAINTEXT | FormattersValues.TEXTAREA | FormattersValues.HTML | FormattersValues.COLOR |
 FormattersValues.BUTTON_TICK | FormattersValues.BUTTON_CROSS | FormattersValues.ROW_NUM | FormattersValues.HANDLE |
