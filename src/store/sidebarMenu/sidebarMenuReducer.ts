@@ -55,9 +55,9 @@ export const sidebarMenuSlice = createSlice({
         },
         deleteElementFromGroup: (state: SidebarMenuState, action: PayloadAction<MenuElementIdentifier>) => {
             if (action.payload.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
-                state.modelPortfolios.elements.filter((e) => e.id !== action.payload.id);
+                state.modelPortfolios.elements = state.modelPortfolios.elements.filter((e) => e.id !== action.payload.id);
             } else if (action.payload.type === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
-                state.brokerAccounts.elements.filter((e) => e.id !== action.payload.id);
+                state.brokerAccounts.elements = state.brokerAccounts.elements.filter((e) => e.id !== action.payload.id);
             }
         },
         renameElementInGroup: (state: SidebarMenuState, action: PayloadAction<MenuElementIdentifier & { newName: string }>) => {

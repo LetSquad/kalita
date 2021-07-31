@@ -65,9 +65,9 @@ export const portfoliosSlice = createSlice({
         },
         deletePortfolio: (state: PortfoliosState, action: PayloadAction<PortfolioIdentifier>) => {
             if (action.payload.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-                state.modelPortfolios.filter((portfolio) => portfolio.id !== action.payload.id);
+                state.modelPortfolios = state.modelPortfolios.filter((portfolio) => portfolio.id !== action.payload.id);
             } else if (action.payload.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
-                state.brokerAccounts.filter((account) => account.id !== action.payload.id);
+                state.brokerAccounts = state.brokerAccounts.filter((account) => account.id !== action.payload.id);
             }
         },
         setCurrentPortfolio: (state: PortfoliosState, action: PayloadAction<PortfolioIdentifier>) => {
