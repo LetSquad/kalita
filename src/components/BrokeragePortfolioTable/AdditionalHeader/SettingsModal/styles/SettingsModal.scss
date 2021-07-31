@@ -22,8 +22,12 @@
   }
 }
 
-.vtb-report-tab-pane {
+.settings-tab-pane {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.settings-radio {
+  margin-right: 1.5rem;
 }

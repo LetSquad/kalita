@@ -16,6 +16,8 @@ import {
 import { ModelPortfolioPosition } from "../../models/portfolios/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import styles from "./styles/columns.scss";
+import { ModelPortfolioSettings } from "../../models/settings/types";
+import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 const tickerValidator = (cell: CellComponent, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);
 
@@ -121,8 +123,11 @@ export const modelPortfolioColumnsWidth = [
     { minWidth: 40, maxWidth: 40 }
 ];
 
-export const modelPortfolioColumns: (data: ModelPortfolioPosition[]) => (actionBlock: JSX.Element) =>
-ModelPortfolioTabulatorColumnsDefinition[] = (data: ModelPortfolioPosition[]) => (actionBlock: JSX.Element) => [
+export const modelPortfolioColumns: (
+    data: ModelPortfolioPosition[],
+    portfolioSettings: ModelPortfolioSettings
+) => (actionBlock: JSX.Element) =>
+ModelPortfolioTabulatorColumnsDefinition[] = (data: ModelPortfolioPosition[], portfolioSettings: ModelPortfolioSettings) => (actionBlock: JSX.Element) => [
     ...commonColumns(actionBlock),
     {
         title: "Вес",
@@ -176,19 +181,20 @@ ModelPortfolioTabulatorColumnsDefinition[] = (data: ModelPortfolioPosition[]) =>
                 cell.getElement()?.classList?.add(styles.errorQuantity);
             }
 
-            return `<span class="${styles.editCell}">${cell.getValue()}</span>`;
-        },
+            return portfolioSettings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT
+                ? `<span class="${styles.editCell}">${cell.getValue()}</span>`
+                : cell.getValue();
+            },
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         hozAlign: HorizontalAlignValues.LEFT,
         headerHozAlign: HorizontalAlignValues.LEFT,
-        editor: EditorsValues.INPUT,
+        editor: portfolioSettings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT ? EditorsValues.INPUT : undefined,
         validator: "min:0"
-    }
-].sort((columnA, columnB) =>
-    modelPortfolioColumnsOrder.indexOf(columnA.field) - modelPortfolioColumnsOrder.indexOf(columnB.field))
-    .map((column, index) =>
-        ({
+        }
+    ].sort((columnA, columnB) =>
+        modelPortfolioColumnsOrder.indexOf(columnA.field) - modelPortfolioColumnsOrder.indexOf(columnB.field))
+        .map((column, index) => ({
             ...column,
             minWidth: modelPortfolioColumnsWidth[index].minWidth,
             maxWidth: modelPortfolioColumnsWidth[index].maxWidth,

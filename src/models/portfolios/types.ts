@@ -1,14 +1,15 @@
 import { EditableTableColumns } from "../table/enums";
 import { BrokeragePortfolioTypes, BrokerReportEncoding, BrokerReportFormat } from "./enums";
+import { ModelPortfolioSettings } from "../settings/types";
 
 export interface ModelPortfolioIdentifier {
     id: string;
-    type: BrokeragePortfolioTypes.MODEL_PORTFOLIO
+    type: BrokeragePortfolioTypes.MODEL_PORTFOLIO;
 }
 
 export interface BrokerAccountIdentifier {
     id: string;
-    type: BrokeragePortfolioTypes.BROKER_ACCOUNT
+    type: BrokeragePortfolioTypes.BROKER_ACCOUNT;
 }
 
 export type PortfolioIdentifier = ModelPortfolioIdentifier | BrokerAccountIdentifier;
@@ -25,6 +26,7 @@ export interface ModelPortfolio {
     type: BrokeragePortfolioTypes.MODEL_PORTFOLIO;
     positions: ModelPortfolioPosition[];
     totalTargetAmount: number | string;
+    settings: ModelPortfolioSettings;
 }
 
 export interface BrokerAccount {

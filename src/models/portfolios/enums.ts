@@ -1,6 +1,6 @@
 export enum BrokeragePortfolioTypes {
-    BROKER_ACCOUNT = "brokerAccount",
-    MODEL_PORTFOLIO = "modelPortfolio"
+    MODEL_PORTFOLIO = "modelPortfolio",
+    BROKER_ACCOUNT = "brokerAccount"
 }
 
 export enum BrokerReportFormat {
