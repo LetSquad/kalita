@@ -2,43 +2,56 @@ import _ from "lodash";
 import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
 import { $enum } from "ts-enum-util";
+import { ColumnCalcs, RowRange, TableLayout } from "../../../custom_typings/react-tabulator/enums";
+import {
+    CellComponent,
+    ColumnDefinition,
+    DataTypes,
+    GroupComponent,
+    RowComponent,
+    TabulatorOptions, TabulatorRef,
+    TabulatorTableDownloadConfig
+} from "../../../custom_typings/react-tabulator/types";
 import { getMoexQuotes } from "../../apis/moexApi";
-import { TabulatorColumn } from "../../../custom_typings/react-tabulator/types";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
+import { TableData } from "../../models/table/types";
 import { useAppDispatch } from "../../store/hooks";
 import {
-    addNewPosition, deleteRowById, update, updateGroupName
+    addNewPosition,
+    deleteRowById,
+    update,
+    updateGroupName
 } from "../../store/portfolios/portfoliosReducer";
 import { ActionBlock } from "./ActionBlock";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
-import { generateCsv, generateExportList } from "./utils/utils";
 import styles from "./styles/Table.scss";
+import { generateCsv, generateExportList } from "./utils/utils";
 
 interface Props {
-    columns: (actionBlock: JSX.Element) => TabulatorColumn[],
+    columns: (actionBlock: JSX.Element) => ColumnDefinition[],
     currentPortfolio: Portfolio,
     additionalHeaderPart?: JSX.Element
 }
 
 export default function Table({ columns, currentPortfolio, additionalHeaderPart }: Props) {
     const dispatch = useAppDispatch();
-    const tableRef = useRef<any>(null);
+    const tableRef = useRef<TabulatorRef>(null);
 
-    const cellUpdated = useCallback((cell: any) => {
+    const cellUpdated = useCallback((cell: CellComponent) => {
         dispatch(update({
             id: cell.getRow().getData().id,
             valueKey: $enum(EditableTableColumns)
                 .asValueOrThrow(cell.getField()),
-            newValue: cell.getValue()
+            newValue: cell.getValue() as string
         }));
         if (cell.getField() === BaseColumnNames.TICKER) {
             dispatch(getMoexQuotes());
         }
     }, [dispatch]);
 
-    const rowMoved = useCallback((row: any) => {
-        const newOrder = row.getTable().getRows().map((_row: any) => _row.getData().id);
+    const rowMoved = useCallback((row: RowComponent) => {
+        const newOrder = row.getTable().getRows().map((_row: RowComponent) => _row.getData().id);
         dispatch(update({
             id: row.getData().id,
             valueKey: EditableTableColumns.GROUP_NAME,
@@ -62,16 +75,16 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         dispatch(deleteRowById(id));
     }, [dispatch]);
 
-    const options = useMemo(() => ({
+    const options: TabulatorOptions = useMemo(() => ({
         movableRows: true,
         headerSortTristate: true,
         layoutColumnsOnNewData: true,
         groupBy: "groupName",
-        columnCalcs: "both",
+        columnCalcs: ColumnCalcs.BOTH,
         reactiveData: true,
-        layout: "fitColumns",
+        layout: TableLayout.FIT_COLUMNS,
         resizableColumns: false,
-        groupHeader: (value: any, count: any, data: any, group: any) => {
+        groupHeader: (value: DataTypes, count: number, data: TableData, group: GroupComponent) => {
             const elem = document.createElement("div");
             elem.className = styles.groupContainer;
             const input = document.createElement("input");
@@ -95,15 +108,14 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const importTableToCsvText = useCallback(() => {
         if (tableRef.current) {
-            const downloadConfig = {
+            const downloadConfig: TabulatorTableDownloadConfig = {
                 columnHeaders: true,
                 columnGroups: true,
                 rowGroups: true,
                 columnCalcs: false,
                 dataTree: true
             };
-
-            let list = tableRef.current.table.modules.export.generateExportList(downloadConfig, false, "visible", "download");
+            let list = tableRef.current.table.modules.export.generateExportList(downloadConfig, false, RowRange.VISIBLE, "download");
             list = generateExportList(list);
             return generateCsv(list);
         }
@@ -117,6 +129,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         />
     ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
 
+    console.log("TABLE_REF", tableRef.current);
     return (
         <div className={styles.container}>
             <AdditionalHeader

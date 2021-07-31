@@ -1,4 +1,6 @@
-export function generateExportList(list: any[]) {
+import { ExportRow } from "../../../../custom_typings/react-tabulator/types";
+
+export function generateExportList(list: ExportRow[]) {
     let updatedList: any[] = [];
 
     const groupsIndexes: number[] = list.map((row, id) => (row.type === "group"
@@ -12,7 +14,7 @@ export function generateExportList(list: any[]) {
             .map((data: any, id: number) => (data.value === undefined
                 ? id
                 : undefined))
-            .filter((index: number) => index !== undefined));
+            .filter((index?: number) => index !== undefined));
         header.columns = [
             ...header.columns,
             {
@@ -44,7 +46,7 @@ export function generateExportList(list: any[]) {
     return list;
 }
 
-export function generateCsv(list: any[], options?: { delimiter: "." | ",", bom?: boolean }) {
+export function generateCsv(list: ExportRow[], options?: { delimiter: "." | ",", bom?: boolean }) {
     const delimiter = options && options.delimiter
         ? options.delimiter
         : ",";

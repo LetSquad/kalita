@@ -33,60 +33,60 @@ export interface BrokerAccount {
     positions: BrokerAccountPosition[];
 }
 
+export interface PortfolioPosition {
+    readonly id: string;
+    readonly ticker: string;
+    readonly percentage: number;
+    readonly currentPrice: number;
+    readonly quantity: number;
+    readonly amount: number;
+    readonly groupName: string;
+}
+
 export interface ModelPortfolioPosition extends PortfolioPosition {
-    readonly weight: number,
-    readonly targetAmount: number,
-    readonly targetQuantity: number
+    readonly weight: number;
+    readonly targetAmount: number;
+    readonly targetQuantity: number;
 }
 
 export interface BrokerAccountPosition extends PortfolioPosition {
-    readonly averagePrice: number
-}
-
-export interface PortfolioPosition {
-    readonly id: string,
-    readonly ticker: string,
-    readonly percentage: number,
-    readonly currentPrice: number,
-    readonly quantity: number,
-    readonly amount: number,
-    readonly groupName: string
+    readonly averagePrice: number;
 }
 
 export interface PortfolioUpdatePayload {
-    readonly id: string,
-    readonly valueKey: EditableTableColumns,
-    readonly newValue: string,
-    readonly newOrder?: string[]
+    readonly id: string;
+    readonly valueKey: EditableTableColumns;
+    readonly newValue: string;
+    readonly newOrder?: string[];
 }
 
 export interface BrokerReportMetadata {
-    readonly brokerName: string,
-    readonly icon: string,
-    readonly reportFormat: BrokerReportFormat,
-    readonly reportEncoding: BrokerReportEncoding,
-    readonly reportParser: (brokerName: string, data: any) => BrokerReportData
+    readonly brokerName: string;
+    readonly icon: string;
+    readonly reportFormat: BrokerReportFormat;
+    readonly reportEncoding: BrokerReportEncoding;
+    readonly reportParser: (brokerName: string, data: any) => BrokerReportData;
 }
 
 export interface BrokerReportPath {
-    readonly path: string,
-    readonly format: BrokerReportFormat,
-    readonly encoding: BrokerReportEncoding
+    readonly path: string;
+    readonly format: BrokerReportFormat;
+    readonly encoding: BrokerReportEncoding;
 }
 
 export interface BrokerReportData {
-    readonly accountName: string,
-    readonly positions: BrokerReportPosition[]
+    readonly accountName: string;
+    readonly positions: BrokerReportPosition[];
 }
 
 export interface BrokerReportPosition {
-    readonly code: string,
-    readonly averagePrice: number,
-    readonly quantity: number
+    readonly code: string;
+    readonly averagePrice: number;
+    readonly quantity: number;
 }
 
 export interface BrokerReportDeal {
-    readonly code: string,
-    readonly price: number,
-    readonly quantity: number
+    readonly code: string;
+    readonly price: number;
+    readonly quantity: number;
 }
