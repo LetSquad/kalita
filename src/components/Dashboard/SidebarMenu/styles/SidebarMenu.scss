@@ -7,6 +7,14 @@ $title-height: 248px;
 $separator-height: 2px;
 $icon-container-height: 24px;
 
+.sidebar {
+  @extend %sidebar;
+  align-items: flex-start;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .title {
   overflow: hidden;
   text-overflow: ellipsis;

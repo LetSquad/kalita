@@ -99,21 +99,18 @@ export default function Dashboard() {
                     direction="left"
                     vertical
                     visible
-                    className={sidebarVisible ? styles.sidebarOpen : styles.sidebarClose}
+                    className={sidebarVisible ? styles.sidebarContainerOpen : styles.sidebarContainerClose}
                 >
                     {
                         sidebarVisible
                             ? <SidebarMenu projectName={projectName} onSidebarClose={() => setSidebarVisible(false)} />
                             : (
-                                <>
+                                <div aria-hidden onClick={() => setSidebarVisible(true)} className={styles.sidebarClose}>
                                     <div className={styles.sidebarCloseTitleContainer}>
                                         <span className={styles.sidebarCloseTitle}>{closeSidebarTitle}</span>
                                     </div>
-                                    <Icon
-                                        className={styles.sidebarCloseIcon} name="angle double right" link
-                                        onClick={() => setSidebarVisible(true)}
-                                    />
-                                </>
+                                    <Icon className={styles.sidebarCloseIcon} name="angle double right" link />
+                                </div>
                             )
                     }
                 </Sidebar>
