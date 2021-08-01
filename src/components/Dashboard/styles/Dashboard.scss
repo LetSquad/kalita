@@ -16,8 +16,10 @@ $menu-width-close: 30px;
   background-color: #ececec;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   &-container {
+    overflow: hidden !important;
     transition: all 0.75s ease 0s !important;
     will-change: transition;
 

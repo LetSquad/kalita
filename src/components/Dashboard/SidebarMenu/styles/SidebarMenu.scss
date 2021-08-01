@@ -11,8 +11,7 @@ $icon-container-height: 24px;
   @extend %sidebar;
   align-items: flex-start;
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .title {
