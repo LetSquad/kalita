@@ -35,16 +35,6 @@ export interface BrokerAccount {
     positions: BrokerAccountPosition[];
 }
 
-export interface ModelPortfolioPosition extends PortfolioPosition {
-    readonly weight: number;
-    readonly targetAmount: number;
-    readonly targetQuantity: number;
-}
-
-export interface BrokerAccountPosition extends PortfolioPosition {
-    readonly averagePrice: number;
-}
-
 export interface PortfolioPosition {
     readonly id: string;
     readonly ticker: string;
@@ -53,6 +43,16 @@ export interface PortfolioPosition {
     readonly quantity: number;
     readonly amount: number;
     readonly groupName: string;
+}
+
+export interface ModelPortfolioPosition extends PortfolioPosition {
+    readonly weight: number;
+    readonly targetAmount: number;
+    readonly targetQuantity: number;
+}
+
+export interface BrokerAccountPosition extends PortfolioPosition {
+    readonly averagePrice: number;
 }
 
 export interface PortfolioUpdatePayload {

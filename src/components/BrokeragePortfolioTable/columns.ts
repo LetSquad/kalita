@@ -1,24 +1,27 @@
 import { reactFormatter } from "react-tabulator";
 import {
+    CalcsValues,
+    EditorsValues,
     FormattersValues,
     HorizontalAlignValues,
     SortersValues,
     VerticalAlignValues
-} from "../../models/libs/react-tabulator/enums";
+} from "../../../custom_typings/react-tabulator/enums";
 import {
-    BaseTabulatorColumn,
-    BrokerAccountTabulatorColumn,
-    ModelPortfolioTabulatorColumn
-} from "../../models/libs/react-tabulator/types";
+    CellComponent,
+    BaseTabulatorColumnsDefinition,
+    ModelPortfolioTabulatorColumnsDefinition,
+    BrokerAccountTabulatorColumnsDefinition
+} from "../../../custom_typings/react-tabulator/types";
 import { ModelPortfolioPosition } from "../../models/portfolios/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import styles from "./styles/columns.scss";
 import { ModelPortfolioSettings } from "../../models/settings/types";
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
-const tickerValidator = (cell: any, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);
+const tickerValidator = (cell: CellComponent, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);
 
-export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumn[] = (actionBlock: JSX.Element) => [
+export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumnsDefinition[] = (actionBlock: JSX.Element) => [
     {
         field: BaseColumnNames.HANDLE,
         rowHandle: true,
@@ -29,11 +32,11 @@ export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumn[] 
         title: "Инструмент",
         field: BaseColumnNames.TICKER,
         sorter: SortersValues.STRING,
-        formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
+        formatter: (cell: CellComponent) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         headerHozAlign: HorizontalAlignValues.LEFT,
-        editor: "input",
+        editor: EditorsValues.INPUT,
         validator: tickerValidator
     }, {
         title: "Доля",
@@ -47,7 +50,7 @@ export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumn[] 
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         headerHozAlign: HorizontalAlignValues.LEFT,
-        topCalc: "sum",
+        topCalc: CalcsValues.SUM,
         topCalcFormatter: FormattersValues.MONEY,
         topCalcFormatterParams: {
             symbol: "%",
@@ -78,7 +81,7 @@ export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumn[] 
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         headerHozAlign: HorizontalAlignValues.LEFT,
-        topCalc: "sum",
+        topCalc: CalcsValues.SUM,
         topCalcFormatter: FormattersValues.MONEY,
         topCalcFormatterParams: {
             symbol: "₽",
@@ -123,21 +126,21 @@ export const modelPortfolioColumnsWidth = [
 export const modelPortfolioColumns: (
     data: ModelPortfolioPosition[],
     portfolioSettings: ModelPortfolioSettings
-) => (actionBlock: JSX.Element) => ModelPortfolioTabulatorColumn[] =
+) => (actionBlock: JSX.Element) => ModelPortfolioTabulatorColumnsDefinition[] =
     (data: ModelPortfolioPosition[], portfolioSettings: ModelPortfolioSettings) => (actionBlock: JSX.Element) => [
         ...commonColumns(actionBlock),
         {
             title: "Вес",
             field: ModelPortfolioColumnNames.WEIGHT,
             sorter: SortersValues.NUMBER,
-            formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
+            formatter: (cell: CellComponent) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
             visible: true,
             vertAlign: VerticalAlignValues.MIDDLE,
             hozAlign: HorizontalAlignValues.LEFT,
             headerHozAlign: HorizontalAlignValues.LEFT,
-            editor: "input",
+            editor: EditorsValues.INPUT,
             validator: "min:1",
-            topCalc: "sum",
+            topCalc: CalcsValues.SUM,
             topCalcFormatter: FormattersValues.PLAINTEXT
         }, {
             title: "Целевая сумма",
@@ -151,7 +154,7 @@ export const modelPortfolioColumns: (
             visible: true,
             vertAlign: VerticalAlignValues.MIDDLE,
             headerHozAlign: HorizontalAlignValues.LEFT,
-            topCalc: "sum",
+            topCalc: CalcsValues.SUM,
             topCalcFormatter: FormattersValues.MONEY,
             topCalcFormatterParams: {
                 symbol: "₽",
@@ -170,12 +173,12 @@ export const modelPortfolioColumns: (
             title: "В портфеле",
             field: ModelPortfolioColumnNames.QUANTITY,
             sorter: SortersValues.NUMBER,
-            formatter: (cell: any) => {
-                const quantity = cell.getValue();
+            formatter: (cell: CellComponent) => {
+                const quantity = cell.getValue() as number;
                 const rowIndex = cell.getRow().getIndex();
                 const targetQuantity = data.find((row) => row.id === rowIndex)?.targetQuantity;
                 if (targetQuantity !== undefined && quantity < targetQuantity) {
-                    cell.getElement().classList.add(styles.errorQuantity);
+                    cell.getElement()?.classList?.add(styles.errorQuantity);
                 }
 
                 return portfolioSettings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT
@@ -186,7 +189,7 @@ export const modelPortfolioColumns: (
             vertAlign: VerticalAlignValues.MIDDLE,
             hozAlign: HorizontalAlignValues.LEFT,
             headerHozAlign: HorizontalAlignValues.LEFT,
-            editor: portfolioSettings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT ? "input" : undefined,
+            editor: portfolioSettings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT ? EditorsValues.INPUT : undefined,
             validator: "min:0"
         }
     ].sort((columnA, columnB) =>
@@ -220,25 +223,26 @@ export const brokerAccountColumnsWidth = [
     { minWidth: 40, maxWidth: 40 }
 ];
 
-export const brokerAccountColumns: (actionBlock: JSX.Element) => BrokerAccountTabulatorColumn[] = (actionBlock: JSX.Element) => [
+export const brokerAccountColumns: (actionBlock: JSX.Element) =>
+BrokerAccountTabulatorColumnsDefinition[] = (actionBlock: JSX.Element) => [
     ...commonColumns(actionBlock),
     {
         title: "Цена покупки",
         field: BrokerAccountColumnNames.AVERAGE_PRICE,
         sorter: SortersValues.NUMBER,
-        formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()} ₽</span>`,
-        editor: "input",
+        formatter: (cell: CellComponent) => `<span class="${styles.editCell}">${cell.getValue()} ₽</span>`,
+        editor: EditorsValues.INPUT,
         validator: "min:0"
     }, {
         title: "В портфеле",
         field: BrokerAccountColumnNames.QUANTITY,
         sorter: SortersValues.NUMBER,
-        formatter: (cell: any) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
+        formatter: (cell: CellComponent) => `<span class="${styles.editCell}">${cell.getValue()}</span>`,
         visible: true,
         vertAlign: VerticalAlignValues.MIDDLE,
         hozAlign: HorizontalAlignValues.LEFT,
         headerHozAlign: HorizontalAlignValues.LEFT,
-        editor: "input",
+        editor: EditorsValues.INPUT,
         validator: "min:0"
     }
 ].sort((columnA, columnB) =>
