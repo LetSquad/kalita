@@ -19,7 +19,7 @@ import styles from "./styles/columns.scss";
 import { ModelPortfolioSettings } from "../../models/settings/types";
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
-const tickerValidator = (cell: CellComponent, value: string) => /^[\dA-Z]([\d.A-Z]){0,9}$/.test(value);
+const tickerValidator = (cell: CellComponent, value: string) => /^[\dA-Z]([\d.A-Z]){0,11}$/.test(value);
 
 export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumnsDefinition[] = (actionBlock: JSX.Element) => [
     {

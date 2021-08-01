@@ -69,6 +69,7 @@
         "no-shadow": "off",
         "no-underscore-dangle": "off",
         "unicorn/no-useless-undefined": "off",
+        "unicorn/require-post-message-target-origin": "off",
         "@typescript-eslint/indent": [
             "error",
             4

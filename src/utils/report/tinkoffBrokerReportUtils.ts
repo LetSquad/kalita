@@ -49,20 +49,24 @@ export function parseTinkoffReport(brokerName: string, data: any[]): BrokerRepor
             }
         } else if (currentChapterNumber === POSITIONS_CHAPTER_NUMBER && name !== POSITIONS_CHAPTER_SUBHEADER) {
             const ticker = row[POSITION_TICKER_INDEX];
-            let totalPrice = 0;
-            let totalQuantity = 0;
+            let dealsSum = 0;
+            let dealsQuantity = 0;
             const deals = dealsMap.get(ticker);
             if (deals) {
                 for (const deal of deals) {
-                    totalPrice += deal.price * deal.quantity;
-                    totalQuantity += deal.quantity;
+                    dealsSum += deal.price * deal.quantity;
+                    dealsQuantity += deal.quantity;
                 }
             }
-            positions.push({
-                code: ticker,
-                averagePrice: Math.round((totalPrice / totalQuantity) * 100) / 100,
-                quantity: Number.parseInt(row[POSITION_QUANTITY_INDEX], 10)
-            });
+
+            const quantity = Number.parseInt(row[POSITION_QUANTITY_INDEX], 10);
+            if (quantity !== 0) {
+                positions.push({
+                    code: ticker,
+                    averagePrice: dealsQuantity === 0 ? 0 : Math.round((dealsSum / dealsQuantity) * 100) / 100,
+                    quantity
+                });
+            }
         }
     }
     return { accountName: brokerName, positions };

@@ -39,8 +39,16 @@ function getStock(name?: string) {
     } : undefined);
 }
 
-function getFonds(name?: string) {
+function getEtf(name?: string) {
     return moexHttpClient.get(getUrl("TQTF"), name ? {
+        params: {
+            securities: name
+        }
+    } : undefined);
+}
+
+function getFund(name?: string) {
+    return moexHttpClient.get(getUrl("TQIF"), name ? {
         params: {
             securities: name
         }
@@ -52,7 +60,8 @@ export const getMoexQuotes = createAsyncThunk(
     async () => {
         const results = await Promise.all([
             getStock(),
-            getFonds()
+            getEtf(),
+            getFund()
         ]);
         let quotes: Quote[] = [];
         for (const el of results) {
@@ -67,7 +76,8 @@ export const getMoexQuotesForName = createAsyncThunk<{ tickerName: string, quote
     async (tickerName: string) => {
         const results = await Promise.all([
             getStock(tickerName),
-            getFonds(tickerName)
+            getEtf(tickerName),
+            getFund(tickerName)
         ]);
 
         for (const el of results) {
