@@ -1,6 +1,4 @@
-$flags-image-path: '~semantic-ui-sass/images/';
-$icons-font-path: '~semantic-ui-sass/icons/';
-@import '~semantic-ui-sass/semantic-ui';
+@import '~semantic-ui-css/semantic.min.css';
 @import '~react-tabulator/lib/css/bootstrap/tabulator_bootstrap4.min.css';
 @import '~react-tabulator/lib/styles.css';
 

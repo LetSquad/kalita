@@ -1,15 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import {
-    MenuElementIdentifier,
-    SidebarMenuElement,
-    SidebarMenuGroupData
+    MenuElementIdentifier, MenuElementOrder, SidebarMenuElement, SidebarMenuGroupData
 } from "../../models/menu/types";
-import {
-    baseSidebarMenuGroups,
-    newBrokerGroupMenuElement,
-    newModelGroupMenuElement
-} from "./sidebarMenuReducerHelper";
+import { baseSidebarMenuGroups, newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
 
 interface SidebarMenuState extends SidebarMenuGroupData {
     currentProjectName?: string;
@@ -81,6 +75,28 @@ export const sidebarMenuSlice = createSlice({
         setActiveId: (state: SidebarMenuState, action: PayloadAction<MenuElementIdentifier>) => {
             state.activeMenuElementId = action.payload;
         },
+        updateOrder: (state: SidebarMenuState, action: PayloadAction<{
+            oldOrder: MenuElementOrder,
+            newOrder: MenuElementOrder
+        }>) => {
+            if (action.payload.oldOrder.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
+                [
+                    state.modelPortfolios.elements[action.payload.oldOrder.index],
+                    state.modelPortfolios.elements[action.payload.newOrder.index]
+                ] = [
+                    state.modelPortfolios.elements[action.payload.newOrder.index],
+                    state.modelPortfolios.elements[action.payload.oldOrder.index]
+                ];
+            } else if (action.payload.oldOrder.type === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
+                [
+                    state.brokerAccounts.elements[action.payload.oldOrder.index],
+                    state.brokerAccounts.elements[action.payload.newOrder.index]
+                ] = [
+                    state.brokerAccounts.elements[action.payload.newOrder.index],
+                    state.brokerAccounts.elements[action.payload.oldOrder.index]
+                ];
+            }
+        },
         setDefault: () => initialState
     }
 });
@@ -94,6 +110,7 @@ export const {
     renameElementInGroup,
     changePortfolioTypeOpenState,
     setActiveId,
+    updateOrder,
     setDefault
 } = sidebarMenuSlice.actions;
 

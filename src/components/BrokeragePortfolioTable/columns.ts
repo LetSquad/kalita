@@ -112,7 +112,7 @@ export const modelPortfolioColumnsOrder = [
 
 export const modelPortfolioColumnsWidth = [
     { minWidth: 30, maxWidth: 30 },
-    { minWidth: 90, maxWidth: 170, widthGrow: 4 },
+    { minWidth: 130, maxWidth: 170, widthGrow: 4 },
     { minWidth: 80, maxWidth: 110, widthGrow: 1 },
     { minWidth: 85, maxWidth: 85 },
     { minWidth: 165, widthGrow: 2 },
@@ -214,7 +214,7 @@ export const brokerAccountColumnsOrder = [
 
 export const brokerAccountColumnsWidth = [
     { minWidth: 30, maxWidth: 30 },
-    { minWidth: 90, maxWidth: 170, widthGrow: 3 },
+    { minWidth: 130, maxWidth: 170, widthGrow: 3 },
     { minWidth: 85, maxWidth: 85 },
     { minWidth: 145, widthGrow: 2 },
     { minWidth: 85, widthGrow: 2 },

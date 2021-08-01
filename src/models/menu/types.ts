@@ -18,6 +18,11 @@ export interface MenuElementIdentifier {
     type: SidebarMenuElementsTypes;
 }
 
+export interface MenuElementOrder {
+    index: number;
+    type: SidebarMenuElementsTypes;
+}
+
 export interface SidebarMenuGroupType {
     name: string;
     isOpen: boolean;
