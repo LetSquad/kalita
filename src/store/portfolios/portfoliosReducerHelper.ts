@@ -239,7 +239,7 @@ export function getNewGroupName(tableData: TableData): string {
     }
     const newGroupsNums = groups.map((groupName) => {
         if (groupName.length === NEW_GROUP.length) return 0;
-        return Number.parseInt(groupName[groupName.length - 1], 10);
-    }).sort();
+        return Number.parseInt(groupName.slice(groupName.lastIndexOf(" ")), 10);
+    }).sort((a, b) => a - b);
     return `${NEW_GROUP} ${newGroupsNums[newGroupsNums.length - 1] + 1}`;
 }
