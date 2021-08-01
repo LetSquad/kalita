@@ -24,7 +24,7 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
     }, [dispatch, history]);
 
     return (
-        <>
+        <div className={styles.sidebar}>
             <div className={styles.titleContainer}>
                 <span className={styles.title}>{projectName}</span>
                 <Icon name="log out" link onClick={closeProject} />
@@ -37,6 +37,6 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
             <div className={styles.iconContainer}>
                 <Icon className={styles.icon} name="angle double left" onClick={onSidebarClose} link />
             </div>
-        </>
+        </div>
     );
 }
