@@ -1,18 +1,24 @@
 import React, { useCallback } from "react";
+import {
+    DragDropContext,
+    Draggable,
+    Droppable,
+    DropResult
+} from "react-beautiful-dnd";
 import { Accordion, Icon } from "semantic-ui-react";
 import { v4 as uuidv4 } from "uuid";
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { SidebarMenuGroupType } from "../../../models/menu/types";
 import { useAppDispatch } from "../../../store/hooks";
-import { addNewElementToGroup, changePortfolioTypeOpenState } from "../../../store/sidebarMenu/sidebarMenuReducer";
+import { addNewElementToGroup, changePortfolioTypeOpenState, updateOrder } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import SidebarMenuElement from "./SidebarMenuElement";
 import styles from "./styles/SidebarMenuGroup.scss";
 
-interface Props {
-    sidebarMenuGroupType: SidebarMenuGroupType
+interface SidebarMenuGroupProps {
+    sidebarMenuGroupType: SidebarMenuGroupType;
 }
 
-export default function SidebarMenuGroup(props: Props) {
+export default function SidebarMenuGroup({ sidebarMenuGroupType }: SidebarMenuGroupProps) {
     const dispatch = useAppDispatch();
 
     const changeOpenState = useCallback((type: SidebarMenuElementsTypes) => {
@@ -20,35 +26,82 @@ export default function SidebarMenuGroup(props: Props) {
     }, [dispatch]);
 
     const addElement = useCallback((type: SidebarMenuElementsTypes) => {
-        dispatch(addNewElementToGroup({ type, id: uuidv4() }));
+        dispatch(addNewElementToGroup({
+            type,
+            id: uuidv4()
+        }));
+    }, [dispatch]);
+
+    const onDragEnd = useCallback((result: DropResult) => {
+        if (result.destination) {
+            dispatch(updateOrder({
+                oldOrder: {
+                    index: result.source.index,
+                    type: result.source.droppableId as SidebarMenuElementsTypes
+                },
+                newOrder: {
+                    index: result.destination.index,
+                    type: result.destination.droppableId as SidebarMenuElementsTypes
+                }
+            }));
+        }
     }, [dispatch]);
 
     return (
         <Accordion className={styles.accordion}>
             <Accordion.Title
-                className={props.sidebarMenuGroupType.elements.length > 0
+                className={sidebarMenuGroupType.elements.length > 0
                     ? styles.item
                     : styles.itemEmpty}
             >
-                {props.sidebarMenuGroupType.elements.length > 0
+                {sidebarMenuGroupType.elements.length > 0
                     ? (
                         <Icon
                             name="dropdown"
-                            className={props.sidebarMenuGroupType.isOpen
+                            className={sidebarMenuGroupType.isOpen
                                 ? styles.dropdownOpen
                                 : styles.dropdown}
-                            onClick={() => changeOpenState(props.sidebarMenuGroupType.type)}
+                            onClick={() => changeOpenState(sidebarMenuGroupType.type)}
                         />
                     )
                     : null}
-                <span>{props.sidebarMenuGroupType.name}</span>
-                <Icon name="plus" className={styles.addIcon} link onClick={() => addElement(props.sidebarMenuGroupType.type)} />
+                <span>{sidebarMenuGroupType.name}</span>
+                <Icon name="plus" className={styles.addIcon} link onClick={() => addElement(sidebarMenuGroupType.type)} />
             </Accordion.Title>
-            <Accordion.Content active={props.sidebarMenuGroupType.isOpen} className={styles.content}>
-                {props.sidebarMenuGroupType.elements.map((portfolio) => (
-                    <SidebarMenuElement key={portfolio.id} menuElement={portfolio} />
-                ))}
-            </Accordion.Content>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId={sidebarMenuGroupType.type}>
+                    {(provided) => (
+                        <Accordion.Content
+                            active={sidebarMenuGroupType.isOpen}
+                            className={styles.content}
+                        >
+                            <div
+                                /* eslint-disable-next-line react/jsx-props-no-spreading */
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                            >
+                                {sidebarMenuGroupType.elements.map((portfolio, index) => (
+                                    <Draggable
+                                        key={portfolio.id}
+                                        draggableId={portfolio.id}
+                                        index={index}
+                                        isDragDisabled={sidebarMenuGroupType.elements.length < 2}
+                                    >
+                                        {(itemProvided) => (
+                                            <SidebarMenuElement
+                                                itemProvided={itemProvided}
+                                                key={portfolio.id}
+                                                menuElement={portfolio}
+                                            />
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        </Accordion.Content>
+                    )}
+                </Droppable>
+            </DragDropContext>
         </Accordion>
     );
 }

@@ -18,7 +18,8 @@ $menu-width-close: 30px;
   flex-direction: column;
 
   &-container {
-    transition: all 0.5s ease 0s !important;
+    transition: all 0.75s ease 0s !important;
+    will-change: transition;
 
     &-close {
       @extend %sidebar-container;
@@ -73,16 +74,20 @@ $menu-width-close: 30px;
 .pusher,
 %pusher {
   height: 100%;
+  transition: all 0.5s ease 0s !important;
+  will-change: transition;
 
   &-open {
-    transform: translate3d($menu-width-open, 0, 0) !important;
-    transition: all 0.5s ease 0s !important;
+    @extend %pusher;
+    left: $menu-width-open;
+    transform: none !important;
     width: calc(100% - #{$menu-width-open});
   }
 
   &-close {
-    transform: translate3d($menu-width-close, 0, 0) !important;
-    transition: all 0.5s ease 0s !important;
+    @extend %pusher;
+    left: $menu-width-close;
+    transform: none !important;
     width: calc(100% - #{$menu-width-close});
   }
 }

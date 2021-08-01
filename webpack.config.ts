@@ -124,13 +124,10 @@ module.exports = () => {
                 }]
             }, {
                 test: /\.(ignore|zip|png|ico|ttf|otf|eot|svg|woff(2)?)(\?[\da-z]+)?$/,
-                use: [{
-                    loader: "file-loader",
-                    options: {
-                        name: "[name]-[contenthash].[ext]",
-                        outputPath: "static/assets/"
-                    }
-                }]
+                type: "asset/resource",
+                generator: {
+                    filename: "static/assets/[name]-[contenthash].[ext]"
+                }
             }]
         },
         optimization: {

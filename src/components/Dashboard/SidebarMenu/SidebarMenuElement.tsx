@@ -1,6 +1,7 @@
 import React, {
     useCallback, useEffect, useMemo, useRef, useState
 } from "react";
+import { DraggableProvided } from "react-beautiful-dnd";
 import { Icon, Input } from "semantic-ui-react";
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../models/menu/types";
@@ -13,11 +14,12 @@ import {
 } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import styles from "./styles/SidebarMenuElement.scss";
 
-interface Props {
+interface SidebarMenuElementProps {
+    itemProvided: DraggableProvided
     menuElement: ModelPortfolioMenuElement | BrokerAccountMenuElement;
 }
 
-export default function SidebarMenuElement(props: Props) {
+export default function SidebarMenuElement({ itemProvided, menuElement }: SidebarMenuElementProps) {
     const dispatch = useAppDispatch();
 
     const inputRef = useRef<Input>(null);
@@ -25,7 +27,7 @@ export default function SidebarMenuElement(props: Props) {
     const activeFile = useAppSelector((state) => state.sidebarMenu.activeMenuElementId);
     const currentPortfolio = useAppSelector(currentPortfolioSelector);
 
-    const active = activeFile?.id === props.menuElement.id;
+    const active = activeFile?.id === menuElement.id;
 
     const [currentEditValue, setCurrentEditValue] = useState<string>();
 
@@ -54,8 +56,8 @@ export default function SidebarMenuElement(props: Props) {
             type,
             id
         }));
-        dispatch(setCurrentPortfolioName(props.menuElement.name));
-    }, [dispatch, props.menuElement]);
+        dispatch(setCurrentPortfolioName(menuElement.name));
+    }, [dispatch, menuElement]);
 
     const elementRenameInput = useCallback((_currentEditValue) => (
         <Input
@@ -63,27 +65,27 @@ export default function SidebarMenuElement(props: Props) {
             onChange={(event, data) => setCurrentEditValue(data.value)}
             onKeyPress={(event: KeyboardEvent) =>
                 (event.key === "Enter"
-                    ? renameElement(props.menuElement.type, props.menuElement.id, (event.target as HTMLInputElement).value)
+                    ? renameElement(menuElement.type, menuElement.id, (event.target as HTMLInputElement).value)
                     : undefined)}
             onBlur={
                 (event: FocusEvent) =>
-                    renameElement(props.menuElement.type, props.menuElement.id, (event.target as HTMLInputElement).value)
+                    renameElement(menuElement.type, menuElement.id, (event.target as HTMLInputElement).value)
             }
         />
-    ), [props.menuElement.id, props.menuElement.type, renameElement]);
+    ), [menuElement.id, menuElement.type, renameElement]);
 
     const elementNameBlock = useMemo(() => (
         <div
             aria-hidden className={styles.item}
             onClick={() => {
-                setPortfolio(props.menuElement.type, props.menuElement.id);
+                setPortfolio(menuElement.type, menuElement.id);
             }}
         >
             <div className={styles.name}>
-                {props.menuElement.name}
+                {menuElement.name}
             </div>
         </div>
-    ), [props.menuElement.id, props.menuElement.name, props.menuElement.type, setPortfolio]);
+    ), [menuElement.id, menuElement.name, menuElement.type, setPortfolio]);
 
     const elementTitle = useMemo(() => (
         currentEditValue !== undefined
@@ -98,20 +100,24 @@ export default function SidebarMenuElement(props: Props) {
     }, [currentEditValue]);
 
     return (
-        <div className={active
-            ? styles.activeItemContainer
-            : styles.itemContainer}
+        <div
+            className={active ? styles.activeItemContainer : styles.itemContainer}
+            ref={itemProvided.innerRef}
+            /* eslint-disable-next-line react/jsx-props-no-spreading */
+            {...itemProvided.draggableProps}
+            /* eslint-disable-next-line react/jsx-props-no-spreading */
+            {...itemProvided.dragHandleProps}
         >
             {elementTitle}
             <div className={styles.iconsContainer}>
                 <Icon
                     name="edit outline" link={currentEditValue === undefined} className={styles.renameIcon}
                     disabled={currentEditValue !== undefined}
-                    onClick={() => setCurrentEditValue(props.menuElement.name)}
+                    onClick={() => setCurrentEditValue(menuElement.name)}
                 />
                 <Icon
                     name="trash alternate outline" link className={styles.removeIcon}
-                    onClick={() => deleteElement(props.menuElement.type, props.menuElement.id)}
+                    onClick={() => deleteElement(menuElement.type, menuElement.id)}
                 />
             </div>
         </div>

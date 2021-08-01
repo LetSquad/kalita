@@ -129,7 +129,6 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         />
     ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
 
-    console.log("TABLE_REF", tableRef.current);
     return (
         <div className={styles.container}>
             <AdditionalHeader
