@@ -15,9 +15,9 @@ import {
     PortfolioPosition,
     PortfolioUpdatePayload
 } from "../../models/portfolios/types";
+import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
-import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 export const defaultTotalTargetAmount = 1_000_000;
 
@@ -120,7 +120,7 @@ export const newModelPortfolioRow: (groupName: string) => ModelPortfolioPosition
     weight: 1,
     percentage: 0,
     targetAmount: 0,
-    currentPrice: 1,
+    currentPrice: 0,
     targetQuantity: 0,
     quantity: 0,
     amount: 0
@@ -132,7 +132,7 @@ export const newBrokerAccountRow: (groupName: string) => BrokerAccountPosition =
     groupName,
     percentage: 0,
     averagePrice: 0,
-    currentPrice: 1,
+    currentPrice: 0,
     quantity: 0,
     amount: 0
 });
@@ -172,6 +172,30 @@ export function recalculateRowsPrice(portfolio: Portfolio, quotes: Quote[]) {
                 amount: newPrice * row.quantity
             };
         }
+        return {
+            ...row,
+            currentPrice: 0,
+            amount: 0
+        };
+    }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+}
+
+export function recalculateRowPrice(portfolio: Portfolio, tickerName: string, quote?: Quote) {
+    portfolio.positions = portfolio.positions.map((row) => {
+        if (row.ticker === tickerName) {
+            if (quote) {
+                return {
+                    ...row,
+                    currentPrice: quote.price,
+                    amount: quote.price * row.quantity
+                };
+            }
+            return {
+                ...row,
+                currentPrice: 0,
+                amount: 0
+            };
+        }
         return row;
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
@@ -191,7 +215,7 @@ export function recalculateModelPortfolioPercentage(
             ...position,
             percentage: proportion * 100,
             targetAmount,
-            targetQuantity: targetAmount ? Math.floor(targetAmount / position.currentPrice) : 0
+            targetQuantity: targetAmount && position.currentPrice > 0 ? Math.floor(targetAmount / position.currentPrice) : 0
         };
     });
 }
