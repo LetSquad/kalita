@@ -215,7 +215,7 @@ export function recalculateModelPortfolioPercentage(
             ...position,
             percentage: proportion * 100,
             targetAmount,
-            targetQuantity: targetAmount ? Math.floor(targetAmount / position.currentPrice) : 0
+            targetQuantity: targetAmount && position.currentPrice > 0 ? Math.floor(targetAmount / position.currentPrice) : 0
         };
     });
 }
