@@ -133,7 +133,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         <div className={styles.container}>
             <AdditionalHeader
                 additionalHeaderPart={additionalHeaderPart} importTableToCsvText={importTableToCsvText}
-                currentPortfolioType={currentPortfolio.type}
+                currentPortfolio={currentPortfolio}
             />
             {table}
         </div>

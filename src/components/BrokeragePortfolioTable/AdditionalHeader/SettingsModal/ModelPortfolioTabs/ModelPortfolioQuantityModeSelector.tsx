@@ -6,36 +6,26 @@ import {
     Radio
 } from "semantic-ui-react";
 import React, { useCallback, useMemo } from "react";
-import { BrokeragePortfolioTypes } from "../../../../../models/portfolios/enums";
+import { ModelPortfolio } from "../../../../../models/portfolios/types";
 import styles from "../styles/SettingsModal.scss";
 import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
 import { updateModelPortfolioQuantityMode, updateModelPortfolioQuantitySources } from "../../../../../store/portfolios/portfoliosReducer";
-import { currentPortfolioSelector } from "../../../../../store/portfolios/selectors";
 import { BrokerAccountMenuElement } from "../../../../../models/menu/types";
 import { ModelPortfolioQuantityMode } from "../../../../../models/settings/enums";
 
-export default function ModelPortfolioQuantityModeSelector() {
+interface ModelPortfolioQuantityModeSelectorProps {
+    currentPortfolio: ModelPortfolio,
+}
+
+export default function ModelPortfolioQuantityModeSelector({ currentPortfolio }: ModelPortfolioQuantityModeSelectorProps) {
     const dispatch = useAppDispatch();
-    const currentPortfolio = useAppSelector(currentPortfolioSelector);
 
     const brokerAccounts: BrokerAccountMenuElement[] = useAppSelector((state) => state.sidebarMenu.brokerAccounts.elements);
-    const quantityMode: ModelPortfolioQuantityMode | undefined = useMemo(() => {
-        if (currentPortfolio && currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-            return currentPortfolio.settings.quantityMode;
-        }
-        return undefined;
-    }, [currentPortfolio]);
 
     const brokerReportsOptions = useMemo(
         () => brokerAccounts.map((e) => ({ key: e.id, text: e.name, value: e.id })),
         [brokerAccounts]
     );
-    const quantitySources: string[] | undefined = useMemo(() => {
-        if (currentPortfolio && currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-            return currentPortfolio.settings.quantitySources;
-        }
-        return undefined;
-    }, [currentPortfolio]);
 
     const onQuantityModeCheck = useCallback((_, data: CheckboxProps) => {
         dispatch(updateModelPortfolioQuantityMode(data.value as ModelPortfolioQuantityMode));
@@ -53,7 +43,7 @@ export default function ModelPortfolioQuantityModeSelector() {
                     label="Ручной ввод"
                     name="quantitySource"
                     value={ModelPortfolioQuantityMode.MANUAL_INPUT}
-                    checked={quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT}
+                    checked={currentPortfolio.settings.quantityMode === ModelPortfolioQuantityMode.MANUAL_INPUT}
                     className={styles.settingsRadio}
                     onChange={onQuantityModeCheck}
                 />
@@ -61,18 +51,18 @@ export default function ModelPortfolioQuantityModeSelector() {
                     label="Брокерские счета"
                     name="quantitySource"
                     value={ModelPortfolioQuantityMode.BROKER_ACCOUNT}
-                    checked={quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT}
+                    checked={currentPortfolio.settings.quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT}
                     className={styles.settingsRadio}
                     onChange={onQuantityModeCheck}
                 />
             </Form.Field>
-            {quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT ? (
+            {currentPortfolio.settings.quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT ? (
                 <Form.Field>
                     <Dropdown
                         placeholder="Выберите брокерские счета"
                         fluid multiple selection
                         options={brokerReportsOptions}
-                        value={quantitySources}
+                        value={currentPortfolio.settings.quantitySources}
                         onChange={onQuantitySourcesSelect}
                     />
                 </Form.Field>

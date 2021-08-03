@@ -25,6 +25,7 @@ $menu-width-close: 30px;
 
     &-close {
       @extend %sidebar-container;
+      cursor: pointer;
       width: $menu-width-close !important;
     }
 

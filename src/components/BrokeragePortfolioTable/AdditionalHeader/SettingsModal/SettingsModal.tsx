@@ -1,34 +1,39 @@
 import { Modal, Tab } from "semantic-ui-react";
-import React, { lazy, useMemo, useState } from "react";
+import React, {
+    lazy, useCallback, useMemo, useState
+} from "react";
+import { ModelPortfolio, Portfolio } from "../../../../models/portfolios/types";
 import { WithSuspense } from "../../../utils/WithSuspense";
 import styles from "./styles/SettingsModal.scss";
 import { BrokeragePortfolioTypes } from "../../../../models/portfolios/enums";
-import ModelPortfolioQuantityModeSelector from "./ModelPortfolioTabs/ModelPortfolioQuantityModeSelector";
 
-interface Props {
-    currentPortfolioType: BrokeragePortfolioTypes,
+interface SettingsModalProps {
+    currentPortfolio: Portfolio,
     readonly onClose: () => void;
     readonly activeTab: number;
 }
 
 const BrokerAccountReportParser = lazy(/* webpackChunkName: "brokerAccountReportParser" */() =>
     import("./BrokerAccountTabs/BrokerAccountReportParser"));
+const ModelPortfolioQuantityModeSelector = lazy(/* webpackChunkName: "modelPortfolioQuantityModeSelector" */() =>
+    import("./ModelPortfolioTabs/ModelPortfolioQuantityModeSelector"));
 
-export default function SettingsModal({ currentPortfolioType, onClose, activeTab }: Props) {
+export default function SettingsModal({ currentPortfolio, onClose, activeTab }: SettingsModalProps) {
     const [activeIndex, setActiveIndex] = useState<number>(activeTab);
 
-    const modelPortfolioPanes = useMemo(() => [
+    const modelPortfolioPanes = useCallback((_currentPortfolio: ModelPortfolio) => [
         {
             menuItem: "Источники данных",
             render: () => (
                 <>
                     <Tab.Pane className={styles.settingsTabPane}>
-                        <ModelPortfolioQuantityModeSelector />
+                        <ModelPortfolioQuantityModeSelector currentPortfolio={_currentPortfolio} />
                     </Tab.Pane>
                 </>
             )
         }
     ], []);
+
     const brokerAccountPanes = useMemo(() => [
         {
             menuItem: "Загрузка отчёта брокера",
@@ -40,8 +45,10 @@ export default function SettingsModal({ currentPortfolioType, onClose, activeTab
         }
     ], []);
     const settingsPanes = useMemo(
-        () => (currentPortfolioType === BrokeragePortfolioTypes.MODEL_PORTFOLIO ? modelPortfolioPanes : brokerAccountPanes),
-        [currentPortfolioType, modelPortfolioPanes, brokerAccountPanes]
+        () => (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO
+            ? modelPortfolioPanes(currentPortfolio)
+            : brokerAccountPanes),
+        [currentPortfolio, modelPortfolioPanes, brokerAccountPanes]
     );
 
     return (

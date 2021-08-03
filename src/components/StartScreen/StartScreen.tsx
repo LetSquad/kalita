@@ -78,12 +78,12 @@ export default function StartScreen() {
         }
     }, [addRecent, addToast, history, removeRecent]);
 
-    const openRecentProject = useCallback((path: string) => {
-        if (fs.existsSync(path)) {
-            openProjectByPath(path);
+    const openRecentProject = useCallback((recent: [string, string]) => {
+        if (fs.existsSync(recent[1])) {
+            openProjectByPath(recent[1]);
         } else {
-            addToast(`Проект "${path}" не найден`, { appearance: "warning" });
-            removeRecent(path);
+            addToast(`Проект "${recent[1]}" не найден`, { appearance: "warning" });
+            removeRecent(recent[0]);
         }
     }, [addToast, openProjectByPath, removeRecent]);
 
@@ -137,7 +137,7 @@ export default function StartScreen() {
                                     <div className={styles.recentProject} key={recent[0]}>
                                         <div className={styles.recentProjectTitle}>
                                             <span
-                                                aria-hidden onClick={() => openRecentProject(recent[1])}
+                                                aria-hidden onClick={() => openRecentProject(recent)}
                                                 className={styles.reverseEllipsisContent}
                                             >
                                                 {recent[1]}
