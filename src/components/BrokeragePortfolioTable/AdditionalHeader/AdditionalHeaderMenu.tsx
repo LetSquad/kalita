@@ -1,18 +1,23 @@
 import { app, dialog } from "@electron/remote";
 import fs from "fs-extra";
-import React, { useCallback, useState } from "react";
+import React, { lazy, useCallback, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 import { Dropdown } from "semantic-ui-react";
 import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
-import SettingsModal from "./SettingsModal/SettingsModal";
-import styles from "./styles/AdditionalHeader.scss";
+import { Portfolio } from "../../../models/portfolios/types";
+import { WithSuspense } from "../../utils/WithSuspense";
+import styles from "./styles/AdditionalHeaderMenu.scss";
+import headerStyles from "./styles/AdditionalHeader.scss";
 
 interface Props {
-    currentPortfolioType: BrokeragePortfolioTypes,
+    currentPortfolio: Portfolio,
     importTableToCsvText: () => string | undefined;
 }
 
-export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvText }: Props) {
+const SettingsModal = lazy(/* webpackChunkName: "settingsModal" */() =>
+    import("./SettingsModal/SettingsModal"));
+
+export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }: Props) {
     const { addToast } = useToasts();
 
     const [settingsModalActiveTab, setSettingsModalActiveTab] = useState<number>();
@@ -43,20 +48,19 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
 
     return (
         <>
-            <Dropdown item icon="cog" simple closeOnChange className={styles.additionalHeaderIcon} direction="left">
+            <Dropdown item icon="cog" simple closeOnChange className={headerStyles.additionalHeaderIcon} direction="left">
                 <Dropdown.Menu>
                     <Dropdown.Item onClick={importToCsv}>Экспорт в CSV...</Dropdown.Item>
+                    <Dropdown.Divider className={styles.divider} />
                     {
-                        currentPortfolioType === BrokeragePortfolioTypes.MODEL_PORTFOLIO ? (
+                        currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO ? (
                             <>
-                                <Dropdown.Divider />
                                 <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
                                     Источники данных
                                 </Dropdown.Item>
                             </>
                         ) : (
                             <>
-                                <Dropdown.Divider />
                                 <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
                                     Загрузка отчёта брокера
                                 </Dropdown.Item>
@@ -68,11 +72,13 @@ export function AdditionalHeaderMenu({ currentPortfolioType, importTableToCsvTex
             {
                 settingsModalActiveTab !== undefined
                     ? (
-                        <SettingsModal
-                            currentPortfolioType={currentPortfolioType}
-                            onClose={() => setSettingsModalActiveTab(undefined)}
-                            activeTab={settingsModalActiveTab}
-                        />
+                        <WithSuspense>
+                            <SettingsModal
+                                currentPortfolio={currentPortfolio}
+                                onClose={() => setSettingsModalActiveTab(undefined)}
+                                activeTab={settingsModalActiveTab}
+                            />
+                        </WithSuspense>
                     )
                     : null
             }

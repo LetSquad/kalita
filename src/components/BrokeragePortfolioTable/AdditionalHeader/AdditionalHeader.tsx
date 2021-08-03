@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Icon } from "semantic-ui-react";
-import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
+import { Portfolio } from "../../../models/portfolios/types";
 import { addNewGroup } from "../../../store/portfolios/portfoliosReducer";
 import { AdditionalHeaderMenu } from "./AdditionalHeaderMenu";
 import styles from "./styles/AdditionalHeader.scss";
@@ -8,13 +8,13 @@ import { getMoexQuotes } from "../../../apis/moexApi";
 import { useAppDispatch } from "../../../store/hooks";
 
 interface Props {
-    currentPortfolioType: BrokeragePortfolioTypes,
+    currentPortfolio: Portfolio,
     additionalHeaderPart?: JSX.Element,
     importTableToCsvText: () => string | undefined;
 }
 
 export function AdditionalHeader({
-    currentPortfolioType, additionalHeaderPart, importTableToCsvText
+    currentPortfolio, additionalHeaderPart, importTableToCsvText
 }: Props) {
     const dispatch = useAppDispatch();
 
@@ -32,7 +32,7 @@ export function AdditionalHeader({
                 {additionalHeaderPart}
             </div>
             <div>
-                <AdditionalHeaderMenu currentPortfolioType={currentPortfolioType} importTableToCsvText={importTableToCsvText} />
+                <AdditionalHeaderMenu currentPortfolio={currentPortfolio} importTableToCsvText={importTableToCsvText} />
                 <Icon name="sync alternate" link className={styles.additionalHeaderIcon} onClick={() => updateQuotesCurrentPrice()} />
                 <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
             </div>
