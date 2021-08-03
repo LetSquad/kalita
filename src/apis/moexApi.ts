@@ -8,7 +8,7 @@ interface MoexData {
         data: {
             id: string,
             rows: {
-                row: MoexQuote[]
+                row: MoexQuote[] | MoexQuote;
             }
         }
     }
@@ -16,7 +16,7 @@ interface MoexData {
 
 interface MoexQuote {
     SECID: string;
-    PREVADMITTEDQUOTE: number;
+    PREVADMITTEDQUOTE: string;
     SHORTNAME: string;
     ISIN: string;
 }
@@ -31,12 +31,20 @@ function getUrl(moexBoardId: string) {
     return `shares/boards/${moexBoardId}/securities.xml?${filters}`;
 }
 
-function getStock() {
-    return moexHttpClient.get(getUrl("TQBR"));
+function getStock(name?: string) {
+    return moexHttpClient.get(getUrl("TQBR"), name ? {
+        params: {
+            securities: name
+        }
+    } : undefined);
 }
 
-function getFonds() {
-    return moexHttpClient.get(getUrl("TQTF"));
+function getFonds(name?: string) {
+    return moexHttpClient.get(getUrl("TQTF"), name ? {
+        params: {
+            securities: name
+        }
+    } : undefined);
 }
 
 export const getMoexQuotes = createAsyncThunk(
@@ -54,6 +62,24 @@ export const getMoexQuotes = createAsyncThunk(
     }
 );
 
+export const getMoexQuotesForName = createAsyncThunk<{ tickerName: string, quote?: Quote }, string>(
+    "getMoexQuotesForName",
+    async (tickerName: string) => {
+        const results = await Promise.all([
+            getStock(tickerName),
+            getFonds(tickerName)
+        ]);
+
+        for (const el of results) {
+            const quote = await (convertResponseToQuotes(el.data));
+            if (quote.length === 1) {
+                return { tickerName, quote: quote[0] };
+            }
+        }
+        return { tickerName };
+    }
+);
+
 async function convertResponseToQuotes(xmlStr: string): Promise<Quote[]> {
     const moexData = await getMoexData(xmlStr);
     return getQuotes(moexData);
@@ -64,10 +90,23 @@ function getMoexData(xmlStr: string): Promise<MoexData> {
 }
 
 function getQuotes(json: MoexData): Quote[] {
-    return json.document.data.rows.row ? json.document.data.rows.row.map((el: MoexQuote) => <Quote>{
-        ticker: el.SECID,
-        price: +el.PREVADMITTEDQUOTE,
-        isin: el.ISIN,
-        name: el.SHORTNAME
-    }) : [];
+    if (json.document.data.rows.row) {
+        const { row } = json.document.data.rows;
+        if (Array.isArray(row)) {
+            return row.map((el: MoexQuote) => ({
+                ticker: el.SECID,
+                price: Number.parseInt(el.PREVADMITTEDQUOTE, 10),
+                isin: el.ISIN,
+                name: el.SHORTNAME
+            }));
+        }
+        return [{
+            ticker: row.SECID,
+            price: Number.parseInt(row.PREVADMITTEDQUOTE, 10),
+            isin: row.ISIN,
+            name: row.SHORTNAME
+        }];
+    }
+
+    return [];
 }
