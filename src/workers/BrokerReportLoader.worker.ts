@@ -15,7 +15,7 @@ ctx.addEventListener("message", (event: MessageEvent<BrokerReportPath>) => {
             switch (event.data.format) {
                 case BrokerReportFormat.XML: {
                     const decodedFile = event.data.encoding === BrokerReportEncoding.WIN1251 ? decoder.decode(file) : file;
-                    return xml2js.parseStringPromise(decodedFile, { explicitArray: false });
+                    return xml2js.parseStringPromise(decodedFile);
                 }
                 case BrokerReportFormat.XLSX: {
                     const workBook: XLSXL.WorkBook = XLSXL.read(file);

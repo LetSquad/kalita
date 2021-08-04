@@ -81,17 +81,18 @@ export default function BrokerAccountReportParser() {
         text: b.brokerName
     })), []);
 
-    const onBrokerReportLoaded = useCallback((e: MessageEvent) => {
+    const onBrokerReportLoaded = useCallback((event: MessageEvent) => {
         if (chosenBrokerIndex === undefined || chosenReportPath === undefined) {
             return;
         }
         const chosenBroker = brokers[chosenBrokerIndex];
 
         try {
-            const reportData: BrokerReportData = chosenBroker.reportParser(chosenBroker.brokerName, e.data);
+            const reportData: BrokerReportData = chosenBroker.reportParser(chosenBroker.brokerName, event.data);
             dispatch(addBrokerAccountPositions(reportData));
             addToast(`Отчёт ${reportData.accountName} успешно загружен`, { appearance: "success" });
-        } catch {
+        } catch (error) {
+            console.error(error);
             addToast("Произошла ошибка при загрузке отчёта", { appearance: "error" });
         } finally {
             setChosenReportPath(undefined);
