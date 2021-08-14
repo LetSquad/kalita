@@ -28,19 +28,22 @@ import {
     recalculateBrokerAccountPercentage,
     recalculateModelPortfolioPercentage,
     recalculateModelPortfolioQuantity,
-    recalculateRow, recalculateRowPrice,
+    recalculateRow,
+    recalculateRowPrice,
     recalculateRowsPrice
 } from "./portfoliosReducerHelper";
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 export interface PortfoliosState extends Portfolios {
     currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier;
+    isChartMode: boolean
 }
 
 const initialState: PortfoliosState = {
     modelPortfolios: [],
     brokerAccounts: [],
-    currentTable: undefined
+    currentTable: undefined,
+    isChartMode: false
 };
 
 export const portfoliosSlice = createSlice({
@@ -90,6 +93,9 @@ export const portfoliosSlice = createSlice({
                     );
                 }
             }
+        },
+        changeChartMode: (state: PortfoliosState) => {
+            state.isChartMode = !state.isChartMode;
         },
         addNewPosition: (state: PortfoliosState, action: PayloadAction<string>) => {
             if (!state.currentTable) {
@@ -328,6 +334,7 @@ export const portfoliosSlice = createSlice({
 
 export const {
     setPortfolios,
+    changeChartMode,
     addNewPosition,
     addBrokerAccountPositions,
     addNewGroup,

@@ -2,6 +2,7 @@ import _ from "lodash";
 import React, { useCallback, useMemo, useRef } from "react";
 import { ReactTabulator } from "react-tabulator";
 import { $enum } from "ts-enum-util";
+import { ChartData } from "chart.js/auto";
 import { ColumnCalcs, RowRange, TableLayout } from "../../../custom_typings/react-tabulator/enums";
 import {
     CellComponent,
@@ -16,7 +17,7 @@ import { getMoexQuotesForName } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
     addNewPosition,
     deleteRowById,
@@ -26,7 +27,9 @@ import {
 import { ActionBlock } from "./ActionBlock";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
+import stylesChart from "../Chart/styles/Chart.scss";
 import { generateCsv, generateExportList } from "./utils/utils";
+import Chart from "../Chart/Chart";
 
 interface Props {
     columns: (actionBlock: JSX.Element) => ColumnDefinition[],
@@ -37,6 +40,8 @@ interface Props {
 export default function Table({ columns, currentPortfolio, additionalHeaderPart }: Props) {
     const dispatch = useAppDispatch();
     const tableRef = useRef<TabulatorRef>(null);
+
+    const isChartMode: boolean = useAppSelector((state) => state.portfolios.isChartMode);
 
     const cellUpdated = useCallback((cell: CellComponent) => {
         dispatch(update({
@@ -129,13 +134,29 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         />
     ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
 
+    const chart = useMemo(() => {
+        const chartData: ChartData | null = {
+            labels: currentPortfolio.positions.map((row) => row.ticker),
+            datasets: [{
+                data: currentPortfolio.positions.map((row) => row.percentage)
+            }]
+        };
+        return (
+            <div className={stylesChart.chartWrapper}>
+                <div className={stylesChart.chart}>
+                    <Chart data={chartData} />
+                </div>
+            </div>
+        );
+    }, [currentPortfolio.positions]);
+
     return (
         <div className={styles.container}>
             <AdditionalHeader
                 additionalHeaderPart={additionalHeaderPart} importTableToCsvText={importTableToCsvText}
                 currentPortfolio={currentPortfolio}
             />
-            {table}
+            {isChartMode ? chart : table}
         </div>
     );
 }

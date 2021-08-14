@@ -52,12 +52,14 @@ export default function SidebarMenuElement({ itemProvided, menuElement }: Sideba
     }, [currentPortfolio?.id, dispatch]);
 
     const setPortfolio = useCallback((type: SidebarMenuElementsTypes, id: string) => {
-        dispatch(setActiveId({
-            type,
-            id
-        }));
-        dispatch(setCurrentPortfolioName(menuElement.name));
-    }, [dispatch, menuElement.name]);
+        if (currentPortfolio?.id !== id) {
+            dispatch(setActiveId({
+                type,
+                id
+            }));
+            dispatch(setCurrentPortfolioName(menuElement.name));
+        }
+    }, [dispatch, menuElement.name, currentPortfolio?.id]);
 
     const elementRenameInput = useCallback((_currentEditValue) => (
         <Input
