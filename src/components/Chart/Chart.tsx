@@ -1,8 +1,26 @@
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
-import { ChartData } from "chart.js/auto";
-import { borderWidth, options } from "./constants";
-import getNColors from "./utils/getNColors";
+import {
+    ChartData,
+    ChartOptions,
+    ChartType,
+    TooltipItem
+} from "chart.js/auto";
+import { getNColors } from "./utils/getNColors";
+
+const borderWidth = 1;
+
+const options: ChartOptions = {
+    plugins: {
+        tooltip: {
+            callbacks: {
+                label: (tooltipItems: TooltipItem<ChartType>) => (
+                    `${tooltipItems.label}: ${tooltipItems.formattedValue}%`
+                )
+            }
+        }
+    }
+};
 
 interface Props {
     data: ChartData
