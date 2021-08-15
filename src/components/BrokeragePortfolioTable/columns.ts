@@ -71,7 +71,7 @@ export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumnsDe
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
-            symbol: "₽",
+            symbol: " ₽",
             symbolAfter: "р"
         },
         visible: true,
@@ -84,7 +84,7 @@ export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumnsDe
         sorter: SortersValues.NUMBER,
         formatter: FormattersValues.MONEY,
         formatterParams: {
-            symbol: "₽",
+            symbol: " ₽",
             symbolAfter: "р"
         },
         visible: true,
@@ -93,7 +93,7 @@ export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumnsDe
         topCalc: CalcsValues.SUM,
         topCalcFormatter: FormattersValues.MONEY,
         topCalcFormatterParams: {
-            symbol: "₽",
+            symbol: " ₽",
             symbolAfter: "р"
         }
     }, {
@@ -157,7 +157,7 @@ export const modelPortfolioColumns: (
             sorter: SortersValues.NUMBER,
             formatter: FormattersValues.MONEY,
             formatterParams: {
-                symbol: "₽",
+                symbol: " ₽",
                 symbolAfter: "р"
             },
             visible: true,
@@ -166,7 +166,7 @@ export const modelPortfolioColumns: (
             topCalc: CalcsValues.SUM,
             topCalcFormatter: FormattersValues.MONEY,
             topCalcFormatterParams: {
-                symbol: "₽",
+                symbol: " ₽",
                 symbolAfter: "р"
             }
         }, {
