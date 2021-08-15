@@ -767,6 +767,7 @@ export interface Tabulator {
     options: TabulatorOptions;
     rowManager: RowManager;
     rtl: boolean;
+    getData: () => TableData;
     [key: string]: any;
 }
 

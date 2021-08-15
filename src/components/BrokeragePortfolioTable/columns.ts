@@ -19,7 +19,16 @@ import styles from "./styles/columns.scss";
 import { ModelPortfolioSettings } from "../../models/settings/types";
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
-const tickerValidator = (cell: CellComponent, value: string) => /^[\dA-Z]([\d.A-Z]){0,11}$/.test(value);
+const tickerValidator = (cell: CellComponent, value: string) => {
+    if (/^[\dA-Z]([\d.A-Z]){0,11}$/.test(value)) {
+        const tickersCoincidenceLength = cell.getTable().getData()
+            .map((row) => row.ticker)
+            .filter((ticker) => ticker === value).length;
+        return ((tickersCoincidenceLength === 0 && cell.getOldValue as unknown as string !== value) ||
+            (tickersCoincidenceLength === 0 && cell.getOldValue as unknown as string === value));
+    }
+    return false;
+};
 
 export const commonColumns: (actionBlock: JSX.Element) => BaseTabulatorColumnsDefinition[] = (actionBlock: JSX.Element) => [
     {
