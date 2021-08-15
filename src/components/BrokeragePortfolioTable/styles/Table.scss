@@ -2,7 +2,7 @@
 @use '../AdditionalHeader/styles/AdditionalHeader' as additionalHeader;
 
 $tabulator-header-height: 40px;
-$tabulator-top-calc-height: 50px;
+$tabulator-top-calc-height: 30px;
 $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-top-calc-height});
 
 :global {
@@ -49,8 +49,13 @@ $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-t
     }
   }
 
+  .tabulator-row {
+    min-height: 1.5rem !important;
+  }
+
   .tabulator-row .tabulator-cell {
     height: auto !important;
+    padding: 0.2rem 0.75rem !important;
     white-space: normal !important;
     word-break: break-all;
   }
@@ -77,8 +82,8 @@ $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-t
   }
 
   &add-button {
-    font-size: 16px !important;
-    margin: 0 5px !important;
+    font-size: 15px !important;
+    margin: 0 8px 0 5px !important;
     opacity: 0.8 !important;
 
     &:hover {
@@ -89,7 +94,7 @@ $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-t
   &input {
     background: transparent;
     border: 0;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     width: 100%;
   }
