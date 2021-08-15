@@ -8,7 +8,7 @@
 * @param   s       The saturation
 * @param   l       The lightness
 */
-export const hslToRgb = (h: number, s: number, l: number) => {
+export const hslToRgb = (h: number, s: number, l: number): [number, number, number] => {
     let r;
     let g;
     let b;
