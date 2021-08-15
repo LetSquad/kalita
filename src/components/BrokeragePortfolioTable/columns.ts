@@ -24,8 +24,8 @@ const tickerValidator = (cell: CellComponent, value: string) => {
         const tickersCoincidenceLength = cell.getTable().getData()
             .map((row) => row.ticker)
             .filter((ticker) => ticker === value).length;
-        return ((tickersCoincidenceLength === 0 && cell.getOldValue as unknown as string !== value) ||
-            (tickersCoincidenceLength === 0 && cell.getOldValue as unknown as string === value));
+        return ((tickersCoincidenceLength === 0 && cell.getOldValue() as string !== value) ||
+            (tickersCoincidenceLength === 1 && (cell.getOldValue() as string || cell.getInitialValue() as string) === value));
     }
     return false;
 };
