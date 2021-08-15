@@ -89,13 +89,13 @@ export function getBrokerAccountsPositionsByIds(
 
 export function generateNewPosition(currentPortfolio: Portfolio, groupName: string) {
     if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-        currentPortfolio.positions.push(newModelPortfolioRow(groupName));
+        currentPortfolio.positions.push(newModelPortfolioRow(getNewRowName(currentPortfolio.positions), groupName));
         currentPortfolio.positions = recalculateModelPortfolioPercentage(
             currentPortfolio.positions,
             typeof currentPortfolio.totalTargetAmount === "number" ? currentPortfolio.totalTargetAmount : 0
         );
     } else {
-        currentPortfolio.positions.push(newBrokerAccountRow(groupName));
+        currentPortfolio.positions.push(newBrokerAccountRow(getNewRowName(currentPortfolio.positions), groupName));
         currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
     }
 }
@@ -113,29 +113,31 @@ export function mapPositionFromBrokerReport(groupName: string, position: BrokerR
     };
 }
 
-export const newModelPortfolioRow: (groupName: string) => ModelPortfolioPosition = (groupName: string) => ({
-    id: uuidv4(),
-    ticker: NEW_ENTRY,
-    groupName,
-    weight: 1,
-    percentage: 0,
-    targetAmount: 0,
-    currentPrice: 0,
-    targetQuantity: 0,
-    quantity: 0,
-    amount: 0
-});
+export const newModelPortfolioRow: (tickerName: string, groupName: string) => ModelPortfolioPosition =
+    (tickerName: string, groupName: string) => ({
+        id: uuidv4(),
+        ticker: tickerName,
+        groupName,
+        weight: 1,
+        percentage: 0,
+        targetAmount: 0,
+        currentPrice: 0,
+        targetQuantity: 0,
+        quantity: 0,
+        amount: 0
+    });
 
-export const newBrokerAccountRow: (groupName: string) => BrokerAccountPosition = (groupName: string) => ({
-    id: uuidv4(),
-    ticker: NEW_ENTRY,
-    groupName,
-    percentage: 0,
-    averagePrice: 0,
-    currentPrice: 0,
-    quantity: 0,
-    amount: 0
-});
+export const newBrokerAccountRow: (tickerName: string, groupName: string) => BrokerAccountPosition =
+    (tickerName: string, groupName: string) => ({
+        id: uuidv4(),
+        ticker: tickerName,
+        groupName,
+        percentage: 0,
+        averagePrice: 0,
+        currentPrice: 0,
+        quantity: 0,
+        amount: 0
+    });
 
 export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdatePayload) {
     portfolio.positions = portfolio.positions.map((row) => {
@@ -254,16 +256,24 @@ export function recalculatePositionAmountByQuantity<T extends PortfolioPosition>
 }
 
 export function getNewGroupName(tableData: TableData): string {
-    const noNameRegExp = new RegExp(`^${NEW_GROUP} ?\\d*$`);
-    const groups = [...new Set(tableData
-        .map((data) => data.groupName)
-        .filter((groupName) => noNameRegExp.test(groupName)))];
-    if (groups.length === 0) {
-        return NEW_GROUP;
+    return getNewName(tableData, NEW_GROUP, "groupName");
+}
+
+export function getNewRowName(tableData: TableData): string {
+    return getNewName(tableData, NEW_ENTRY, "ticker");
+}
+
+function getNewName(tableData: TableData, nameConst: string, fieldName: "ticker" | "groupName"): string {
+    const noNameRegExp = new RegExp(`^${nameConst} ?\\d*$`);
+    const strings = [...new Set(tableData
+        .map((data) => data[fieldName])
+        .filter((ticker) => noNameRegExp.test(ticker)))];
+    if (strings.length === 0) {
+        return nameConst;
     }
-    const newGroupsNums = groups.map((groupName) => {
-        if (groupName.length === NEW_GROUP.length) return 0;
-        return Number.parseInt(groupName.slice(groupName.lastIndexOf(" ")), 10);
+    const newStringsNums = strings.map((ticker) => {
+        if (ticker.length === nameConst.length) return 0;
+        return Number.parseInt(ticker.slice(ticker.lastIndexOf(" ")), 10);
     }).sort((a, b) => a - b);
-    return `${NEW_GROUP} ${newGroupsNums[newGroupsNums.length - 1] + 1}`;
+    return `${nameConst} ${newStringsNums[newStringsNums.length - 1] + 1}`;
 }
