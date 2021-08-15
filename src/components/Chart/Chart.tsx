@@ -1,7 +1,7 @@
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { ChartData } from "chart.js/auto";
-import { borderWidth } from "./constants";
+import { borderWidth, options } from "./constants";
 import getNColors from "./utils/getNColors";
 
 interface Props {
@@ -29,6 +29,9 @@ export default function Chart(props: Props) {
     }
 
     return (
-        <Doughnut data={chartData} />
+        <Doughnut
+            data={chartData}
+            options={options}
+        />
     );
 }
