@@ -38,10 +38,12 @@ export default function Chart(props: Props) {
         }))
     };
 
-    if (!props.data.datasets.some((dataset) => (dataset.data.length > 0))) {
+    if (props.data.datasets.every((dataset) => (
+        dataset.data.length === 0 || dataset.data.every((value) => value === 0)
+    ))) {
         return (
             <>
-                Нет данных
+                Портфель пуст
             </>
         );
     }
