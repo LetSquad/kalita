@@ -1,6 +1,9 @@
 import _ from "lodash";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, {
+    useCallback, useMemo, useRef, useState
+} from "react";
 import { ReactTabulator } from "react-tabulator";
+import { Popup } from "semantic-ui-react";
 import { $enum } from "ts-enum-util";
 import { ColumnCalcs, RowRange, TableLayout } from "../../../custom_typings/react-tabulator/enums";
 import {
@@ -9,7 +12,8 @@ import {
     DataTypes,
     GroupComponent,
     RowComponent,
-    TabulatorOptions, TabulatorRef,
+    TabulatorOptions,
+    TabulatorRef,
     TabulatorTableDownloadConfig
 } from "../../../custom_typings/react-tabulator/types";
 import { getMoexQuotesForName } from "../../apis/moexApi";
@@ -28,15 +32,19 @@ import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
 import { generateCsv, generateExportList } from "./utils/utils";
 
-interface Props {
-    columns: (actionBlock: JSX.Element) => ColumnDefinition[],
+interface TableProps {
+    columns: (actionBlock: JSX.Element, setCurrentInvalidCell: (invalidCell?: [HTMLDivElement, string]) => void) => ColumnDefinition[],
     currentPortfolio: Portfolio,
     additionalHeaderPart?: JSX.Element
 }
 
-export default function Table({ columns, currentPortfolio, additionalHeaderPart }: Props) {
+export default function Table({ columns, currentPortfolio, additionalHeaderPart }: TableProps) {
     const dispatch = useAppDispatch();
     const tableRef = useRef<TabulatorRef>(null);
+
+    const [currentInvalidCell, setCurrentInvalidCell] = useState<[HTMLDivElement, string]>();
+
+    const resetInvalidCell = useCallback(() => setCurrentInvalidCell(undefined), []);
 
     const cellUpdated = useCallback((cell: CellComponent) => {
         dispatch(update({
@@ -48,7 +56,8 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         if (cell.getField() === BaseColumnNames.TICKER) {
             dispatch(getMoexQuotesForName(cell.getValue() as string));
         }
-    }, [dispatch]);
+        resetInvalidCell();
+    }, [dispatch, resetInvalidCell]);
 
     const rowMoved = useCallback((row: RowComponent) => {
         const newOrder = row.getTable().getRows().map((_row: RowComponent) => _row.getData().id);
@@ -124,10 +133,11 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const table = useMemo(() => (
         <ReactTabulator
-            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(currentPortfolio.positions)}
+            ref={tableRef} columns={columns(actionBlock(), setCurrentInvalidCell)} data={_.cloneDeep(currentPortfolio.positions)}
             options={options} className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
+            cellEditCancelled={resetInvalidCell}
         />
-    ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
+    ), [columns, actionBlock, currentPortfolio.positions, options, cellUpdated, rowMoved, resetInvalidCell]);
 
     return (
         <div className={styles.container}>
@@ -136,6 +146,15 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 currentPortfolio={currentPortfolio}
             />
             {table}
+            {currentInvalidCell && (
+                <Popup
+                    open
+                    key={`${currentInvalidCell[0].id}-popup`}
+                    context={currentInvalidCell[0]}
+                    content={currentInvalidCell[1]}
+                    position="top center"
+                />
+            )}
         </div>
     );
 }
