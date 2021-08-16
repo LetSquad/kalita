@@ -4,7 +4,7 @@ import { RowData, TableData } from "../../src/models/table/types";
 import {
     AjaxContentType,
     CalcsValues,
-    ColumnCalcs,
+    ColumnCalcsPosition,
     RowRange,
     EditorsValues,
     FilterType,
@@ -48,7 +48,7 @@ export interface CellEvents {
 }
 
 export interface CellComponent {
-    _cell: Row;
+    _cell: Cell;
     getValue: () => DataTypes;
     getOldValue: () => DataTypes;
     restoreOldValue: () => void;
@@ -56,7 +56,7 @@ export interface CellComponent {
     restoreInitialValue: () => void;
     getElement: () => HTMLElement | undefined;
     getTable: () => Tabulator;
-    getRow: () => RowComponent;
+    getRow: () => (RowComponent | CalcComponent);
     getColumn: () => ColumnComponent;
     getData: () => RowData;
     getField: () => string;
@@ -79,6 +79,14 @@ export interface CellComponent {
     clearValidation: () => void;
 }
 
+export interface CellComponentWithRow extends CellComponent {
+    getRow: () => RowComponent;
+}
+
+export interface CellComponentWithCalc extends CellComponent {
+    getRow: () => CalcComponent;
+}
+
 export interface Cell {
     column: Column;
     component: CellComponent;
@@ -89,11 +97,19 @@ export interface Cell {
     minWidth: null | number;
     modules: { [key: string]: Function };
     oldValue: DataTypes;
-    row: Row;
+    row: Row | Calc;
     table: Tabulator;
     value: DataTypes;
     width: number;
     [key: string]: any;
+}
+
+export interface CellWithRow extends Cell{
+    row: Row;
+}
+
+export interface CellWithCalc extends Cell{
+    row: Calc;
 }
 
 export interface RowComponent {
@@ -130,10 +146,9 @@ export interface RowComponent {
     validate: () => true | CellComponent[];
 }
 
-export interface Row {
+interface BaseRow {
     cells: Cell[];
     data: RowData;
-    component: RowComponent;
     created: boolean;
     element: HTMLElement | false;
     height: number;
@@ -143,8 +158,12 @@ export interface Row {
     manualHeight: boolean;
     modules: { [key: string]: Function };
     outerHeight: number;
-    parent: RowManager;
     table: Tabulator;
+}
+
+export interface Row extends BaseRow {
+    component: RowComponent;
+    parent: RowManager;
     type: "row";
     [key: string]: any;
 }
@@ -172,6 +191,35 @@ export interface ExportRow {
     component: RowComponent;
     indent: number;
     columns: ExportColumn[];
+}
+
+export interface CalcComponent {
+    _row: Calc;
+    getData: () => RowData;
+    getElement: () => HTMLElement | undefined;
+    getTable: () => Tabulator;
+    getCells: () => CellComponent[];
+    getCell: (column: string | ColumnComponent | HTMLElement) => CellComponent | false;
+}
+
+export interface Calc extends BaseRow {
+    component: CalcComponent;
+    parent: ColumnCalcs;
+    type: "calc";
+    [key: string]: any;
+}
+
+export interface ColumnCalcs {
+    botCalcs: Column[];
+    botElement: HTMLElement | false;
+    botInitialized: boolean;
+    botRow: Calc | false;
+    genColumn: Column;
+    table: Tabulator;
+    topCalcs: Column[];
+    topElement: HTMLElement | false;
+    topInitialized: boolean
+    topRow: Calc;
 }
 
 export interface ColumnComponent {
@@ -384,7 +432,7 @@ export interface TabulatorOptions {
     headerFilterPlaceholder?: string;
     scrollToColumnPosition?: HorizontalAlignValues;
     scrollToColumnIfVisible?: boolean;
-    columnCalcs?: boolean | ColumnCalcs;
+    columnCalcs?: boolean | ColumnCalcsPosition;
     nestedFieldSeparator?: boolean | string;
     headerVisible?: boolean;
     rowFormatter?: ((row: RowComponent) => void) | boolean;
@@ -491,6 +539,11 @@ export interface TabulatorOptions {
     rowClickMenu?: ContextMenu<RowComponent>[];
     groupContextMenu?: ContextMenu<GroupComponent>[];
     groupClickMenu?: ContextMenu<GroupComponent>[];
+    cellMouseEnter?: (e: MouseEvent, cell: CellComponent) => void;
+    cellMouseLeave?: (e: MouseEvent, cell: CellComponent) => void;
+    cellMouseOver?: (e: MouseEvent, cell: CellComponent) => void;
+    cellMouseOut?: (e: MouseEvent, cell: CellComponent) => void;
+    cellMouseMove?: (e: MouseEvent, cell: CellComponent) => void;
 }
 
 export interface FooterManager {
@@ -847,7 +900,7 @@ type SorterParams = {
 
 type Formatter = (
     (
-        cell: CellComponent,
+        cell: CellComponentWithRow,
         formatterParams: { [key: string]: any },
         onRendered: (callback: () => void) => void
     ) => DataTypes

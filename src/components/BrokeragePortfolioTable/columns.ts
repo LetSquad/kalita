@@ -11,7 +11,7 @@ import {
     CellComponent,
     BaseTabulatorColumnsDefinition,
     ModelPortfolioTabulatorColumnsDefinition,
-    BrokerAccountTabulatorColumnsDefinition
+    BrokerAccountTabulatorColumnsDefinition, CellComponentWithRow
 } from "../../../custom_typings/react-tabulator/types";
 import { ModelPortfolioPosition } from "../../models/portfolios/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
@@ -32,7 +32,6 @@ function setInvalidCell(
     message: string
 ) {
     if (typeof cell._cell.element === "object") {
-        cell._cell.element.id = `${cell.getData().id}-${cell.getField()}`;
         setCurrentInvalidCell([cell._cell.element as HTMLDivElement, message]);
     }
 }
@@ -256,7 +255,7 @@ export const modelPortfolioColumns: (
         title: "В портфеле",
         field: ModelPortfolioColumnNames.QUANTITY,
         sorter: SortersValues.NUMBER,
-        formatter: (cell: CellComponent) => {
+        formatter: (cell: CellComponentWithRow) => {
             const quantity = cell.getValue() as number;
             const rowIndex = cell.getRow().getIndex();
             const targetQuantity = data.find((row) => row.id === rowIndex)?.targetQuantity;
