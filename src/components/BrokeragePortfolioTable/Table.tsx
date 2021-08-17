@@ -44,6 +44,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const [currentInvalidCell, setCurrentInvalidCell] = useState<[HTMLDivElement, string]>();
     const [quantityPopupData, setQuantityPopupData] = useState<[HTMLDivElement, number]>();
+    const [tickerNamePopupData, setTickerNamePopupData] = useState<[HTMLDivElement, string]>();
 
     const resetInvalidCell = useCallback(() => setCurrentInvalidCell(undefined), []);
 
@@ -93,11 +94,17 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
             ) {
                 setQuantityPopupData([cell.getElement() as HTMLDivElement, data.targetQuantity - data.quantity]);
             }
+
+            const tickerName = cell.getData().name;
+            if (cell.getField() === BaseColumnNames.TICKER && tickerName) {
+                setTickerNamePopupData([cell.getElement() as HTMLDivElement, tickerName]);
+            }
         }
     }, []);
 
     const onCellMouseLeave = useCallback(() => {
         setQuantityPopupData(undefined);
+        setTickerNamePopupData(undefined);
     }, []);
 
     const options: TabulatorOptions = useMemo(() => ({
@@ -177,6 +184,14 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                     open
                     context={quantityPopupData[0]}
                     content={quantityPopupData[1]}
+                    position="top center"
+                />
+            )}
+            {tickerNamePopupData && (
+                <Popup
+                    open
+                    context={tickerNamePopupData[0]}
+                    content={tickerNamePopupData[1]}
                     position="top center"
                 />
             )}
