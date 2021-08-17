@@ -24,7 +24,7 @@ const TICKER_DUPLICATE = "Тикер должен быть уникальным 
 const WEIGHT_INVALID_FORMAT = "Вес должен быть числовым";
 const WEIGHT_INVALID_COUNT = "Вес должен быть больше 0";
 const QUANTITY_INVALID = "Количество бумаг в портфеле должно быть числовым и больше нуля";
-const AVERAGE_PRICE_INVALID = "Цена покупка бумаги должна быть числовой и больше нуля";
+const AVERAGE_PRICE_INVALID = "Цена покупки бумаги должна быть числовой, больше нуля и иметь не более 5 символов после точки";
 
 function setInvalidCell(
     cell: CellComponent,
@@ -84,7 +84,7 @@ function averagePriceValidator(
     value: string,
     setCurrentInvalidCell: (invalidCell?: [HTMLDivElement, string]) => void
 ) {
-    if (/^\d+$/.test(value)) {
+    if (/^\d+([,.]\d{1,5})?$/.test(value)) {
         return true;
     }
 
