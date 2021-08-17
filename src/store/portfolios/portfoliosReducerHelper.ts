@@ -161,23 +161,27 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
 }
 
 export function recalculateRowsPrice(portfolio: Portfolio, quotes: Quote[]) {
-    const priceMap = new Map<string, number>();
+    const quoteDataMap = new Map<string, { price: number, name: string, isin: string }>();
     for (const quote of quotes) {
-        priceMap.set(quote.ticker, quote.price);
+        quoteDataMap.set(quote.ticker, { price: quote.price, name: quote.name, isin: quote.isin });
     }
     portfolio.positions = portfolio.positions.map((row) => {
-        const newPrice = priceMap.get(row.ticker);
-        if (newPrice) {
+        const quoteData = quoteDataMap.get(row.ticker);
+        if (quoteData) {
             return {
                 ...row,
-                currentPrice: newPrice,
-                amount: newPrice * row.quantity
+                currentPrice: quoteData.price,
+                amount: quoteData.price * row.quantity,
+                name: quoteData.name,
+                isin: quoteData.isin
             };
         }
         return {
             ...row,
             currentPrice: 0,
-            amount: 0
+            amount: 0,
+            name: undefined,
+            isin: undefined
         };
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
@@ -189,13 +193,17 @@ export function recalculateRowPrice(portfolio: Portfolio, tickerName: string, qu
                 return {
                     ...row,
                     currentPrice: quote.price,
-                    amount: quote.price * row.quantity
+                    amount: quote.price * row.quantity,
+                    name: quote.name,
+                    isin: quote.isin
                 };
             }
             return {
                 ...row,
                 currentPrice: 0,
-                amount: 0
+                amount: 0,
+                name: undefined,
+                isin: undefined
             };
         }
         return row;
