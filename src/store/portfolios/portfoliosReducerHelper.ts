@@ -151,6 +151,12 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
                     [tableUpdate.valueKey]: Number.parseInt(tableUpdate.newValue, 10)
                 };
             }
+            if (tableUpdate.valueKey === EditableTableColumns.AVERAGE_PRICE) {
+                return {
+                    ...row,
+                    [tableUpdate.valueKey]: Number.parseFloat(Number.parseFloat(tableUpdate.newValue.replace(",", ".")).toFixed(5))
+                };
+            }
             return {
                 ...row,
                 [tableUpdate.valueKey]: tableUpdate.newValue
