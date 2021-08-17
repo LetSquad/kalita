@@ -4,7 +4,7 @@ import { RowData, TableData } from "../../src/models/table/types";
 import {
     AjaxContentType,
     CalcsValues,
-    ColumnCalcs,
+    ColumnCalcsPosition,
     RowRange,
     EditorsValues,
     FilterType,
@@ -48,15 +48,15 @@ export interface CellEvents {
 }
 
 export interface CellComponent {
-    _cell: Row;
+    _cell: Cell;
     getValue: () => DataTypes;
     getOldValue: () => DataTypes;
     restoreOldValue: () => void;
     getInitialValue: () => DataTypes;
     restoreInitialValue: () => void;
-    getElement: () => Element | undefined;
+    getElement: () => HTMLElement | undefined;
     getTable: () => Tabulator;
-    getRow: () => RowComponent;
+    getRow: () => (RowComponent | CalcComponent);
     getColumn: () => ColumnComponent;
     getData: () => RowData;
     getField: () => string;
@@ -79,39 +79,55 @@ export interface CellComponent {
     clearValidation: () => void;
 }
 
+export interface CellComponentWithRow extends CellComponent {
+    getRow: () => RowComponent;
+}
+
+export interface CellComponentWithCalc extends CellComponent {
+    getRow: () => CalcComponent;
+}
+
 export interface Cell {
     column: Column;
     component: CellComponent;
-    element: Element | false;
+    element: HTMLElement | false;
     height: number;
     initialValue: DataTypes;
     loaded: boolean;
     minWidth: null | number;
     modules: { [key: string]: Function };
     oldValue: DataTypes;
-    row: Row;
+    row: Row | Calc;
     table: Tabulator;
     value: DataTypes;
     width: number;
     [key: string]: any;
 }
 
+export interface CellWithRow extends Cell{
+    row: Row;
+}
+
+export interface CellWithCalc extends Cell{
+    row: Calc;
+}
+
 export interface RowComponent {
     _row: Row;
     getData: () => RowData;
-    getElement: () => Element | undefined;
+    getElement: () => HTMLElement | undefined;
     getTable: () => Tabulator;
     getNextRow: () => RowComponent | false;
     getPrevRow: () => RowComponent | false;
     getCells: () => CellComponent[];
-    getCell: (column: string | ColumnComponent | Element) => CellComponent | false;
+    getCell: (column: string | ColumnComponent | HTMLElement) => CellComponent | false;
     getIndex: () => DataTypes;
     getPosition: (inFiltered?: boolean) => number;
     getGroup: () => GroupComponent | false;
     delete: Promise<void>;
     scrollTo: Promise<void>;
     pageTo: Promise<void>;
-    move: (moveToRow: number | RowComponent | Element, isAbove: boolean) => void;
+    move: (moveToRow: number | RowComponent | HTMLElement, isAbove: boolean) => void;
     update: Promise<(value: { [key: string]: DataTypes }) => void>;
     select: () => void;
     deselect: () => void;
@@ -130,12 +146,11 @@ export interface RowComponent {
     validate: () => true | CellComponent[];
 }
 
-export interface Row {
+interface BaseRow {
     cells: Cell[];
     data: RowData;
-    component: RowComponent;
     created: boolean;
-    element: Element | false;
+    element: HTMLElement | false;
     height: number;
     heightInitialized: boolean;
     heightStyled: string;
@@ -143,8 +158,12 @@ export interface Row {
     manualHeight: boolean;
     modules: { [key: string]: Function };
     outerHeight: number;
-    parent: RowManager;
     table: Tabulator;
+}
+
+export interface Row extends BaseRow {
+    component: RowComponent;
+    parent: RowManager;
     type: "row";
     [key: string]: any;
 }
@@ -155,15 +174,15 @@ interface RowManager {
     columnManager: ColumnManager;
     displayRows: ((Group | Row)[])[];
     displayRowsCount: number;
-    element: Element | false;
+    element: HTMLElement | false;
     fixedHeight: boolean;
     height: number;
-    heightFixer: Element | false;
+    heightFixer: HTMLElement | false;
     rows: Row[];
     scrollLeft: number;
     scrollTop: number;
     table: Tabulator;
-    tableElement: Element | false;
+    tableElement: HTMLElement | false;
     [key: string]: any;
 }
 
@@ -174,10 +193,39 @@ export interface ExportRow {
     columns: ExportColumn[];
 }
 
+export interface CalcComponent {
+    _row: Calc;
+    getData: () => RowData;
+    getElement: () => HTMLElement | undefined;
+    getTable: () => Tabulator;
+    getCells: () => CellComponent[];
+    getCell: (column: string | ColumnComponent | HTMLElement) => CellComponent | false;
+}
+
+export interface Calc extends BaseRow {
+    component: CalcComponent;
+    parent: ColumnCalcs;
+    type: "calc";
+    [key: string]: any;
+}
+
+export interface ColumnCalcs {
+    botCalcs: Column[];
+    botElement: HTMLElement | false;
+    botInitialized: boolean;
+    botRow: Calc | false;
+    genColumn: Column;
+    table: Tabulator;
+    topCalcs: Column[];
+    topElement: HTMLElement | false;
+    topInitialized: boolean
+    topRow: Calc;
+}
+
 export interface ColumnComponent {
     type: "ColumnComponent";
     _column: Column;
-    getElement: () => Element | undefined;
+    getElement: () => HTMLElement | undefined;
     getTable: () => Tabulator;
     getDefinition: () => ColumnDefinition;
     updateDefinition: Promise<(value: { [key in keyof ColumnDefinition]: ColumnDefinition[key] }) => void>;
@@ -193,7 +241,7 @@ export interface ColumnComponent {
     setWidth: (size: number | true) => void;
     delete: Promise<void>;
     scrollTo: Promise<void>;
-    move: (moveTo: string | ColumnComponent | Element, isAfter: boolean) => void;
+    move: (moveTo: string | ColumnComponent | HTMLElement, isAfter: boolean) => void;
     getSubColumns: () => ColumnComponent[];
     getParentColumn: () => ColumnComponent | false;
     headerFilterFocus: () => void;
@@ -208,13 +256,13 @@ export interface Column {
     cells: Cell[];
     columns: Column[];
     component: ColumnComponent;
-    contentElement: Element | false;
+    contentElement: HTMLElement | false;
     definition: ColumnDefinition;
-    element: Element | false;
+    element: HTMLElement | false;
     field: string;
     fieldStructure: string[];
     getFieldValue: (data: TableData) => void;
-    groupElement: Element | false;
+    groupElement: HTMLElement | false;
     hozAlign: HorizontalAlignValues;
     isGroup: boolean;
     maxWidth: number | null;
@@ -225,8 +273,8 @@ export interface Column {
     parent: ColumnManager;
     setFieldValue: (data: TableData, value: DataTypes) => void;
     table: Tabulator;
-    titleElement: Element | false;
-    titleHolderElement: Element | false;
+    titleElement: HTMLElement | false;
+    titleHolderElement: HTMLElement | false;
     tooltip: Tooltip;
     type: "column";
     vertAlign: VerticalAlignValues;
@@ -241,8 +289,8 @@ export interface ColumnManager {
     columns: Column[];
     columnsByField: { [key: string]: Column };
     columnsByIndex: Column[];
-    element: Element | false;
-    headersElement: Element | false;
+    element: HTMLElement | false;
+    headersElement: HTMLElement | false;
     rowManager: RowManager;
     scrollLeft: number;
     table: Tabulator;
@@ -260,7 +308,7 @@ export interface ExportColumn {
 export interface GroupComponent {
     type: "GroupComponent";
     _group: Group;
-    getElement: () => Element | undefined;
+    getElement: () => HTMLElement | undefined;
     getTable: () => Tabulator;
     getKey: () => string;
     getField: () => string;
@@ -275,11 +323,11 @@ export interface GroupComponent {
 
 export interface Group {
     addRow: (row: Row) => void;
-    arrowElement: Element | false;
+    arrowElement: HTMLElement | false;
     calcs: { top: Row | undefined; bottom: Row | undefined };
     component: GroupComponent;
-    element: Element | false;
-    elementContents: Element | false;
+    element: HTMLElement | false;
+    elementContents: HTMLElement | false;
     field: string;
     generator: (value: DataTypes, count: number, data: TableData, group: Group) => void;
     groupList: Group[];
@@ -384,7 +432,7 @@ export interface TabulatorOptions {
     headerFilterPlaceholder?: string;
     scrollToColumnPosition?: HorizontalAlignValues;
     scrollToColumnIfVisible?: boolean;
-    columnCalcs?: boolean | ColumnCalcs;
+    columnCalcs?: boolean | ColumnCalcsPosition;
     nestedFieldSeparator?: boolean | string;
     headerVisible?: boolean;
     rowFormatter?: ((row: RowComponent) => void) | boolean;
@@ -402,7 +450,7 @@ export interface TabulatorOptions {
     movableRowsReceiver?: ((fromRow: RowComponent, toRow: RowComponent, toTable: Tabulator) => void)
     | false | MovableRowsReceiverAction;
     movableRowsConnectedElements?: string | Node;
-    movableRowsElementDrop?: ((e: MouseEvent, element: Element, row: RowComponent) => void);
+    movableRowsElementDrop?: ((e: MouseEvent, element: HTMLElement, row: RowComponent) => void);
     resizableRows?: boolean;
     scrollToRowPosition?: ScrollToRowPosition;
     scrollToRowIfVisible?: boolean;
@@ -486,16 +534,21 @@ export interface TabulatorOptions {
     printConfig?: TabulatorTableHtmlOutputPrintConfig;
     printHeader?: string | Node;
     printFooter?: string | Node;
-    printFormatter?: (tableHolderElement: Element, tableElement: Element) => void;
+    printFormatter?: (tableHolderElement: HTMLElement, tableElement: HTMLElement) => void;
     rowContextMenu?: ContextMenu<RowComponent>[];
     rowClickMenu?: ContextMenu<RowComponent>[];
     groupContextMenu?: ContextMenu<GroupComponent>[];
     groupClickMenu?: ContextMenu<GroupComponent>[];
+    cellMouseEnter?: (e: MouseEvent, cell: CellComponent) => void;
+    cellMouseLeave?: (e: MouseEvent, cell: CellComponent) => void;
+    cellMouseOver?: (e: MouseEvent, cell: CellComponent) => void;
+    cellMouseOut?: (e: MouseEvent, cell: CellComponent) => void;
+    cellMouseMove?: (e: MouseEvent, cell: CellComponent) => void;
 }
 
 export interface FooterManager {
     active: boolean;
-    element: Element;
+    element: HTMLElement;
     external: boolean;
     table: Tabulator;
     [key: string]: any;
@@ -513,12 +566,12 @@ export interface AccessorModule {
 export interface AjaxModule {
     table: Tabulator;
     config: string | Request;
-    errorElement: false | Element;
-    loaderElement: false | Element;
+    errorElement: false | HTMLElement;
+    loaderElement: false | HTMLElement;
     loaderPromise: (url: string, config: Request, params: { [key: string ]: string }) => void;
     loading: boolean;
-    loadingElement: false | Element;
-    msgElement: false | Element;
+    loadingElement: false | HTMLElement;
+    msgElement: false | HTMLElement;
     params: { [key: string ]: string };
     progressiveLoad: boolean;
     requestOrder: number;
@@ -541,12 +594,12 @@ export interface ClipboardModule {
 export interface ColumnCalcsModule {
     table: Tabulator;
     botCalcs: Column[];
-    botElement: false | Element;
+    botElement: false | HTMLElement;
     botInitialized: boolean;
     botRow: Row;
     genColumn: Column;
     topCalcs: Column[];
-    topElement: false | Element;
+    topElement: false | HTMLElement;
     topInitialized: boolean;
     topRow: Row;
     [key: string]: any;
@@ -559,11 +612,11 @@ export interface CommsModule {
 
 export interface DataTreeModule {
     table: Tabulator;
-    branchEl: null | Element;
-    collapseEl: null | Element;
+    branchEl: null | HTMLElement;
+    collapseEl: null | HTMLElement;
     displayIndex: number;
-    elementField: null | Element;
-    expandEl: null | Element;
+    elementField: null | HTMLElement;
+    expandEl: null | HTMLElement;
     field: string;
     indent: number;
     startOpen: () => void;
@@ -761,7 +814,7 @@ export interface Tabulator {
     browserMobile: boolean;
     browserSlow: boolean;
     columnManager: ColumnManager;
-    element: Element | false;
+    element: HTMLElement | false;
     footerManager: FooterManager;
     modules: Modules;
     options: TabulatorOptions;
@@ -791,7 +844,7 @@ export interface TabulatorRef extends Component<any> {
     htmlProps: { className: string }
     mainId: string;
     props: TabulatorRefProps;
-    ref: Element;
+    ref: HTMLElement;
     state: TabulatorRefState;
     table: Tabulator;
     pickValidHTMLProps: () => void;
@@ -847,7 +900,7 @@ type SorterParams = {
 
 type Formatter = (
     (
-        cell: CellComponent,
+        cell: CellComponentWithRow,
         formatterParams: { [key: string]: any },
         onRendered: (callback: () => void) => void
     ) => DataTypes
@@ -891,8 +944,8 @@ type FormatterParams = {
 } | {
     allowEmpty?: boolean;
     allowTruthy?: boolean;
-    tickElement?: Element | false;
-    crossElement?: Element | false;
+    tickElement?: HTMLElement | false;
+    crossElement?: HTMLElement | false;
 } | {
     stars?: number;
 } | {

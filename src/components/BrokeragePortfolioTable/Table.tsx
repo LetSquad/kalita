@@ -1,20 +1,24 @@
 import _ from "lodash";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, {
+    useCallback, useMemo, useRef, useState
+} from "react";
 import { ReactTabulator } from "react-tabulator";
+import { Popup } from "semantic-ui-react";
 import { $enum } from "ts-enum-util";
-import { ColumnCalcs, RowRange, TableLayout } from "../../../custom_typings/react-tabulator/enums";
+import { ColumnCalcsPosition, RowRange, TableLayout } from "../../../custom_typings/react-tabulator/enums";
 import {
     CellComponent,
     ColumnDefinition,
     DataTypes,
     GroupComponent,
     RowComponent,
-    TabulatorOptions, TabulatorRef,
+    TabulatorOptions,
+    TabulatorRef,
     TabulatorTableDownloadConfig
 } from "../../../custom_typings/react-tabulator/types";
 import { getMoexQuotesForName } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
-import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
+import { BaseColumnNames, EditableTableColumns, ModelPortfolioColumnNames } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
 import { useAppDispatch } from "../../store/hooks";
 import {
@@ -28,15 +32,20 @@ import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
 import { generateCsv, generateExportList } from "./utils/utils";
 
-interface Props {
-    columns: (actionBlock: JSX.Element) => ColumnDefinition[],
+interface TableProps {
+    columns: (actionBlock: JSX.Element, setCurrentInvalidCell: (invalidCell?: [HTMLDivElement, string]) => void) => ColumnDefinition[],
     currentPortfolio: Portfolio,
     additionalHeaderPart?: JSX.Element
 }
 
-export default function Table({ columns, currentPortfolio, additionalHeaderPart }: Props) {
+export default function Table({ columns, currentPortfolio, additionalHeaderPart }: TableProps) {
     const dispatch = useAppDispatch();
     const tableRef = useRef<TabulatorRef>(null);
+
+    const [currentInvalidCell, setCurrentInvalidCell] = useState<[HTMLDivElement, string]>();
+    const [quantityPopupData, setQuantityPopupData] = useState<[HTMLDivElement, number]>();
+
+    const resetInvalidCell = useCallback(() => setCurrentInvalidCell(undefined), []);
 
     const cellUpdated = useCallback((cell: CellComponent) => {
         dispatch(update({
@@ -48,7 +57,8 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         if (cell.getField() === BaseColumnNames.TICKER) {
             dispatch(getMoexQuotesForName(cell.getValue() as string));
         }
-    }, [dispatch]);
+        resetInvalidCell();
+    }, [dispatch, resetInvalidCell]);
 
     const rowMoved = useCallback((row: RowComponent) => {
         const newOrder = row.getTable().getRows().map((_row: RowComponent) => _row.getData().id);
@@ -75,12 +85,27 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         dispatch(deleteRowById(id));
     }, [dispatch]);
 
+    const onCellMouseEnter = useCallback((event: MouseEvent, cell: CellComponent) => {
+        if (cell.getRow()._row.type !== "calc") {
+            const data = cell.getData();
+            if (cell.getField() === ModelPortfolioColumnNames.QUANTITY && "targetQuantity" in data &&
+                data.targetQuantity > data.quantity
+            ) {
+                setQuantityPopupData([cell.getElement() as HTMLDivElement, data.targetQuantity - data.quantity]);
+            }
+        }
+    }, []);
+
+    const onCellMouseLeave = useCallback(() => {
+        setQuantityPopupData(undefined);
+    }, []);
+
     const options: TabulatorOptions = useMemo(() => ({
         movableRows: true,
         headerSortTristate: true,
         layoutColumnsOnNewData: true,
         groupBy: "groupName",
-        columnCalcs: ColumnCalcs.BOTH,
+        columnCalcs: ColumnCalcsPosition.BOTH,
         reactiveData: true,
         layout: TableLayout.FIT_COLUMNS,
         resizableColumns: false,
@@ -99,8 +124,10 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
             plus.addEventListener("click", () => addRowToGroup(group.getKey()));
             elem.append(plus);
             return elem;
-        }
-    }), [addRowToGroup, updateGroup]);
+        },
+        cellMouseEnter: onCellMouseEnter,
+        cellMouseLeave: onCellMouseLeave
+    }), [addRowToGroup, onCellMouseEnter, onCellMouseLeave, updateGroup]);
 
     const actionBlock = useCallback(() => (
         <ActionBlock deleteRow={deleteRow} />
@@ -124,10 +151,11 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const table = useMemo(() => (
         <ReactTabulator
-            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(currentPortfolio.positions)}
+            ref={tableRef} columns={columns(actionBlock(), setCurrentInvalidCell)} data={_.cloneDeep(currentPortfolio.positions)}
             options={options} className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
+            cellEditCancelled={resetInvalidCell}
         />
-    ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
+    ), [columns, actionBlock, currentPortfolio.positions, options, cellUpdated, rowMoved, resetInvalidCell]);
 
     return (
         <div className={styles.container}>
@@ -136,6 +164,22 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 currentPortfolio={currentPortfolio}
             />
             {table}
+            {currentInvalidCell && (
+                <Popup
+                    open
+                    context={currentInvalidCell[0]}
+                    content={currentInvalidCell[1]}
+                    position="top center"
+                />
+            )}
+            {quantityPopupData && (
+                <Popup
+                    open
+                    context={quantityPopupData[0]}
+                    content={quantityPopupData[1]}
+                    position="top center"
+                />
+            )}
         </div>
     );
 }

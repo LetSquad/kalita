@@ -109,7 +109,7 @@ export enum ResponsiveLayout {
     COLLAPSE = "collapse"
 }
 
-export enum ColumnCalcs {
+export enum ColumnCalcsPosition {
     BOTH = "both",
     TABLE = "table",
     GROUP = "group"
