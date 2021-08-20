@@ -40,7 +40,7 @@ export function parseOpenBrokerDeals(data: any): Map<string, BrokerReportDeal[]>
 }
 
 export function parseOpenBrokerReport(brokerName: string, data: any): BrokerReportData {
-    const accountName = `${brokerName}: ${data.broker_report.$.acc_client_code[0]}`;
+    const accountName = `${brokerName}: ${data.broker_report.$.acc_client_code}`;
 
     const stocksMap: Map<string, string> = parseOpenBrokerStocks(data);
     const dealsMap: Map<string, BrokerReportDeal[]> = parseOpenBrokerDeals(data);
