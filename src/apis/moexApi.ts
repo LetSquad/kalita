@@ -105,14 +105,14 @@ function getQuotes(json: MoexData): Quote[] {
         if (Array.isArray(row)) {
             return row.map((el: MoexQuote) => ({
                 ticker: el.SECID,
-                price: Number.parseInt(el.PREVADMITTEDQUOTE, 10),
+                price: Number.parseFloat(Number.parseFloat(el.PREVADMITTEDQUOTE).toFixed(5)),
                 isin: el.ISIN,
                 name: el.SHORTNAME
             }));
         }
         return [{
             ticker: row.SECID,
-            price: Number.parseInt(row.PREVADMITTEDQUOTE, 10),
+            price: Number.parseFloat(Number.parseFloat(row.PREVADMITTEDQUOTE).toFixed(5)),
             isin: row.ISIN,
             name: row.SHORTNAME
         }];
