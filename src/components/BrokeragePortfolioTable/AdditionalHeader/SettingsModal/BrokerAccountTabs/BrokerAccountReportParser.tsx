@@ -7,40 +7,45 @@ import React, {
 } from "react";
 import { useToasts } from "react-toast-notifications";
 import { Button, Dropdown } from "semantic-ui-react";
-import { BrokerReportEncoding, BrokerReportFormat } from "../../../../../models/portfolios/enums";
-import { BrokerReportData, BrokerReportMetadata } from "../../../../../models/portfolios/types";
+import {
+    BrokerCode,
+    BrokerReportEncoding,
+    BrokerReportFormat,
+    BrokerReportPositionCodeFormat
+} from "../../../../../models/portfolios/enums";
+import { BrokerReportLoadResult, BrokerReportMetadata } from "../../../../../models/portfolios/types";
 import { useAppDispatch } from "../../../../../store/hooks";
 import { addBrokerAccountPositions } from "../../../../../store/portfolios/portfoliosReducer";
 import BrokerReportLoaderWorker from "../../../../../workers/BrokerReportLoader.worker";
 import styles from "./styles/BrokerAccountReportParser.scss";
-import { parseOpenBrokerReport } from "../../../../../utils/report/openBrokerReoprtUtils";
-import { parseVtbReport } from "../../../../../utils/report/vtbBrokerReportUtils";
 import vtbBrokerIcon from "../../../../../static/icons/vtb-broker.png";
 import openBrokerIcon from "../../../../../static/icons/open-broker.ico";
 import tinkoffBrokerIcon from "../../../../../static/icons/tinkoff-broker.png";
-import { parseTinkoffReport } from "../../../../../utils/report/tinkoffBrokerReportUtils";
 
 const brokers: BrokerReportMetadata[] = [
     {
         brokerName: "ВТБ Брокер",
+        brokerCode: BrokerCode.VTB,
         icon: vtbBrokerIcon,
         reportFormat: BrokerReportFormat.XML,
         reportEncoding: BrokerReportEncoding.UTF8,
-        reportParser: parseVtbReport
+        positionCodeFormat: BrokerReportPositionCodeFormat.ISIN
     },
     {
         brokerName: "Открытие Брокер",
+        brokerCode: BrokerCode.OPEN_BROKER,
         icon: openBrokerIcon,
         reportFormat: BrokerReportFormat.XML,
         reportEncoding: BrokerReportEncoding.WIN1251,
-        reportParser: parseOpenBrokerReport
+        positionCodeFormat: BrokerReportPositionCodeFormat.TICKER
     },
     {
         brokerName: "Тинькофф Инвестиции",
+        brokerCode: BrokerCode.TINKOFF,
         icon: tinkoffBrokerIcon,
         reportFormat: BrokerReportFormat.XLSX,
         reportEncoding: BrokerReportEncoding.UTF8,
-        reportParser: parseTinkoffReport
+        positionCodeFormat: BrokerReportPositionCodeFormat.TICKER
     }
 ];
 
@@ -81,26 +86,27 @@ export default function BrokerAccountReportParser() {
         text: b.brokerName
     })), []);
 
-    const onBrokerReportLoaded = useCallback((event: MessageEvent) => {
-        if (chosenBrokerIndex === undefined || chosenReportPath === undefined) {
-            return;
-        }
-        const chosenBroker = brokers[chosenBrokerIndex];
-
-        try {
-            const reportData: BrokerReportData = chosenBroker.reportParser(chosenBroker.brokerName, event.data);
-            dispatch(addBrokerAccountPositions(reportData));
-            addToast(`Отчёт ${reportData.accountName} успешно загружен`, { appearance: "success" });
-        } catch (error) {
-            console.error(error);
+    const onBrokerReportLoaded = useCallback((event: MessageEvent<BrokerReportLoadResult>) => {
+        if (event.data.error !== undefined) {
+            console.error(event.data.error);
             addToast("Произошла ошибка при загрузке отчёта", { appearance: "error" });
-        } finally {
-            setChosenReportPath(undefined);
-            setReportLoading(false);
-            if (reportLoader) {
-                reportLoader.terminate();
-                setReportLoader(undefined);
-            }
+        } else if (
+            chosenBrokerIndex !== undefined &&
+            chosenReportPath !== undefined &&
+            event.data.reportData !== undefined
+        ) {
+            dispatch(addBrokerAccountPositions(event.data.reportData));
+            addToast(
+                `Отчёт ${event.data.reportData.accountName} успешно загружен`,
+                { appearance: "success" }
+            );
+        }
+
+        setChosenReportPath(undefined);
+        setReportLoading(false);
+        if (reportLoader) {
+            reportLoader.terminate();
+            setReportLoader(undefined);
         }
     }, [dispatch, addToast, chosenBrokerIndex, chosenReportPath, reportLoader, setReportLoading]);
 
@@ -114,7 +120,14 @@ export default function BrokerAccountReportParser() {
 
         const loader = new BrokerReportLoaderWorker();
         setReportLoader(loader);
-        loader.postMessage({ path: chosenReportPath, format: chosenBroker.reportFormat, encoding: chosenBroker.reportEncoding });
+        loader.postMessage({
+            brokerName: chosenBroker.brokerName,
+            brokerCode: chosenBroker.brokerCode,
+            path: chosenReportPath,
+            format: chosenBroker.reportFormat,
+            encoding: chosenBroker.reportEncoding,
+            positionCodeFormat: chosenBroker.positionCodeFormat
+        });
 
         loader.addEventListener("message", onBrokerReportLoaded);
     }, [chosenBrokerIndex, chosenReportPath, onBrokerReportLoaded]);

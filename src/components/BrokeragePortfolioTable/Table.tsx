@@ -16,7 +16,7 @@ import {
     TabulatorRef,
     TabulatorTableDownloadConfig
 } from "../../../custom_typings/react-tabulator/types";
-import { getMoexQuotesForName } from "../../apis/moexApi";
+import { loadMoexQuotesByTickers } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns, ModelPortfolioColumnNames } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
@@ -56,7 +56,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
             newValue: cell.getValue() as string
         }));
         if (cell.getField() === BaseColumnNames.TICKER) {
-            dispatch(getMoexQuotesForName(cell.getValue() as string));
+            dispatch(loadMoexQuotesByTickers([cell.getValue() as string]));
         }
         resetInvalidCell();
     }, [dispatch, resetInvalidCell]);

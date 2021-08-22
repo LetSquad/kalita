@@ -71,7 +71,7 @@ export function parseVtbReport(brokerName: string, data: any): BrokerReportData 
 
                 if (quantity !== 0) {
                     positions.push({
-                        code: fullCode.split(" ")[0].replace(/,\s*$/, ""),
+                        code: fullCode.split(",")[2].trim(),
                         averagePrice: dealsQuantity === 0 ? 0 : Math.round((dealsSum / dealsQuantity) * 100) / 100,
                         quantity
                     });
