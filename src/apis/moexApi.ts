@@ -25,6 +25,8 @@ const BOARD_STOCKS = "TQBR";
 const BOARD_ETFS = "TQTF";
 const BOARD_FUNDS = "TQIF";
 
+const QUOTES_FILTER_LIMIT = 10;
+
 const moexHttpClient = axios.create({
     baseURL: "https://iss.moex.com",
     responseType: "text"
@@ -38,7 +40,7 @@ function getUrl(board: string) {
 function getQuotesByBoard(board: string, tickers?: string[]): Promise<Quote[]> {
     return moexHttpClient.get(
         getUrl(board),
-        tickers ? { params: { securities: tickers.join(",") } } : undefined
+        tickers && tickers.length <= QUOTES_FILTER_LIMIT ? { params: { securities: tickers.join(",") } } : undefined
     ).then((response) => convertResponseToQuotes(response.data));
 }
 
