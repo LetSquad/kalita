@@ -21,85 +21,43 @@ interface MoexQuote {
     ISIN: string;
 }
 
+const BOARD_STOCKS = "TQBR";
+const BOARD_ETFS = "TQTF";
+const BOARD_FUNDS = "TQIF";
+
+const QUOTES_FILTER_LIMIT = 10;
+
 const moexHttpClient = axios.create({
-    baseURL: "https://iss.moex.com/iss/engines/stock/markets/",
+    baseURL: "https://iss.moex.com",
     responseType: "text"
 });
 
-function getUrl(moexBoardId: string) {
+function getUrl(board: string) {
     const filters = "iss.meta=off&iss.only=securities&securities.columns=SECID,PREVADMITTEDQUOTE,SHORTNAME,ISIN";
-    return `shares/boards/${moexBoardId}/securities.xml?${filters}`;
+    return `/iss/engines/stock/markets/shares/boards/${board}/securities.xml?${filters}`;
 }
 
-function getStock(name?: string) {
-    return moexHttpClient.get(getUrl("TQBR"), name ? {
-        params: {
-            securities: name
-        }
-    } : undefined);
+function getQuotesByBoard(board: string, tickers?: string[]): Promise<Quote[]> {
+    return moexHttpClient.get(
+        getUrl(board),
+        tickers && tickers.length <= QUOTES_FILTER_LIMIT ? { params: { securities: tickers.join(",") } } : undefined
+    ).then((response) => convertResponseToQuotes(response.data));
 }
 
-function getEtf(name?: string) {
-    return moexHttpClient.get(getUrl("TQTF"), name ? {
-        params: {
-            securities: name
-        }
-    } : undefined);
+function getMoexQuotes(tickers?: string[]): Promise<Quote[]> {
+    return Promise.all([
+        getQuotesByBoard(BOARD_STOCKS, tickers),
+        getQuotesByBoard(BOARD_ETFS, tickers),
+        getQuotesByBoard(BOARD_FUNDS, tickers)
+    ]).then((quotes) => quotes.flat());
 }
 
-function getFund(name?: string) {
-    return moexHttpClient.get(getUrl("TQIF"), name ? {
-        params: {
-            securities: name
-        }
-    } : undefined);
+function convertResponseToQuotes(xmlStr: string): Promise<Quote[]> {
+    return parseStringPromise(xmlStr, { ignoreAttrs: false, mergeAttrs: true, explicitArray: false })
+        .then((moexData) => parseQuotes(moexData));
 }
 
-export const getMoexQuotes = createAsyncThunk(
-    "getMoexQuotes",
-    async () => {
-        const results = await Promise.all([
-            getStock(),
-            getEtf(),
-            getFund()
-        ]);
-        let quotes: Quote[] = [];
-        for (const el of results) {
-            quotes = [...quotes, ...await (convertResponseToQuotes(el.data))];
-        }
-        return quotes;
-    }
-);
-
-export const getMoexQuotesForName = createAsyncThunk<{ tickerName: string, quote?: Quote }, string>(
-    "getMoexQuotesForName",
-    async (tickerName: string) => {
-        const results = await Promise.all([
-            getStock(tickerName),
-            getEtf(tickerName),
-            getFund(tickerName)
-        ]);
-
-        for (const el of results) {
-            const quote = await (convertResponseToQuotes(el.data));
-            if (quote.length === 1) {
-                return { tickerName, quote: quote[0] };
-            }
-        }
-        return { tickerName };
-    }
-);
-
-async function convertResponseToQuotes(xmlStr: string): Promise<Quote[]> {
-    const moexData = await getMoexData(xmlStr);
-    return getQuotes(moexData);
-}
-
-function getMoexData(xmlStr: string): Promise<MoexData> {
-    return parseStringPromise(xmlStr, { ignoreAttrs: false, mergeAttrs: true, explicitArray: false });
-}
-
-function getQuotes(json: MoexData): Quote[] {
+function parseQuotes(json: MoexData): Quote[] {
     if (json.document.data.rows.row) {
         const { row } = json.document.data.rows;
         if (Array.isArray(row)) {
@@ -119,4 +77,29 @@ function getQuotes(json: MoexData): Quote[] {
     }
 
     return [];
+}
+
+export const loadMoexQuotesByTickers = createAsyncThunk<Map<string, Quote>, string[]>(
+    "loadMoexQuotesByTickers",
+    async (tickers: string[]) => getMoexQuotesByTickers(tickers)
+);
+
+export function getMoexQuotesByTickers(tickers: string[]): Promise<Map<string, Quote>> {
+    return getMoexQuotes(tickers).then((quotes) => {
+        const quotesByTickers = new Map<string, Quote>();
+        for (const quote of quotes) {
+            quotesByTickers.set(quote.ticker, quote);
+        }
+        return quotesByTickers;
+    });
+}
+
+export function getMoexQuotesByIsinCodes(): Promise<Map<string, Quote>> {
+    return getMoexQuotes().then((quotes) => {
+        const quotesByIsinCodes = new Map<string, Quote>();
+        for (const quote of quotes) {
+            quotesByIsinCodes.set(quote.isin, quote);
+        }
+        return quotesByIsinCodes;
+    });
 }

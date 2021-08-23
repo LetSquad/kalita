@@ -101,13 +101,15 @@ export function generateNewPosition(currentPortfolio: Portfolio, groupName: stri
 }
 
 export function mapPositionFromBrokerReport(groupName: string, position: BrokerReportPosition): BrokerAccountPosition {
+    const currentPrice = position.currentPrice ? position.currentPrice : position.averagePrice;
     return {
         id: uuidv4(),
+        name: position.name,
         ticker: position.code,
         percentage: 0,
-        currentPrice: position.averagePrice,
+        currentPrice,
         quantity: position.quantity,
-        amount: position.quantity * position.averagePrice,
+        amount: position.quantity * currentPrice,
         groupName,
         averagePrice: position.averagePrice
     };
@@ -166,53 +168,26 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 
-export function recalculateRowsPrice(portfolio: Portfolio, quotes: Quote[]) {
-    const quoteDataMap = new Map<string, { price: number, name: string, isin: string }>();
-    for (const quote of quotes) {
-        quoteDataMap.set(quote.ticker, { price: quote.price, name: quote.name, isin: quote.isin });
-    }
-    portfolio.positions = portfolio.positions.map((row) => {
-        const quoteData = quoteDataMap.get(row.ticker);
-        if (quoteData) {
+export function recalculateRowsPrice(
+    portfolio: Portfolio,
+    quotes: Map<string, Quote>
+): ModelPortfolioPosition[] | BrokerAccountPosition[] {
+    return portfolio.positions.map((row) => {
+        const quote = quotes.get(row.ticker);
+        if (quote) {
             return {
                 ...row,
-                currentPrice: quoteData.price,
-                amount: quoteData.price * row.quantity,
-                name: quoteData.name,
-                isin: quoteData.isin
+                currentPrice: quote.price,
+                amount: quote.price * row.quantity,
+                name: quote.name
             };
         }
         return {
             ...row,
             currentPrice: 0,
             amount: 0,
-            name: undefined,
-            isin: undefined
+            name: undefined
         };
-    }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
-}
-
-export function recalculateRowPrice(portfolio: Portfolio, tickerName: string, quote?: Quote) {
-    portfolio.positions = portfolio.positions.map((row) => {
-        if (row.ticker === tickerName) {
-            if (quote) {
-                return {
-                    ...row,
-                    currentPrice: quote.price,
-                    amount: quote.price * row.quantity,
-                    name: quote.name,
-                    isin: quote.isin
-                };
-            }
-            return {
-                ...row,
-                currentPrice: 0,
-                amount: 0,
-                name: undefined,
-                isin: undefined
-            };
-        }
-        return row;
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 

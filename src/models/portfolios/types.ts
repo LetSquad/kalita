@@ -1,5 +1,10 @@
 import { EditableTableColumns } from "../table/enums";
-import { BrokeragePortfolioTypes, BrokerReportEncoding, BrokerReportFormat } from "./enums";
+import {
+    BrokeragePortfolioTypes,
+    BrokerReportPositionCodeFormat,
+    BrokerReportEncoding,
+    BrokerReportFormat, BrokerCode
+} from "./enums";
 import { ModelPortfolioSettings } from "../settings/types";
 
 export interface ModelPortfolioIdentifier {
@@ -38,7 +43,6 @@ export interface BrokerAccount {
 export interface PortfolioPosition {
     readonly id: string;
     readonly name?: string;
-    readonly isin?: string;
     readonly ticker: string;
     readonly percentage: number;
     readonly currentPrice: number;
@@ -66,16 +70,25 @@ export interface PortfolioUpdatePayload {
 
 export interface BrokerReportMetadata {
     readonly brokerName: string;
+    readonly brokerCode: BrokerCode;
     readonly icon: string;
     readonly reportFormat: BrokerReportFormat;
     readonly reportEncoding: BrokerReportEncoding;
-    readonly reportParser: (brokerName: string, data: any) => BrokerReportData;
+    readonly positionCodeFormat: BrokerReportPositionCodeFormat;
+}
+
+export interface BrokerReportLoadResult {
+    readonly reportData?: BrokerReportData;
+    readonly error?: Error;
 }
 
 export interface BrokerReportPath {
+    readonly brokerName: string;
+    readonly brokerCode:BrokerCode;
     readonly path: string;
     readonly format: BrokerReportFormat;
     readonly encoding: BrokerReportEncoding;
+    readonly positionCodeFormat: BrokerReportPositionCodeFormat;
 }
 
 export interface BrokerReportData {
@@ -85,7 +98,9 @@ export interface BrokerReportData {
 
 export interface BrokerReportPosition {
     readonly code: string;
+    readonly name?: string;
     readonly averagePrice: number;
+    readonly currentPrice?: number;
     readonly quantity: number;
 }
 

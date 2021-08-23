@@ -4,7 +4,7 @@ import { Portfolio } from "../../../models/portfolios/types";
 import { addNewGroup } from "../../../store/portfolios/portfoliosReducer";
 import { AdditionalHeaderMenu } from "./AdditionalHeaderMenu";
 import styles from "./styles/AdditionalHeader.scss";
-import { getMoexQuotes } from "../../../apis/moexApi";
+import { loadMoexQuotesByTickers } from "../../../apis/moexApi";
 import { useAppDispatch } from "../../../store/hooks";
 
 interface Props {
@@ -23,8 +23,9 @@ export function AdditionalHeader({
     }, [dispatch]);
 
     const updateQuotesCurrentPrice = useCallback(() => {
-        dispatch(getMoexQuotes());
-    }, [dispatch]);
+        const tickers: string[] = currentPortfolio.positions.map((position) => position.ticker);
+        dispatch(loadMoexQuotesByTickers(tickers));
+    }, [dispatch, currentPortfolio]);
 
     return (
         <div className={styles.additionalHeader}>
