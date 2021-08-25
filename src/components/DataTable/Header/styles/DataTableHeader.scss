@@ -1,0 +1,7 @@
+@use '../../styles/base' as *;
+@use '../../styles/variables' as dataTableVariables;
+
+.head {
+  @extend %data-table-row;
+  height: dataTableVariables.$head-height;
+}

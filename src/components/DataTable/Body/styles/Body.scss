@@ -1,0 +1,7 @@
+@use '../../styles/variables' as dataTableVariables;
+
+.body {
+  display: block;
+  height: calc(100% - #{dataTableVariables.$head-height});
+  overflow: auto;
+}

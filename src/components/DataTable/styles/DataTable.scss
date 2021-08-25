@@ -1,0 +1,7 @@
+@use '../../BrokeragePortfolioTable/AdditionalHeader/styles/AdditionalHeader' as additionalHeader;
+@use './variables' as dataTableVariables;
+
+.table {
+  height: calc(100% - #{additionalHeader.$additional-header-height});
+  margin: 0 !important;
+}

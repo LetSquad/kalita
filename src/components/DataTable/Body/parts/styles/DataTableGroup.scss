@@ -1,0 +1,41 @@
+.group {
+  &-row {
+    background-color: #fafafa;
+    display: flex;
+    width: 100%;
+  }
+
+  &-cell {
+    align-items: center;
+    display: flex;
+    width: 100%;
+  }
+
+  &-add-button {
+    font-size: 15px !important;
+    margin: 0 8px 0 auto !important;
+    opacity: 0.8 !important;
+
+    &:hover {
+      opacity: 1 !important;
+    }
+  }
+
+  &-input {
+    margin-right: 5px;
+    width: 100%;
+
+    > input {
+      background: transparent !important;
+      border: 0 !important;
+      font-size: 14px !important;
+      font-weight: bold !important;
+      padding: 1px !important;
+      width: 100% !important;
+
+      &:focus {
+        border: 2px solid #e69600 !important;
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { ModelPortfolio } from "../../../models/portfolios/types";
 import { modelPortfolioColumns } from "../columns";
+import NewTable from "../NewTable";
 import Table from "../Table";
 import TargetAmountInput from "./TargetAmountInput";
 
@@ -10,7 +11,7 @@ interface Props {
 
 export default function ModelTable({ currentPortfolio }: Props) {
     return useMemo(() => (
-        <Table
+        <NewTable
             columns={modelPortfolioColumns(currentPortfolio.positions, currentPortfolio.settings)}
             currentPortfolio={currentPortfolio}
             additionalHeaderPart={<TargetAmountInput />}
