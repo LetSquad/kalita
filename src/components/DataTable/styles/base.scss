@@ -1,6 +1,13 @@
-.row,
-%data-table-row {
+.base-row,
+%data-table-base-row {
   display: table;
   table-layout: fixed;
   width: 100%;
+}
+
+.base-cell,
+%data-table-base-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -1,10 +1,11 @@
 import React from "react";
 import { Table } from "semantic-ui-react";
 import { BaseColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
+import { NewActionBlock } from "../BrokeragePortfolioTable/NewActionBlock";
 import DataTableBody from "./Body/DataTableBody";
 import DataTableHeader from "./Header/DataTableHeader";
 import styles from "./styles/DataTable.scss";
-import { DataTable as DataTableType } from "./types/base";
+import { DataTable as DataTableType, DataTableData } from "./types/base";
 import { DataTableBodyContext, DataTableContext } from "./utils/contexts/contexts";
 
 const columns = [
@@ -32,6 +33,9 @@ const columns = [
     }, {
         title: "Сумма",
         field: BaseColumnNames.AMOUNT
+    }, {
+        field: BaseColumnNames.ACTION,
+        element: (rowData: DataTableData) => <NewActionBlock rowData={rowData} />
     }
 ];
 

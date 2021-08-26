@@ -1,6 +1,6 @@
 export type DataTableData = {
     id: string;
-    [key: string]: any;
+    [key: string]: string | number | undefined;
 };
 
 export interface DataTable {
@@ -14,4 +14,5 @@ export interface DataTable {
 export interface ColumnDefinition {
     field: string;
     title?: string;
+    element?: (rowData: DataTableData) => JSX.Element;
 }

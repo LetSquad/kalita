@@ -1,5 +1,5 @@
 import { DataTableData } from "../types/base";
-import { GroupData } from "../types/body";
+import { GroupData } from "../types/group";
 
 export function groupData(
     list: DataTableData[],

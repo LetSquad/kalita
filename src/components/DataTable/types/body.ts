@@ -1,10 +1,5 @@
 import { DataTableData } from "./base";
 
-export interface GroupData {
-    name: string;
-    data: DataTableData[];
-}
-
 export interface DataTableBodyParams {
     groupBy?: keyof DataTableData;
     expandableGroup?: boolean;
@@ -12,17 +7,6 @@ export interface DataTableBodyParams {
     onAddRowToGroup?: (groupName: string) => void;
 }
 
-export type DataTableUngroupedBodyParams = Omit<DataTableBodyParams,
-"groupBy" |
-"onGroupNameEdit" |
-"onAddRowToGroup" |
-"expandableGroup"
->;
-
 export interface DataTableGroupedBodyParams extends DataTableBodyParams {
     groupBy: keyof DataTableData;
-}
-
-export interface DataTableGroupParams {
-    group: GroupData;
 }
