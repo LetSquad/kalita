@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { DataTableBodyParams, DataTableGroupedBodyParams } from "../../types/body";
-import { DataTableBaseCellParams, DataTableCellParams, DataTableElementCellParams } from "../../types/cell";
+import {
+    DataTableBaseCellParams, DataTableCellParams, DataTableElementCellParams, DataTableEmptyCellParams
+} from "../../types/cell";
 import { DataTableContextParams } from "../../types/contexts";
 import { DataTableBodyContext, DataTableCellContext, DataTableContext } from "./contexts";
 
@@ -26,4 +28,8 @@ export function useDataTableBaseCellContext() {
 
 export function useDataTableElementCellContext() {
     return useContext(DataTableCellContext) as DataTableElementCellParams;
+}
+
+export function useDataTableEmptyCellContext() {
+    return useContext(DataTableCellContext) as DataTableEmptyCellParams;
 }

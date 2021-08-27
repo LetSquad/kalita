@@ -10,12 +10,14 @@ import {
     BrokerReportData,
     ModelPortfolioIdentifier,
     ModelPortfolioPosition,
-    PortfolioIdentifier,
+    PortfolioIdentifier, PortfolioReorderPayload,
     Portfolios,
     PortfolioUpdatePayload
 } from "../../models/portfolios/types";
 import { EditableTableColumns } from "../../models/table/enums";
-import { addNewElementToGroup, deleteElementFromGroup, setActiveId } from "../sidebarMenu/sidebarMenuReducer";
+import {
+    addNewElementToGroup, deleteElementFromGroup, setActiveId, setDefault
+} from "../sidebarMenu/sidebarMenuReducer";
 import {
     generateNewPosition,
     getBrokerAccountsPositionsByIds,
@@ -160,6 +162,29 @@ export const portfoliosSlice = createSlice({
                 }
             }
         },
+        updatePosition: (state: PortfoliosState, action: PayloadAction<PortfolioReorderPayload>) => {
+            if (!state.currentTable) {
+                return;
+            }
+            const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
+            if (currentPortfolio) {
+                if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                    const movedPosition = currentPortfolio.positions.splice(action.payload.oldOrder, 1)[0];
+                    currentPortfolio.positions.splice(
+                        action.payload.newOrder,
+                        0,
+                        action.payload.newGroupName ? { ...movedPosition, groupName: action.payload.newGroupName } : movedPosition
+                    );
+                } else {
+                    const movedPosition = currentPortfolio.positions.splice(action.payload.oldOrder, 1)[0];
+                    currentPortfolio.positions.splice(
+                        action.payload.newOrder,
+                        0,
+                        action.payload.newGroupName ? { ...movedPosition, groupName: action.payload.newGroupName } : movedPosition
+                    );
+                }
+            }
+        },
         updateGroupName: (state: PortfoliosState, action: PayloadAction<{ oldGroupName: string, newGroupName: string }>) => {
             if (!state.currentTable) {
                 return;
@@ -298,6 +323,9 @@ export const portfoliosSlice = createSlice({
                         }
                     }
                 );
+            })
+            .addCase(setDefault, (state) => {
+                portfoliosSlice.caseReducers.resetCurrentPortfolio(state);
             });
     }
 });
@@ -308,6 +336,7 @@ export const {
     addBrokerAccountPositions,
     addNewGroup,
     update,
+    updatePosition,
     updateGroupName,
     deleteRowById,
     updateTotalTargetAmount,

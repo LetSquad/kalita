@@ -1,11 +1,15 @@
 .row {
   background-color: #fafafa;
   display: flex;
-  width: 100%;
 }
 
 .cell {
   align-items: center;
+  display: flex;
+  width: 100%;
+}
+
+.container {
   display: flex;
   width: 100%;
 }
@@ -34,6 +38,8 @@
 
     &:focus {
       border: 2px solid #e69600 !important;
+      margin-left: -2px !important;
+      margin-top: -2px !important;
     }
   }
 }

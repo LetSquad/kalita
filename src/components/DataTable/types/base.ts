@@ -9,10 +9,12 @@ export interface DataTable {
     expandableGroup?: boolean;
     onGroupNameEdit?: (oldGroupName: string, newGroupName: string) => void;
     onAddRowToGroup?: (groupName: string) => void;
+    onRowMoved?: (rowId: string, oldOrder: number, newOrder: number, newGroupName?: string) => void;
 }
 
 export interface ColumnDefinition {
     field: string;
     title?: string;
     element?: (rowData: DataTableData) => JSX.Element;
+    width?: number;
 }

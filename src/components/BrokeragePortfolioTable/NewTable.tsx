@@ -1,10 +1,8 @@
 import React, { useCallback } from "react";
-import {
-    ColumnDefinition
-} from "../../../custom_typings/react-tabulator/types";
+import { ColumnDefinition } from "../../../custom_typings/react-tabulator/types";
 import { Portfolio } from "../../models/portfolios/types";
 import { useAppDispatch } from "../../store/hooks";
-import { addNewPosition, updateGroupName } from "../../store/portfolios/portfoliosReducer";
+import { addNewPosition, updateGroupName, updatePosition } from "../../store/portfolios/portfoliosReducer";
 import DataTable from "../DataTable/DataTable";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
@@ -31,6 +29,15 @@ export default function NewTable({ columns, currentPortfolio, additionalHeaderPa
         }));
     }, [dispatch]);
 
+    const rowMoved = useCallback((rowId: string, oldOrder: number, newOrder: number, newGroupName?: string) => {
+        dispatch(updatePosition({
+            id: rowId,
+            oldOrder,
+            newOrder,
+            newGroupName
+        }));
+    }, [dispatch]);
+
     return (
         <div className={styles.container}>
             <AdditionalHeader
@@ -43,6 +50,7 @@ export default function NewTable({ columns, currentPortfolio, additionalHeaderPa
                 onAddRowToGroup={addRowToGroup}
                 onGroupNameEdit={updateGroup}
                 expandableGroup
+                onRowMoved={rowMoved}
             />
         </div>
     );

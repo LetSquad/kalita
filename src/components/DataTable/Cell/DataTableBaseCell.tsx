@@ -4,7 +4,7 @@ import { useDataTableBaseCellContext } from "../utils/contexts/hooks";
 import baseStyles from "../styles/base.scss";
 
 export default function DataTableBaseCell() {
-    const { row, column: { field } } = useDataTableBaseCellContext();
+    const { row, column: { field }, style } = useDataTableBaseCellContext();
 
-    return <Table.Cell className={baseStyles.baseCell}>{row[field]}</Table.Cell>;
+    return <Table.Cell className={baseStyles.baseCell} style={style}>{row[field]}</Table.Cell>;
 }

@@ -10,30 +10,32 @@ export default function DataTableGroupRow({ groupName, expandState, setExpandSta
     return (
         <Table.Row className={styles.row}>
             <Table.Cell className={styles.cell}>
-                {
-                    expandableGroup && (
-                        <Icon
-                            name={expandState ? "chevron down" : "chevron right"}
-                            link
-                            onClick={() => setExpandState(!expandState)}
-                        />
-                    )
-                }
-                {
-                    onGroupNameEdit
-                        ? (
-                            <Input
-                                defaultValue={groupName}
-                                className={styles.input}
-                                onBlur={({ target }: FocusEvent<HTMLInputElement>) => onGroupNameEdit(groupName, target.value)}
-                                onKeyPress={({ key, target }: KeyboardEvent<HTMLInputElement>) =>
-                                    (key === "Enter" && onGroupNameEdit(groupName, (target as HTMLInputElement).value))}
+                <div className={styles.container}>
+                    {
+                        expandableGroup && (
+                            <Icon
+                                name={expandState ? "chevron down" : "chevron right"}
+                                link
+                                onClick={() => setExpandState(!expandState)}
                             />
                         )
-                        : <span>{groupName}</span>
-                }
+                    }
+                    {
+                        onGroupNameEdit
+                            ? (
+                                <Input
+                                    defaultValue={groupName}
+                                    className={styles.input}
+                                    onBlur={({ target }: FocusEvent<HTMLInputElement>) => onGroupNameEdit(groupName, target.value)}
+                                    onKeyPress={({ key, target }: KeyboardEvent<HTMLInputElement>) =>
+                                        (key === "Enter" && onGroupNameEdit(groupName, (target as HTMLInputElement).value))}
+                                />
+                            )
+                            : <span>{groupName}</span>
+                    }
+                </div>
                 {onAddRowToGroup &&
-                <Icon name="plus" link onClick={() => onAddRowToGroup(groupName)} className={styles.addButton} />}
+                    <Icon name="plus" link onClick={() => onAddRowToGroup(groupName)} className={styles.addButton} />}
             </Table.Cell>
         </Table.Row>
     );

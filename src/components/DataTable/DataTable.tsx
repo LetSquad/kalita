@@ -1,41 +1,51 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { DropResult } from "react-beautiful-dnd";
 import { Table } from "semantic-ui-react";
 import { BaseColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import { NewActionBlock } from "../BrokeragePortfolioTable/NewActionBlock";
 import DataTableBody from "./Body/DataTableBody";
 import DataTableHeader from "./Header/DataTableHeader";
 import styles from "./styles/DataTable.scss";
-import { DataTable as DataTableType, DataTableData } from "./types/base";
+import { ColumnDefinition, DataTable as DataTableType, DataTableData } from "./types/base";
 import { DataTableBodyContext, DataTableContext } from "./utils/contexts/contexts";
 
-const columns = [
+const columns: ColumnDefinition[] = [
     {
         title: "Инструмент",
-        field: BaseColumnNames.TICKER
+        field: BaseColumnNames.TICKER,
+        width: 130
     }, {
         title: "Вес",
-        field: ModelPortfolioColumnNames.WEIGHT
+        field: ModelPortfolioColumnNames.WEIGHT,
+        width: 80
     }, {
         title: "Доля",
-        field: BaseColumnNames.PERCENTAGE
+        field: BaseColumnNames.PERCENTAGE,
+        width: 85
     }, {
         title: "Целевая сумма",
-        field: ModelPortfolioColumnNames.TARGET_AMOUNT
+        field: ModelPortfolioColumnNames.TARGET_AMOUNT,
+        width: 165
     }, {
         title: "Цена",
-        field: BaseColumnNames.CURRENT_PRICE
+        field: BaseColumnNames.CURRENT_PRICE,
+        width: 120
     }, {
         title: "Целевое количество",
-        field: ModelPortfolioColumnNames.TARGET_QUANTITY
+        field: ModelPortfolioColumnNames.TARGET_QUANTITY,
+        width: 190
     }, {
         title: "В портфеле",
-        field: ModelPortfolioColumnNames.QUANTITY
+        field: ModelPortfolioColumnNames.QUANTITY,
+        width: 130
     }, {
         title: "Сумма",
-        field: BaseColumnNames.AMOUNT
+        field: BaseColumnNames.AMOUNT,
+        width: 130
     }, {
         field: BaseColumnNames.ACTION,
-        element: (rowData: DataTableData) => <NewActionBlock rowData={rowData} />
+        element: (rowData: DataTableData) => <NewActionBlock rowData={rowData} />,
+        width: 40
     }
 ];
 
@@ -44,8 +54,18 @@ export default function DataTable({
     groupBy,
     onGroupNameEdit,
     onAddRowToGroup,
+    onRowMoved,
     expandableGroup
 }: DataTableType) {
+    const onDragEnd = useCallback((result: DropResult) => {
+        console.log(result);
+        if (onRowMoved && result.destination) {
+            onRowMoved(result.draggableId, result.source.index, result.destination.index, result.destination.droppableId);
+        }
+    }, [onRowMoved]);
+
+    console.log(data);
+
     return (
         <DataTableContext.Provider
             value={{
@@ -53,19 +73,26 @@ export default function DataTable({
                 data
             }}
         >
-            <Table className={styles.table}>
-                <DataTableHeader />
-                <DataTableBodyContext.Provider
-                    value={{
-                        groupBy,
-                        onAddRowToGroup,
-                        onGroupNameEdit,
-                        expandableGroup
-                    }}
-                >
-                    <DataTableBody />
-                </DataTableBodyContext.Provider>
-            </Table>
+            <div className={styles.tableContainer}>
+                <Table className={styles.innerTableHeader}>
+                    <DataTableHeader />
+                </Table>
+
+                <Table className={styles.innerTableBody}>
+                    <DataTableBodyContext.Provider
+                        value={{
+                            groupBy,
+                            onAddRowToGroup,
+                            onGroupNameEdit,
+                            expandableGroup,
+                            onDragEnd,
+                            isRowMovedEnabled: !!onRowMoved
+                        }}
+                    >
+                        <DataTableBody />
+                    </DataTableBodyContext.Provider>
+                </Table>
+            </div>
         </DataTableContext.Provider>
     );
 }

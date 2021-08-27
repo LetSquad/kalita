@@ -68,6 +68,13 @@ export interface PortfolioUpdatePayload {
     readonly newOrder?: string[];
 }
 
+export interface PortfolioReorderPayload {
+    readonly id: string;
+    readonly oldOrder: number;
+    readonly newOrder: number;
+    readonly newGroupName?: string;
+}
+
 export interface BrokerReportMetadata {
     readonly brokerName: string;
     readonly brokerCode: BrokerCode;

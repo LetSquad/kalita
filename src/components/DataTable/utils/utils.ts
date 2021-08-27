@@ -1,4 +1,5 @@
-import { DataTableData } from "../types/base";
+import { CSSProperties } from "react";
+import { ColumnDefinition, DataTableData } from "../types/base";
 import { GroupData } from "../types/group";
 
 export function groupData(
@@ -19,4 +20,12 @@ export function groupData(
         }
     }
     return groups;
+}
+
+export function getCssStyleFromColumn({ width }: Pick<ColumnDefinition, "width">) {
+    const cssProperties: CSSProperties = {};
+    if (width !== undefined) {
+        cssProperties.width = `${width}px`;
+    }
+    return cssProperties || undefined;
 }
