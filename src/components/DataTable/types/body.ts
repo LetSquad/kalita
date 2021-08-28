@@ -12,4 +12,5 @@ export interface DataTableBodyParams {
 
 export interface DataTableGroupedBodyParams extends DataTableBodyParams {
     groupBy: keyof DataTableData;
+    onDragEnd: (result: DropResult, provided: ResponderProvided) => void;
 }

@@ -32,8 +32,10 @@ export default function DataTableBaseRow({ row }: DataTableBaseRowParams) {
                             <DataTableCellContext.Provider
                                 key={`cell-context-${column.field}-${row.id}`}
                                 value={{
+                                    id: row.id,
                                     column,
                                     row,
+                                    cell: row[column.field],
                                     style: getCssStyleFromColumn(column)
                                 }}
                             >

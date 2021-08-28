@@ -12,9 +12,3 @@ export interface DataTable {
     onRowMoved?: (rowId: string, oldOrder: number, newOrder: number, newGroupName?: string) => void;
 }
 
-export interface ColumnDefinition {
-    field: string;
-    title?: string;
-    element?: (rowData: DataTableData) => JSX.Element;
-    width?: number;
-}

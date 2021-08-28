@@ -1,18 +1,14 @@
 import React from "react";
 import { useDataTableCellContext } from "../utils/contexts/hooks";
 import DataTableBaseCell from "./DataTableBaseCell";
-import DataTableElementCell from "./DataTableElementCell";
-import DataTableEmptyCell from "./DataTableEmptyCell";
+import DataTableFormatterCell from "./FormatterCell/DataTableFormatterCell";
 
 export default function DataTableCell() {
-    const { row, column } = useDataTableCellContext();
+    const { cell, column: { formatter } } = useDataTableCellContext();
 
-    const { field, element } = column;
-    if (element) {
-        return <DataTableElementCell />;
+    if (formatter) {
+        return <DataTableFormatterCell />;
     }
-    if (field in row) {
-        return <DataTableBaseCell />;
-    }
-    return <DataTableEmptyCell />;
+
+    return <DataTableBaseCell>{cell}</DataTableBaseCell>;
 }

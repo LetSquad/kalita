@@ -1,5 +1,7 @@
 import { CSSProperties } from "react";
-import { ColumnDefinition, DataTableData } from "./base";
+import { DataTableData } from "./base";
+import { ColumnDefinition } from "./column";
+import { ElementFormatterParams } from "./formatter";
 
 export interface DataTableHeaderCellParams {
     column: ColumnDefinition;
@@ -7,23 +9,24 @@ export interface DataTableHeaderCellParams {
 }
 
 export interface DataTableCellParams {
+    id: string;
     column: ColumnDefinition;
     row: DataTableData;
+    cell: string | number | undefined;
     style?: CSSProperties;
 }
 
 export interface DataTableBaseCellParams {
-    row: DataTableData;
-    column: Pick<ColumnDefinition, "field">;
+    children: string | number | JSX.Element | JSX.Element[] | undefined;
     style?: CSSProperties;
+    className?: string;
 }
 
-export interface DataTableElementCellParams {
-    row: DataTableData;
-    column: Required<Pick<ColumnDefinition, "element">>;
-    style?: CSSProperties;
+export interface DataTableFormatterCellParams {
+    cell: string | number | undefined;
+    column: Required<Pick<ColumnDefinition, "formatter">>;
 }
 
-export interface DataTableEmptyCellParams {
-    style?: CSSProperties;
+export interface DataTableElementFormatterCellParams {
+    params: ElementFormatterParams;
 }

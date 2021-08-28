@@ -1,5 +1,6 @@
 import { CSSProperties } from "react";
-import { ColumnDefinition, DataTableData } from "../types/base";
+import { DataTableData } from "../types/base";
+import { ColumnDefinition } from "../types/column";
 import { GroupData } from "../types/group";
 
 export function groupData(

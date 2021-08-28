@@ -6,7 +6,9 @@ import { NewActionBlock } from "../BrokeragePortfolioTable/NewActionBlock";
 import DataTableBody from "./Body/DataTableBody";
 import DataTableHeader from "./Header/DataTableHeader";
 import styles from "./styles/DataTable.scss";
-import { ColumnDefinition, DataTable as DataTableType, DataTableData } from "./types/base";
+import { DataTable as DataTableType } from "./types/base";
+import { ColumnDefinition } from "./types/column";
+import { FormatterTypes } from "./types/formatter";
 import { DataTableBodyContext, DataTableContext } from "./utils/contexts/contexts";
 
 const columns: ColumnDefinition[] = [
@@ -44,7 +46,12 @@ const columns: ColumnDefinition[] = [
         width: 130
     }, {
         field: BaseColumnNames.ACTION,
-        element: (rowData: DataTableData) => <NewActionBlock rowData={rowData} />,
+        formatter: {
+            type: FormatterTypes.ELEMENT,
+            params: {
+                renderElement: (cellData, rowId) => <NewActionBlock rowId={rowId} />
+            }
+        },
         width: 40
     }
 ];
@@ -58,13 +65,10 @@ export default function DataTable({
     expandableGroup
 }: DataTableType) {
     const onDragEnd = useCallback((result: DropResult) => {
-        console.log(result);
         if (onRowMoved && result.destination) {
             onRowMoved(result.draggableId, result.source.index, result.destination.index, result.destination.droppableId);
         }
     }, [onRowMoved]);
-
-    console.log(data);
 
     return (
         <DataTableContext.Provider
