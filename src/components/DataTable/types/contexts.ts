@@ -29,6 +29,10 @@ export interface DataTableLinkFormatterCellContextParams {
     cell: number | string;
 }
 
+export interface DataTableImageFormatterCellContextParams {
+    cell: string;
+}
+
 export interface DataTableColorFormatterCellContextParams {
     cell: string;
     style?: CSSProperties;

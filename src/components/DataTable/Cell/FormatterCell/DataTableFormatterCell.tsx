@@ -4,6 +4,7 @@ import { useDataTableFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
 import DataTableColorFormatterCell from "./DataTableColorFormatterCell";
 import DataTableElementFormatterCell from "./DataTableElementFormatterCell";
+import DataTableImageFormatterCell from "./DataTableImageFormatterCell";
 import DataTableLinkFormatterCell from "./DataTableLinkFormatterCell";
 import DataTableMoneyFormatterCell from "./DataTableMoneyFormatterCell";
 import DataTablePercentageFormatterCell from "./DataTablePercentageFormatterCell";
@@ -35,6 +36,11 @@ export default function DataTableFormatterCell() {
         case FormatterTypes.COLOR: {
             return typeof cell === "string"
                 ? <DataTableColorFormatterCell />
+                : baseCell;
+        }
+        case FormatterTypes.IMAGE: {
+            return typeof cell === "string"
+                ? <DataTableImageFormatterCell params={formatter.params} />
                 : baseCell;
         }
         default: {

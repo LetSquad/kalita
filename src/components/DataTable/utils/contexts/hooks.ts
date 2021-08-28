@@ -4,7 +4,7 @@ import { DataTableCellParams, DataTableFormatterCellParams } from "../../types/c
 import {
     DataTableBaseCellContextParams, DataTableColorFormatterCellContextParams,
     DataTableContextParams,
-    DataTableElementFormatterCellContextParams, DataTableLinkFormatterCellContextParams,
+    DataTableElementFormatterCellContextParams, DataTableImageFormatterCellContextParams, DataTableLinkFormatterCellContextParams,
     DataTableMoneyFormatterCellContextParams,
     DataTablePercentageFormatterCellContextParams
 } from "../../types/contexts";
@@ -52,4 +52,8 @@ export function useDataTableLinkFormatterCellContext() {
 
 export function useDataTableColorFormatterCellContext() {
     return useContext(DataTableCellContext) as DataTableColorFormatterCellContextParams;
+}
+
+export function useDataTableImageFormatterCellContext() {
+    return useContext(DataTableCellContext) as DataTableImageFormatterCellContextParams;
 }

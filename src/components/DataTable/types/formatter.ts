@@ -57,20 +57,22 @@ export interface PercentageFormatterParams {
  * Interface that represent a params for image formatter.
  *
  * @interface ImageFormatterParams
+ * @param {string} [label]           - Image label
  * @param {number} [height]          - Image height value
  * @param {number} [width]           - Image width value
  * @param {string} [className]       - The class name that will be passed to the image element
- * @param {string} [link=false]      - The link that will be followed by clicking on the image
+ * @param {string} [link]            - The link that will be followed by clicking on the image
  * @param {boolean} [circular=false] - Will the image be circular
  * @param {boolean} [bordered=false] - Whether the image will include a border to highlight the edges of white or transparent content
  * @param {string} [urlPrefix]       - The prefix that will be added to the passed value to generate the url
  * @param {string} [urlSuffix]       - The suffix that will be added to the passed value to generate the url
  */
 export interface ImageFormatterParams {
+    label?: string;
     height?: number;
     width?: number;
     className?: string;
-    link?: boolean;
+    link?: string;
     circular?: boolean;
     bordered?: boolean;
     urlPrefix?: string;
