@@ -6,7 +6,7 @@ import {
     ImageFormatterParams,
     LinkFormatterParams,
     MoneyFormatterParams,
-    PercentageFormatterParams
+    PercentageFormatterParams, StarFormatterParams
 } from "./formatter";
 
 export interface DataTableHeaderCellParams {
@@ -49,4 +49,8 @@ export interface DataTableLinkFormatterCellParams {
 
 export interface DataTableImageFormatterCellParams {
     params?: ImageFormatterParams;
+}
+
+export interface DataTableStarFormatterCellParams {
+    params?: StarFormatterParams;
 }

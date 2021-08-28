@@ -33,6 +33,10 @@ export interface DataTableImageFormatterCellContextParams {
     cell: string;
 }
 
+export interface DataTableStarFormatterCellContextParams {
+    cell: number;
+}
+
 export interface DataTableColorFormatterCellContextParams {
     cell: string;
     style?: CSSProperties;

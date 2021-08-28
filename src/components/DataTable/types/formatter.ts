@@ -101,10 +101,12 @@ export interface LinkFormatterParams {
  * Interface that represent a params for star formatter.
  *
  * @interface StarFormatterParams
- * @param {number} [stars=5] - Maximum number of stars to be displayed
+ * @param {number} [stars=5]   - Maximum number of stars to be displayed
+ * @param {string} [className] - The class name that will be passed to the link element
  */
 export interface StarFormatterParams {
     stars?: number;
+    className?: string;
 }
 
 /**

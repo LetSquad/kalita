@@ -8,6 +8,7 @@ import DataTableImageFormatterCell from "./DataTableImageFormatterCell";
 import DataTableLinkFormatterCell from "./DataTableLinkFormatterCell";
 import DataTableMoneyFormatterCell from "./DataTableMoneyFormatterCell";
 import DataTablePercentageFormatterCell from "./DataTablePercentageFormatterCell";
+import DataTableStarFormatterCell from "./DataTableStarFormatterCell";
 
 export default function DataTableFormatterCell() {
     const { cell, column: { formatter } } = useDataTableFormatterCellContext();
@@ -41,6 +42,11 @@ export default function DataTableFormatterCell() {
         case FormatterTypes.IMAGE: {
             return typeof cell === "string"
                 ? <DataTableImageFormatterCell params={formatter.params} />
+                : baseCell;
+        }
+        case FormatterTypes.STAR: {
+            return typeof cell === "number"
+                ? <DataTableStarFormatterCell params={formatter.params} />
                 : baseCell;
         }
         default: {
