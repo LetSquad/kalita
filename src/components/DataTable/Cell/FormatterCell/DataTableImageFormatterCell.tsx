@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { Image } from "semantic-ui-react";
-import { DataTableFormatterTypeCellParams } from "../../types/cell";
 import { ImageFormatterParams } from "../../types/formatter";
 import { useDataTableImageFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
@@ -10,10 +9,15 @@ const defaultParams: ImageFormatterParams = {
     bordered: false
 };
 
-export default function DataTableImageFormatterCell({
-    params = defaultParams
-}: DataTableFormatterTypeCellParams<ImageFormatterParams | undefined>) {
-    const { cell } = useDataTableImageFormatterCellContext();
+export default function DataTableImageFormatterCell() {
+    const {
+        cell,
+        column: {
+            formatter: {
+                params = defaultParams
+            }
+        }
+    } = useDataTableImageFormatterCellContext();
 
     const {
         label,

@@ -1,34 +1,48 @@
 import React, { useMemo } from "react";
 import { Rating } from "semantic-ui-react";
-import { DataTableFormatterTypeCellParams } from "../../types/cell";
 import { StarFormatterParams } from "../../types/formatter";
 import { useDataTableStarFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
 
 const defaultParams: StarFormatterParams = {
-    stars: 5
+    maxStars: 5
 };
 
-export default function DataTableStarFormatterCell({
-    params = defaultParams
-}: DataTableFormatterTypeCellParams<StarFormatterParams | undefined>) {
-    const { cell } = useDataTableStarFormatterCellContext();
+export default function DataTableStarFormatterCell() {
+    const {
+        cell,
+        id,
+        column: {
+            formatter: {
+                params = defaultParams
+            },
+            edit
+        }
+    } = useDataTableStarFormatterCellContext();
 
     const {
-        stars = 5,
+        maxStars = 5,
         className
     } = params;
+
+    const editParams = edit?.params;
 
     const formattedStars = useMemo(() => {
         return (
             <Rating
-                disabled
-                maxRating={stars}
+                disabled={!editParams}
+                maxRating={maxStars}
                 defaultRating={cell}
+                rating={cell}
                 className={className}
+                onRate={(event, data) =>
+                    editParams
+                        ? editParams.onCellChange(id, event, data.rating as number)
+                        : undefined
+                }
             />
         );
-    }, [cell, className, stars]);
+    }, [cell, className, editParams, id, maxStars]);
 
     return <DataTableBaseCell>{formattedStars}</DataTableBaseCell>;
 }

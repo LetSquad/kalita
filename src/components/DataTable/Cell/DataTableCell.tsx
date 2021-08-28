@@ -4,9 +4,9 @@ import DataTableBaseFormatterCell from "./FormatterCell/DataTableBaseFormatterCe
 import DataTableFormatterCell from "./FormatterCell/DataTableFormatterCell";
 
 export default function DataTableCell() {
-    const { column: { formatter } } = useDataTableCellContext();
+    const { column } = useDataTableCellContext();
 
-    if (formatter) {
+    if ("formatter" in column) {
         return <DataTableFormatterCell />;
     }
 

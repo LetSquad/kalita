@@ -106,11 +106,11 @@ export interface LinkFormatterParams {
  *
  * @interface
  * @name StarFormatterParams
- * @param {number} [stars=5]   - Maximum number of stars to be displayed
- * @param {string} [className] - The class name that will be passed to the link element
+ * @param {number} [maxStars=5]   - Maximum number of stars to be displayed
+ * @param {string} [className] - The class name that will be passed to the stars element
  */
 export interface StarFormatterParams {
-    stars?: number;
+    maxStars?: number;
     className?: string;
 }
 
@@ -182,7 +182,7 @@ export interface ElementFormatterParams {
  * @param {FormatterTypes.MONEY} type     - Formatter type
  * @param {MoneyFormatterParams} [params] - Formatter params
  */
-interface MoneyFormatter {
+export interface MoneyFormatter {
     type: FormatterTypes.MONEY;
     params?: MoneyFormatterParams;
 }
@@ -195,7 +195,7 @@ interface MoneyFormatter {
  * @param {FormatterTypes.PERCENTAGE} type     - Formatter type
  * @param {PercentageFormatterParams} [params] - Formatter params
  */
-interface PercentageFormatter {
+export interface PercentageFormatter {
     type: FormatterTypes.PERCENTAGE;
     params?: PercentageFormatterParams;
 }
@@ -208,7 +208,7 @@ interface PercentageFormatter {
  * @param {FormatterTypes.IMAGE} type     - Formatter type
  * @param {ImageFormatterParams} [params] - Formatter params
  */
-interface ImageFormatter {
+export interface ImageFormatter {
     type: FormatterTypes.IMAGE;
     params?: ImageFormatterParams;
 }
@@ -221,7 +221,7 @@ interface ImageFormatter {
  * @param {FormatterTypes.LINK} type      - Formatter type
  * @param {LinkFormatterParams} [params]  - Formatter params
  */
-interface LinkFormatter {
+export interface LinkFormatter {
     type: FormatterTypes.LINK;
     params?: LinkFormatterParams;
 }
@@ -233,7 +233,7 @@ interface LinkFormatter {
  * @name ColorFormatter
  * @param {FormatterTypes.COLOR} type - Formatter type
  */
-interface ColorFormatter {
+export interface ColorFormatter {
     type: FormatterTypes.COLOR;
 }
 
@@ -245,7 +245,7 @@ interface ColorFormatter {
  * @param {FormatterTypes.STAR} type     - Formatter type
  * @param {StarFormatterParams} [params] - Formatter params
  */
-interface StarFormatter {
+export interface StarFormatter {
     type: FormatterTypes.STAR;
     params?: StarFormatterParams
 }
@@ -258,7 +258,7 @@ interface StarFormatter {
  * @param {FormatterTypes.PROGRESS} type                                              - Formatter type
  * @param {TotalProgressFormatterParams | PercentageProgressFormatterParams} [params] - Formatter params
  */
-interface ProgressFormatter {
+export interface ProgressFormatter {
     type: FormatterTypes.PROGRESS;
     params?: TotalProgressFormatterParams | PercentageProgressFormatterParams
 }
@@ -271,7 +271,7 @@ interface ProgressFormatter {
  * @param {FormatterTypes.ELEMENT} type   - Formatter type
  * @param {ElementFormatterParams} params - Formatter params
  */
-interface ElementFormatter {
+export interface ElementFormatter {
     type: FormatterTypes.ELEMENT;
     params: ElementFormatterParams
 }

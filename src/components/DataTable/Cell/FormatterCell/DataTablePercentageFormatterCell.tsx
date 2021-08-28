@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { DataTableFormatterTypeCellParams } from "../../types/cell";
 import { PercentageFormatterParams } from "../../types/formatter";
 import { useDataTablePercentageFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
@@ -10,10 +9,16 @@ const defaultParams: PercentageFormatterParams = {
     zerosRemove: false
 };
 
-export default function DataTablePercentageFormatterCell({
-    params = defaultParams
-}: DataTableFormatterTypeCellParams<PercentageFormatterParams | undefined>) {
-    const { cell } = useDataTablePercentageFormatterCellContext();
+export default function DataTablePercentageFormatterCell() {
+    const {
+        cell,
+        column: {
+            formatter: {
+                params = defaultParams
+            },
+            edit
+        }
+    } = useDataTablePercentageFormatterCellContext();
 
     const {
         additionalSpace = false,

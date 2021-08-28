@@ -1,4 +1,12 @@
-import { Formatter } from "./formatter";
+import { DropdownEdit, InputEdit, StarEdit } from "./edit";
+import {
+    ColorFormatter,
+    ElementFormatter,
+    ImageFormatter,
+    LinkFormatter,
+    MoneyFormatter,
+    PercentageFormatter, ProgressFormatter, StarFormatter
+} from "./formatter";
 
 export enum HorizontalAlignValues {
     LEFT = "left",
@@ -12,13 +20,65 @@ export enum VerticalAlignValues {
     BOTTOM = "bottom"
 }
 
-export interface ColumnDefinition {
+export type NotEditFormattersColumnDefinition = ElementFormatterColumnDefinition |
+ImageFormatterColumnDefinition |
+LinkFormatterColumnDefinition |
+ColorFormatterColumnDefinition |
+ProgressFormatterColumnDefinition;
+
+export type EditFormattersColumnDefinition = MoneyFormatterColumnDefinition |
+PercentageFormatterColumnDefinition |
+StarFormatterColumnDefinition;
+
+export type FormatterColumnDefinition = NotEditFormattersColumnDefinition | EditFormattersColumnDefinition;
+
+export type ColumnDefinition = FormatterColumnDefinition | BaseFormatterColumnDefinition;
+
+export interface BaseColumnDefinition {
     field: string;
     title?: string;
-    formatter?: Formatter;
     width?: number;
-    vertAlign?: VerticalAlignValues,
-    hozAlign?: HorizontalAlignValues,
-    headerVertAlign?: VerticalAlignValues,
-    headerHozAlign?: HorizontalAlignValues,
+    vertAlign?: VerticalAlignValues;
+    hozAlign?: HorizontalAlignValues;
+    headerVertAlign?: VerticalAlignValues;
+    headerHozAlign?: HorizontalAlignValues;
+}
+
+export interface ElementFormatterColumnDefinition extends BaseColumnDefinition {
+    formatter?: ElementFormatter;
+}
+
+export interface MoneyFormatterColumnDefinition extends BaseColumnDefinition {
+    formatter?: MoneyFormatter;
+    edit?: DropdownEdit<number> | InputEdit<number>;
+}
+
+export interface PercentageFormatterColumnDefinition extends BaseColumnDefinition {
+    formatter?: PercentageFormatter;
+    edit?: DropdownEdit<number> | InputEdit<number>;
+}
+
+export interface ImageFormatterColumnDefinition extends BaseColumnDefinition {
+    formatter?: ImageFormatter;
+}
+
+export interface LinkFormatterColumnDefinition extends BaseColumnDefinition {
+    formatter?: LinkFormatter;
+}
+
+export interface ColorFormatterColumnDefinition extends BaseColumnDefinition {
+    formatter?: ColorFormatter;
+}
+
+export interface StarFormatterColumnDefinition extends BaseColumnDefinition {
+    formatter?: StarFormatter;
+    edit?: StarEdit;
+}
+
+export interface ProgressFormatterColumnDefinition extends BaseColumnDefinition {
+    formatter?: ProgressFormatter;
+}
+
+export interface BaseFormatterColumnDefinition extends BaseColumnDefinition {
+    edit?: DropdownEdit | InputEdit;
 }

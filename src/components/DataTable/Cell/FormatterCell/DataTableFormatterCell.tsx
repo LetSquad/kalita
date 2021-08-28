@@ -18,42 +18,28 @@ export default function DataTableFormatterCell() {
 
     switch (formatter?.type) {
         case FormatterTypes.ELEMENT: {
-            return <DataTableElementFormatterCell params={formatter.params} />;
+            return <DataTableElementFormatterCell />;
         }
         case FormatterTypes.MONEY: {
-            return typeof cell === "number"
-                ? <DataTableMoneyFormatterCell params={formatter.params} />
-                : baseCell;
+            return typeof cell === "number" ? <DataTableMoneyFormatterCell /> : baseCell;
         }
         case FormatterTypes.PERCENTAGE: {
-            return typeof cell === "number"
-                ? <DataTablePercentageFormatterCell params={formatter.params} />
-                : baseCell;
+            return typeof cell === "number" ? <DataTablePercentageFormatterCell /> : baseCell;
         }
         case FormatterTypes.LINK: {
-            return cell !== undefined
-                ? <DataTableLinkFormatterCell params={formatter.params} />
-                : baseCell;
+            return cell !== undefined ? <DataTableLinkFormatterCell /> : baseCell;
         }
         case FormatterTypes.COLOR: {
-            return typeof cell === "string"
-                ? <DataTableColorFormatterCell />
-                : baseCell;
+            return typeof cell === "string" ? <DataTableColorFormatterCell /> : baseCell;
         }
         case FormatterTypes.IMAGE: {
-            return cell !== undefined
-                ? <DataTableImageFormatterCell params={formatter.params} />
-                : baseCell;
+            return cell !== undefined ? <DataTableImageFormatterCell /> : baseCell;
         }
         case FormatterTypes.STAR: {
-            return typeof cell === "number"
-                ? <DataTableStarFormatterCell params={formatter.params} />
-                : baseCell;
+            return typeof cell === "number" ? <DataTableStarFormatterCell /> : baseCell;
         }
         case FormatterTypes.PROGRESS: {
-            return typeof cell === "number"
-                ? <DataTableProgressFormatterCell params={formatter.params} />
-                : baseCell;
+            return typeof cell === "number" ? <DataTableProgressFormatterCell /> : baseCell;
         }
     }
 }

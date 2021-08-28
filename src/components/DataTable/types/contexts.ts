@@ -1,6 +1,12 @@
 import { CSSProperties } from "react";
 import { DataTableData } from "./base";
-import { ColumnDefinition } from "./column";
+import {
+    BaseFormatterColumnDefinition,
+    ColumnDefinition,
+    EditFormattersColumnDefinition,
+    ElementFormatterColumnDefinition,
+    NotEditFormattersColumnDefinition
+} from "./column";
 
 export interface DataTableContextParams {
     columns: ColumnDefinition[];
@@ -11,25 +17,35 @@ export interface DataTableBaseCellContextParams {
     column: ColumnDefinition;
 }
 
-export interface DataTableElementFormatterCellContextParams {
+export interface DataTableNotEditCellFormatterContextParams<T, K extends NotEditFormattersColumnDefinition> {
     id: string;
-    cell: string | number | undefined;
+    cell: T;
     row: DataTableData;
+    column: Required<Pick<K, "formatter">>
 }
 
-export interface DataTableColorFormatterCellContextParams {
+export interface DataTableEditCellContextParams<T> {
+    cell: T;
+    column: Pick<BaseFormatterColumnDefinition, "edit">
+}
+
+export interface DataTableEditCellFormatterContextParams<T, K extends EditFormattersColumnDefinition> {
+    id: string;
+    cell: T;
+    row: DataTableData;
+    column: Required<Pick<K, "formatter">> & Pick<K, "edit">;
+}
+
+export interface DataTableElementCellFormatterContextParams<T> {
+    id: string;
+    cell: T;
+    row: DataTableData;
+    column: Required<Pick<ElementFormatterColumnDefinition, "formatter">>;
+}
+
+export interface DataTableColorCellFormatterContextParams {
     cell: string;
     style?: CSSProperties;
-}
-
-export interface DataTableProgressFormatterCellContextParams {
-    id: string;
-    cell: number;
-    row: DataTableData;
-}
-
-export interface DataTableBaseCellFormatterContextParams<T> {
-    cell: T;
 }
 
 

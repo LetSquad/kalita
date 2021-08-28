@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { DataTableFormatterTypeCellParams } from "../../types/cell";
 import { CurrencyPosition, MoneyFormatterParams } from "../../types/formatter";
 import { useDataTableMoneyFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
@@ -14,10 +13,16 @@ const defaultParams: MoneyFormatterParams = {
     zerosRemove: false
 };
 
-export default function DataTableMoneyFormatterCell({
-    params = defaultParams
-}: DataTableFormatterTypeCellParams<MoneyFormatterParams | undefined>) {
-    const { cell } = useDataTableMoneyFormatterCellContext();
+export default function DataTableMoneyFormatterCell() {
+    const {
+        cell,
+        column: {
+            formatter: {
+                params = defaultParams
+            },
+            edit
+        }
+    } = useDataTableMoneyFormatterCellContext();
 
     const {
         decimal: decimalSym = ".",

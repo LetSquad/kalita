@@ -1,6 +1,6 @@
 import { CSSProperties } from "react";
 import { DataTableData } from "./base";
-import { ColumnDefinition } from "./column";
+import { ColumnDefinition, FormatterColumnDefinition } from "./column";
 
 export interface DataTableHeaderCellParams {
     column: ColumnDefinition;
@@ -21,9 +21,5 @@ export interface DataTableBaseCellParams {
 
 export interface DataTableFormatterCellParams {
     cell: string | number | undefined;
-    column: Required<Pick<ColumnDefinition, "formatter">>;
-}
-
-export interface DataTableFormatterTypeCellParams<T> {
-    params: T;
+    column: Required<Pick<FormatterColumnDefinition, "formatter">>;
 }

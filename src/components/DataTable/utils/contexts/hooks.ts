@@ -2,10 +2,18 @@ import { useContext } from "react";
 import { DataTableBodyParams, DataTableGroupedBodyParams } from "../../types/body";
 import { DataTableCellParams, DataTableFormatterCellParams } from "../../types/cell";
 import {
-    DataTableBaseCellContextParams, DataTableBaseCellFormatterContextParams,
-    DataTableColorFormatterCellContextParams,
+    ImageFormatterColumnDefinition,
+    LinkFormatterColumnDefinition,
+    MoneyFormatterColumnDefinition,
+    PercentageFormatterColumnDefinition, ProgressFormatterColumnDefinition, StarFormatterColumnDefinition
+} from "../../types/column";
+import {
+    DataTableBaseCellContextParams,
+    DataTableColorCellFormatterContextParams,
     DataTableContextParams,
-    DataTableElementFormatterCellContextParams, DataTableProgressFormatterCellContextParams
+    DataTableEditCellContextParams,
+    DataTableEditCellFormatterContextParams,
+    DataTableElementCellFormatterContextParams, DataTableNotEditCellFormatterContextParams
 } from "../../types/contexts";
 import { DataTableBodyContext, DataTableCellContext, DataTableContext } from "./contexts";
 
@@ -34,37 +42,43 @@ export function useDataTableFormatterCellContext() {
 }
 
 export function useDataTableBaseFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<string | number | undefined>;
+    return useContext(DataTableCellContext) as DataTableEditCellContextParams<string | number | undefined>;
 }
 
 export function useDataTableElementFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableElementFormatterCellContextParams;
+    return useContext(DataTableCellContext) as DataTableElementCellFormatterContextParams<string | number | undefined>;
 }
 
 export function useDataTableMoneyFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<number>;
+    return useContext(DataTableCellContext) as DataTableEditCellFormatterContextParams<number, MoneyFormatterColumnDefinition>;
 }
 
 export function useDataTablePercentageFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<number>;
+    return useContext(DataTableCellContext) as DataTableEditCellFormatterContextParams<number, PercentageFormatterColumnDefinition>;
 }
 
 export function useDataTableLinkFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<string | number>;
+    return useContext(DataTableCellContext) as DataTableNotEditCellFormatterContextParams<
+    string | number,
+    LinkFormatterColumnDefinition
+    >;
 }
 
 export function useDataTableColorFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableColorFormatterCellContextParams;
+    return useContext(DataTableCellContext) as DataTableColorCellFormatterContextParams;
 }
 
 export function useDataTableImageFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<string | number>;
+    return useContext(DataTableCellContext) as DataTableNotEditCellFormatterContextParams<
+    string | number,
+    ImageFormatterColumnDefinition
+    >;
 }
 
 export function useDataTableStarFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<number>;
+    return useContext(DataTableCellContext) as DataTableEditCellFormatterContextParams<number, StarFormatterColumnDefinition>;
 }
 
 export function useDataTableProgressFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableProgressFormatterCellContextParams;
+    return useContext(DataTableCellContext) as DataTableNotEditCellFormatterContextParams<number, ProgressFormatterColumnDefinition>;
 }

@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Progress } from "semantic-ui-react";
-import { DataTableFormatterTypeCellParams } from "../../types/cell";
-import { BaseProgressFormatterParams, PercentageProgressFormatterParams, TotalProgressFormatterParams } from "../../types/formatter";
+import { BaseProgressFormatterParams } from "../../types/formatter";
 import { useDataTableProgressFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
 
@@ -10,10 +9,17 @@ const defaultParams: BaseProgressFormatterParams = {
     indicating: false
 };
 
-export default function DataTableProgressFormatterCell({
-    params = defaultParams
-}: DataTableFormatterTypeCellParams<TotalProgressFormatterParams | PercentageProgressFormatterParams | undefined>) {
-    const { cell, row, id } = useDataTableProgressFormatterCellContext();
+export default function DataTableProgressFormatterCell() {
+    const {
+        cell,
+        row,
+        id,
+        column: {
+            formatter: {
+                params = defaultParams
+            }
+        }
+    } = useDataTableProgressFormatterCellContext();
 
     const {
         label,
