@@ -10,9 +10,13 @@ export default function DataTableBaseCell({ children, style, className }: DataTa
 
     return (
         <Table.Cell className={className ?? baseStyles.baseCell} style={style ?? getCellCssStyleFromColumn(column)}>
-            <div className={baseStyles.baseCellContentWrapper} style={getCellContentCssStyleFromColumn(column)}>
-                {children}
-            </div>
+            {
+                children && (
+                    <div className={baseStyles.baseCellContentWrapper} style={getCellContentCssStyleFromColumn(column)}>
+                        {children}
+                    </div>
+                )
+            }
         </Table.Cell>
     );
 }

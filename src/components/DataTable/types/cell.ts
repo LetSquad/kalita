@@ -1,7 +1,7 @@
 import { CSSProperties } from "react";
 import { DataTableData } from "./base";
 import { ColumnDefinition } from "./column";
-import { ElementFormatterParams, MoneyFormatterParams, PercentageFormatterParams } from "./formatter";
+import { ElementFormatterParams, LinkFormatterParams, MoneyFormatterParams, PercentageFormatterParams } from "./formatter";
 
 export interface DataTableHeaderCellParams {
     column: ColumnDefinition;
@@ -15,7 +15,7 @@ export interface DataTableCellParams {
 }
 
 export interface DataTableBaseCellParams {
-    children: string | number | JSX.Element | JSX.Element[] | undefined;
+    children?: string | number | JSX.Element | JSX.Element[] | undefined;
     style?: CSSProperties;
     className?: string;
 }
@@ -35,4 +35,8 @@ export interface DataTableMoneyFormatterCellParams {
 
 export interface DataTablePercentageFormatterCellParams {
     params?: PercentageFormatterParams;
+}
+
+export interface DataTableLinkFormatterCellParams {
+    params?: LinkFormatterParams;
 }

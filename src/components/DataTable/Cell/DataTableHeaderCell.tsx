@@ -7,9 +7,13 @@ import { getCellCssStyleFromColumn, getHeaderCellContentCssStyleFromColumn } fro
 export default function DataTableHeaderCell({ column }: DataTableHeaderCellParams) {
     return (
         <Table.HeaderCell className={baseStyles.baseCell} style={getCellCssStyleFromColumn(column)}>
-            <div className={baseStyles.baseCellContentWrapper} style={getHeaderCellContentCssStyleFromColumn(column)}>
-                {column.title}
-            </div>
+            {
+                column.title && (
+                    <div className={baseStyles.baseCellContentWrapper} style={getHeaderCellContentCssStyleFromColumn(column)}>
+                        {column.title}
+                    </div>
+                )
+            }
         </Table.HeaderCell>
     );
 }

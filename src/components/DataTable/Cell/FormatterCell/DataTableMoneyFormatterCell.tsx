@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useMemo } from "react";
 import { DataTableMoneyFormatterCellParams } from "../../types/cell";
 import { CurrencyPosition, MoneyFormatterParams } from "../../types/formatter";
 import { useDataTableMoneyFormatterCellContext } from "../../utils/contexts/hooks";
@@ -27,7 +27,7 @@ export default function DataTableMoneyFormatterCell({ params = defaultParams }: 
         zerosRemove = false
     } = params;
 
-    const reformatValue = useCallback(() => {
+    const formattedValue = useMemo(() => {
         let precisionValue: string | number = precision !== false ? cell.toFixed(precision) : cell;
         precisionValue = zerosRemove ? Number(precisionValue) : precisionValue;
         const formattedValues = String(precisionValue).split(".");
@@ -45,5 +45,5 @@ export default function DataTableMoneyFormatterCell({ params = defaultParams }: 
             : `${integer}${decimal}${additionalSpace ? " " : ""}${currency}`;
     }, [additionalSpace, cell, currency, currencyPosition, decimalSym, precision, thousandSym, zerosRemove]);
 
-    return <DataTableBaseCell>{reformatValue()}</DataTableBaseCell>;
+    return <DataTableBaseCell>{formattedValue}</DataTableBaseCell>;
 }

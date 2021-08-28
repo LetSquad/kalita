@@ -2,7 +2,9 @@ import React, { useMemo } from "react";
 import { FormatterTypes } from "../../types/formatter";
 import { useDataTableFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
+import DataTableColorFormatterCell from "./DataTableColorFormatterCell";
 import DataTableElementFormatterCell from "./DataTableElementFormatterCell";
+import DataTableLinkFormatterCell from "./DataTableLinkFormatterCell";
 import DataTableMoneyFormatterCell from "./DataTableMoneyFormatterCell";
 import DataTablePercentageFormatterCell from "./DataTablePercentageFormatterCell";
 
@@ -23,6 +25,16 @@ export default function DataTableFormatterCell() {
         case FormatterTypes.PERCENTAGE: {
             return typeof cell === "number"
                 ? <DataTablePercentageFormatterCell params={formatter.params} />
+                : baseCell;
+        }
+        case FormatterTypes.LINK: {
+            return cell !== undefined
+                ? <DataTableLinkFormatterCell params={formatter.params} />
+                : baseCell;
+        }
+        case FormatterTypes.COLOR: {
+            return typeof cell === "string"
+                ? <DataTableColorFormatterCell />
                 : baseCell;
         }
         default: {

@@ -1,3 +1,4 @@
+import { HTMLAttributeAnchorTarget } from "react";
 import { DataTableData } from "./base";
 
 export enum FormatterTypes {
@@ -80,20 +81,16 @@ export interface ImageFormatterParams {
  * Interface that represent a params for link formatter.
  *
  * @interface LinkFormatterParams
- * @param {string} [label]                                            - The text to be displayed (by default, url is displayed)
- * @param {"_blank" | "_self" | "_parent" | "_top" | string} [target] - A string representing the value of the anchor tags target attribute
- * @param {string} [className]                                        - The class name that will be passed to the link element
- * @param {string} [color=#0000ee]                                    - Link color in format #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)
- * @param {string} [visitColor=#551a8b]                               - Visited link color in format #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)
- * @param {string} [urlPrefix]                                        - The prefix that will be added to the passed value to generate the url
- * @param {string} [urlSuffix]                                        - The suffix that will be added to the passed value to generate the url
+ * @param {string} [label]                     - The text to be displayed (by default, url is displayed)
+ * @param {HTMLAttributeAnchorTarget} [target] - A string representing the value of the anchor tags target attribute
+ * @param {string} [className]                 - The class name that will be passed to the link element
+ * @param {string} [urlPrefix]                 - The prefix that will be added to the passed value to generate the url
+ * @param {string} [urlSuffix]                 - The suffix that will be added to the passed value to generate the url
  */
 export interface LinkFormatterParams {
     label?: string;
-    target?: "_blank" | "_self" | "_parent" | "_top" | string;
+    target?: HTMLAttributeAnchorTarget;
     className?: string;
-    color?: string;
-    visitColor?: string;
     urlPrefix?: string;
     urlSuffix?: string;
 }

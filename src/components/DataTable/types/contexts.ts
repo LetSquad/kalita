@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import { DataTableData } from "./base";
 import { ColumnDefinition } from "./column";
 
@@ -22,4 +23,13 @@ export interface DataTableMoneyFormatterCellContextParams {
 
 export interface DataTablePercentageFormatterCellContextParams {
     cell: number;
+}
+
+export interface DataTableLinkFormatterCellContextParams {
+    cell: number | string;
+}
+
+export interface DataTableColorFormatterCellContextParams {
+    cell: string;
+    style?: CSSProperties;
 }

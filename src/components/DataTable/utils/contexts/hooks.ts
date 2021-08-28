@@ -2,9 +2,9 @@ import { useContext } from "react";
 import { DataTableBodyParams, DataTableGroupedBodyParams } from "../../types/body";
 import { DataTableCellParams, DataTableFormatterCellParams } from "../../types/cell";
 import {
-    DataTableBaseCellContextParams,
+    DataTableBaseCellContextParams, DataTableColorFormatterCellContextParams,
     DataTableContextParams,
-    DataTableElementFormatterCellContextParams,
+    DataTableElementFormatterCellContextParams, DataTableLinkFormatterCellContextParams,
     DataTableMoneyFormatterCellContextParams,
     DataTablePercentageFormatterCellContextParams
 } from "../../types/contexts";
@@ -44,4 +44,12 @@ export function useDataTableMoneyFormatterCellContext() {
 
 export function useDataTablePercentageFormatterCellContext() {
     return useContext(DataTableCellContext) as DataTablePercentageFormatterCellContextParams;
+}
+
+export function useDataTableLinkFormatterCellContext() {
+    return useContext(DataTableCellContext) as DataTableLinkFormatterCellContextParams;
+}
+
+export function useDataTableColorFormatterCellContext() {
+    return useContext(DataTableCellContext) as DataTableColorFormatterCellContextParams;
 }
