@@ -16,3 +16,7 @@ export interface DataTableElementFormatterCellContextParams {
     cell: string | number | undefined;
     row: DataTableData;
 }
+
+export interface DataTableMoneyFormatterCellContextParams {
+    cell: number;
+}

@@ -11,23 +11,30 @@ export enum FormatterTypes {
     ELEMENT = "element"
 }
 
+export enum CurrencyPosition {
+    BEFORE,
+    AFTER
+}
+
 /**
  * Interface that represent a params for money formatter.
  *
  * @interface MoneyFormatterParams
- * @param {string} [decimal=.]          - Symbol to represent the decimal point
- * @param {string} [thousand=,]         - Symbol to represent the thousands separator
- * @param {string} [currency]           - Currency symbol
- * @param {boolean} [spaceAfter=false]  - Whether to add a space between the number and the currency symbol
- * @param {number} [precision=2]        - The number of digits after the decimal point to which the number will be rounded
- * @param {boolean} [zerosRemove=false] - Whether to remove extra zeros at the end
+ * @param {string} [decimal=.]                                         - Symbol to represent the decimal point
+ * @param {string} [thousand=,]                                        - Symbol to represent the thousands separator
+ * @param {string} [currency]                                          - Currency symbol
+ * @param {CurrencyPosition} [currencyPosition=CurrencyPosition.AFTER] - Where will the currency symbol be located?
+ * @param {boolean} [additionalSpace=false]                            - Whether to add a space between the number and the currency symbol
+ * @param {number | false} [precision=2]                               - The number of digits after the decimal point to which the number will be rounded
+ * @param {boolean} [zerosRemove=false]                                - Whether to remove extra zeros at the end
  */
 export interface MoneyFormatterParams {
     decimal?: string;
     thousand?: string;
     currency?: string;
-    spaceAfter?: boolean;
-    precision?: number;
+    currencyPosition?: CurrencyPosition;
+    additionalSpace?: boolean;
+    precision?: number | false;
     zerosRemove?: boolean;
 }
 

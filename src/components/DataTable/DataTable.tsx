@@ -27,11 +27,25 @@ const columns: ColumnDefinition[] = [
     }, {
         title: "Целевая сумма",
         field: ModelPortfolioColumnNames.TARGET_AMOUNT,
-        width: 165
+        width: 165,
+        formatter: {
+            type: FormatterTypes.MONEY,
+            params: {
+                currency: "₽",
+                additionalSpace: true
+            }
+        }
     }, {
         title: "Цена",
         field: BaseColumnNames.CURRENT_PRICE,
-        width: 120
+        width: 120,
+        formatter: {
+            type: FormatterTypes.MONEY,
+            params: {
+                currency: "₽",
+                additionalSpace: true
+            }
+        }
     }, {
         title: "Целевое количество",
         field: ModelPortfolioColumnNames.TARGET_QUANTITY,
