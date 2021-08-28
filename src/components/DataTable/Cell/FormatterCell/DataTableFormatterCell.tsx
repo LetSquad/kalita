@@ -8,6 +8,7 @@ import DataTableImageFormatterCell from "./DataTableImageFormatterCell";
 import DataTableLinkFormatterCell from "./DataTableLinkFormatterCell";
 import DataTableMoneyFormatterCell from "./DataTableMoneyFormatterCell";
 import DataTablePercentageFormatterCell from "./DataTablePercentageFormatterCell";
+import DataTableProgressFormatterCell from "./DataTableProgressFormatterCell";
 import DataTableStarFormatterCell from "./DataTableStarFormatterCell";
 
 export default function DataTableFormatterCell() {
@@ -40,7 +41,7 @@ export default function DataTableFormatterCell() {
                 : baseCell;
         }
         case FormatterTypes.IMAGE: {
-            return typeof cell === "string"
+            return cell !== undefined
                 ? <DataTableImageFormatterCell params={formatter.params} />
                 : baseCell;
         }
@@ -49,8 +50,10 @@ export default function DataTableFormatterCell() {
                 ? <DataTableStarFormatterCell params={formatter.params} />
                 : baseCell;
         }
-        default: {
-            return baseCell;
+        case FormatterTypes.PROGRESS: {
+            return typeof cell === "number"
+                ? <DataTableProgressFormatterCell params={formatter.params} />
+                : baseCell;
         }
     }
 }

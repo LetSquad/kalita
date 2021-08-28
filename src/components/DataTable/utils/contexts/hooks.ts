@@ -2,11 +2,10 @@ import { useContext } from "react";
 import { DataTableBodyParams, DataTableGroupedBodyParams } from "../../types/body";
 import { DataTableCellParams, DataTableFormatterCellParams } from "../../types/cell";
 import {
-    DataTableBaseCellContextParams, DataTableColorFormatterCellContextParams,
+    DataTableBaseCellContextParams, DataTableBaseCellFormatterContextParams,
+    DataTableColorFormatterCellContextParams,
     DataTableContextParams,
-    DataTableElementFormatterCellContextParams, DataTableImageFormatterCellContextParams, DataTableLinkFormatterCellContextParams,
-    DataTableMoneyFormatterCellContextParams,
-    DataTablePercentageFormatterCellContextParams, DataTableStarFormatterCellContextParams
+    DataTableElementFormatterCellContextParams, DataTableProgressFormatterCellContextParams
 } from "../../types/contexts";
 import { DataTableBodyContext, DataTableCellContext, DataTableContext } from "./contexts";
 
@@ -39,15 +38,15 @@ export function useDataTableElementFormatterCellContext() {
 }
 
 export function useDataTableMoneyFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableMoneyFormatterCellContextParams;
+    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<number>;
 }
 
 export function useDataTablePercentageFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTablePercentageFormatterCellContextParams;
+    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<number>;
 }
 
 export function useDataTableLinkFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableLinkFormatterCellContextParams;
+    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<string | number>;
 }
 
 export function useDataTableColorFormatterCellContext() {
@@ -55,9 +54,13 @@ export function useDataTableColorFormatterCellContext() {
 }
 
 export function useDataTableImageFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableImageFormatterCellContextParams;
+    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<string | number>;
 }
 
 export function useDataTableStarFormatterCellContext() {
-    return useContext(DataTableCellContext) as DataTableStarFormatterCellContextParams;
+    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<number>;
+}
+
+export function useDataTableProgressFormatterCellContext() {
+    return useContext(DataTableCellContext) as DataTableProgressFormatterCellContextParams;
 }

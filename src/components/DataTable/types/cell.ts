@@ -1,13 +1,6 @@
 import { CSSProperties } from "react";
 import { DataTableData } from "./base";
 import { ColumnDefinition } from "./column";
-import {
-    ElementFormatterParams,
-    ImageFormatterParams,
-    LinkFormatterParams,
-    MoneyFormatterParams,
-    PercentageFormatterParams, StarFormatterParams
-} from "./formatter";
 
 export interface DataTableHeaderCellParams {
     column: ColumnDefinition;
@@ -31,26 +24,6 @@ export interface DataTableFormatterCellParams {
     column: Required<Pick<ColumnDefinition, "formatter">>;
 }
 
-export interface DataTableElementFormatterCellParams {
-    params: ElementFormatterParams;
-}
-
-export interface DataTableMoneyFormatterCellParams {
-    params?: MoneyFormatterParams;
-}
-
-export interface DataTablePercentageFormatterCellParams {
-    params?: PercentageFormatterParams;
-}
-
-export interface DataTableLinkFormatterCellParams {
-    params?: LinkFormatterParams;
-}
-
-export interface DataTableImageFormatterCellParams {
-    params?: ImageFormatterParams;
-}
-
-export interface DataTableStarFormatterCellParams {
-    params?: StarFormatterParams;
+export interface DataTableFormatterTypeCellParams<T> {
+    params: T;
 }

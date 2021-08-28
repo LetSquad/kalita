@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
-import { DataTableLinkFormatterCellParams } from "../../types/cell";
+import { DataTableFormatterTypeCellParams } from "../../types/cell";
+import { LinkFormatterParams } from "../../types/formatter";
 import { useDataTableLinkFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
 
-export default function DataTableLinkFormatterCell({ params }: DataTableLinkFormatterCellParams) {
+export default function DataTableLinkFormatterCell({ params }: DataTableFormatterTypeCellParams<LinkFormatterParams | undefined>) {
     const { cell } = useDataTableLinkFormatterCellContext();
 
     const formattedLink = useMemo(() => {

@@ -20,7 +20,8 @@ export enum CurrencyPosition {
 /**
  * Interface that represent a params for money formatter.
  *
- * @interface MoneyFormatterParams
+ * @interface
+ * @name MoneyFormatterParams
  * @param {string} [decimal=.]                                         - Symbol to represent the decimal point
  * @param {string} [thousand=,]                                        - Symbol to represent the thousands separator
  * @param {string} [currency]                                          - Currency symbol
@@ -42,7 +43,8 @@ export interface MoneyFormatterParams {
 /**
  * Interface that represent a params for percentage formatter.
  *
- * @interface PercentageFormatterParams
+ * @interface
+ * @name PercentageFormatterParams
  * @param {boolean} [additionalSpace=false] - Whether to add a space between the number and the currency symbol
  * @param {number | false} [precision=2]    - The number of digits after the decimal point to which the number will be rounded
  * @param {boolean} [zerosRemove=false]     - Whether to remove extra zeros at the end
@@ -56,7 +58,8 @@ export interface PercentageFormatterParams {
 /**
  * Interface that represent a params for image formatter.
  *
- * @interface ImageFormatterParams
+ * @interface
+ * @name ImageFormatterParams
  * @param {string} [label]           - Image label
  * @param {number} [height]          - Image height value
  * @param {number} [width]           - Image width value
@@ -82,7 +85,8 @@ export interface ImageFormatterParams {
 /**
  * Interface that represent a params for link formatter.
  *
- * @interface LinkFormatterParams
+ * @interface
+ * @name LinkFormatterParams
  * @param {string} [label]                     - The text to be displayed (by default, url is displayed)
  * @param {HTMLAttributeAnchorTarget} [target] - A string representing the value of the anchor tags target attribute
  * @param {string} [className]                 - The class name that will be passed to the link element
@@ -100,7 +104,8 @@ export interface LinkFormatterParams {
 /**
  * Interface that represent a params for star formatter.
  *
- * @interface StarFormatterParams
+ * @interface
+ * @name StarFormatterParams
  * @param {number} [stars=5]   - Maximum number of stars to be displayed
  * @param {string} [className] - The class name that will be passed to the link element
  */
@@ -112,7 +117,8 @@ export interface StarFormatterParams {
 /**
  * Interface that represent a params for base progress formatter.
  *
- * @interface BaseProgressFormatterParams
+ * @interface
+ * @name BaseProgressFormatterParams
  * @param {string} [label]                                                                 - Label displayed under the progress bar
  * @param {boolean} [progress=false]                                                       - Should the current fill percentage be displayed on the progress bar?
  * @param {boolean} [indicating=false]                                                     - Will there be a visual progress indicator showing the current level of task completion
@@ -136,7 +142,8 @@ export interface BaseProgressFormatterParams {
 /**
  * Interface that represent a params for percentage progress formatter.
  *
- * @interface PercentageProgressFormatterParams
+ * @interface
+ * @name PercentageProgressFormatterParams
  * @augments BaseProgressFormatterParams
  * @param {boolean} [percent=false] - Is the input parameter passed as a percentage? (Cannot be used with maximum value mode)
  */
@@ -147,7 +154,8 @@ export interface PercentageProgressFormatterParams extends BaseProgressFormatter
 /**
  * Interface that represent a params for total progress formatter.
  *
- * @interface TotalProgressFormatterParams
+ * @interface
+ * @name TotalProgressFormatterParams
  * @augments BaseProgressFormatterParams
  * @param {number} [total=100] - Maximum value of the progress bar (Used if no percentage mode is selected)
  */
@@ -158,7 +166,8 @@ export interface TotalProgressFormatterParams extends BaseProgressFormatterParam
 /**
  * Interface that represent a params for element formatter.
  *
- * @interface ElementFormatterParams
+ * @interface
+ * @name ElementFormatterParams
  * @param {(cellData: number, rowId: string, rowData: DataTableData) => JSX.Element} renderElement - Displayed react component
  */
 export interface ElementFormatterParams {
@@ -168,7 +177,8 @@ export interface ElementFormatterParams {
 /**
  * Interface that represent money formatter. Accepts a number as input and displays it in the specified currency format in accordance with the parameters
  *
- * @interface MoneyFormatter
+ * @interface
+ * @name MoneyFormatter
  * @param {FormatterTypes.MONEY} type     - Formatter type
  * @param {MoneyFormatterParams} [params] - Formatter params
  */
@@ -180,7 +190,8 @@ interface MoneyFormatter {
 /**
  * Interface that represent percentages formatter. Accepts a number as input and displays it in the specified percentages format in accordance with the parameters
  *
- * @interface PercentageFormatter
+ * @interface
+ * @name PercentageFormatter
  * @param {FormatterTypes.PERCENTAGE} type     - Formatter type
  * @param {PercentageFormatterParams} [params] - Formatter params
  */
@@ -192,7 +203,8 @@ interface PercentageFormatter {
 /**
  * Interface that represent image formatter. Accepts a url or part of url to image as input and displays image from url with the parameters
  *
- * @interface ImageFormatter
+ * @interface
+ * @name ImageFormatter
  * @param {FormatterTypes.IMAGE} type     - Formatter type
  * @param {ImageFormatterParams} [params] - Formatter params
  */
@@ -204,7 +216,8 @@ interface ImageFormatter {
 /**
  * Interface that represent link formatter. Accepts a url or part of url as input and displays link with url and parameters
  *
- * @interface LinkFormatter
+ * @interface
+ * @name LinkFormatter
  * @param {FormatterTypes.LINK} type      - Formatter type
  * @param {LinkFormatterParams} [params]  - Formatter params
  */
@@ -216,7 +229,8 @@ interface LinkFormatter {
 /**
  * Interface that represent color formatter. Accepts a color as input and displays colored cell
  *
- * @interface ColorFormatter
+ * @interface
+ * @name ColorFormatter
  * @param {FormatterTypes.COLOR} type - Formatter type
  */
 interface ColorFormatter {
@@ -226,7 +240,8 @@ interface ColorFormatter {
 /**
  * Interface that represent star formatter. Accepts a number as input and displays stars with the parameters
  *
- * @interface StarFormatter
+ * @interface
+ * @name StarFormatter
  * @param {FormatterTypes.STAR} type     - Formatter type
  * @param {StarFormatterParams} [params] - Formatter params
  */
@@ -238,7 +253,8 @@ interface StarFormatter {
 /**
  * Interface that represent progress formatter. Accepts a number as input and displays progress bar with the parameters
  *
- * @interface ProgressFormatter
+ * @interface
+ * @name ProgressFormatter
  * @param {FormatterTypes.PROGRESS} type                                              - Formatter type
  * @param {TotalProgressFormatterParams | PercentageProgressFormatterParams} [params] - Formatter params
  */
@@ -250,7 +266,8 @@ interface ProgressFormatter {
 /**
  * Interface that represent element formatter. Accepts a number, string or undefined as input and displays element from parameters
  *
- * @interface ElementFormatter
+ * @interface
+ * @name ElementFormatter
  * @param {FormatterTypes.ELEMENT} type   - Formatter type
  * @param {ElementFormatterParams} params - Formatter params
  */

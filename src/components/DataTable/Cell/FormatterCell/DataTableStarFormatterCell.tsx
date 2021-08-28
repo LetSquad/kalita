@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Rating } from "semantic-ui-react";
-import { DataTableStarFormatterCellParams } from "../../types/cell";
+import { DataTableFormatterTypeCellParams } from "../../types/cell";
 import { StarFormatterParams } from "../../types/formatter";
 import { useDataTableStarFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
@@ -9,7 +9,9 @@ const defaultParams: StarFormatterParams = {
     stars: 5
 };
 
-export default function DataTableStarFormatterCell({ params = defaultParams }: DataTableStarFormatterCellParams) {
+export default function DataTableStarFormatterCell({
+    params = defaultParams
+}: DataTableFormatterTypeCellParams<StarFormatterParams | undefined>) {
     const { cell } = useDataTableStarFormatterCellContext();
 
     const {

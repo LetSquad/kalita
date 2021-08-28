@@ -17,27 +17,19 @@ export interface DataTableElementFormatterCellContextParams {
     row: DataTableData;
 }
 
-export interface DataTableMoneyFormatterCellContextParams {
-    cell: number;
-}
-
-export interface DataTablePercentageFormatterCellContextParams {
-    cell: number;
-}
-
-export interface DataTableLinkFormatterCellContextParams {
-    cell: number | string;
-}
-
-export interface DataTableImageFormatterCellContextParams {
-    cell: string;
-}
-
-export interface DataTableStarFormatterCellContextParams {
-    cell: number;
-}
-
 export interface DataTableColorFormatterCellContextParams {
     cell: string;
     style?: CSSProperties;
 }
+
+export interface DataTableProgressFormatterCellContextParams {
+    id: string;
+    cell: number;
+    row: DataTableData;
+}
+
+export interface DataTableBaseCellFormatterContextParams<T> {
+    cell: T;
+}
+
+
