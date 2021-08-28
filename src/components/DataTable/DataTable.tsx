@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { Table } from "semantic-ui-react";
+import { VerticalAlignValues } from "../../../custom_typings/react-tabulator/enums";
 import { BaseColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import { NewActionBlock } from "../BrokeragePortfolioTable/NewActionBlock";
 import DataTableBody from "./Body/DataTableBody";
@@ -15,10 +16,12 @@ const columns: ColumnDefinition[] = [
     {
         title: "Инструмент",
         field: BaseColumnNames.TICKER,
-        width: 130
+        width: 130,
+        vertAlign: VerticalAlignValues.MIDDLE
     }, {
         title: "Вес",
         field: ModelPortfolioColumnNames.WEIGHT,
+        vertAlign: VerticalAlignValues.MIDDLE,
         width: 80
     }, {
         title: "Доля",
@@ -29,7 +32,8 @@ const columns: ColumnDefinition[] = [
             params: {
                 additionalSpace: true
             }
-        }
+        },
+        vertAlign: VerticalAlignValues.MIDDLE
     }, {
         title: "Целевая сумма",
         field: ModelPortfolioColumnNames.TARGET_AMOUNT,
@@ -40,7 +44,8 @@ const columns: ColumnDefinition[] = [
                 currency: "₽",
                 additionalSpace: true
             }
-        }
+        },
+        vertAlign: VerticalAlignValues.MIDDLE
     }, {
         title: "Цена",
         field: BaseColumnNames.CURRENT_PRICE,
@@ -51,19 +56,23 @@ const columns: ColumnDefinition[] = [
                 currency: "₽",
                 additionalSpace: true
             }
-        }
+        },
+        vertAlign: VerticalAlignValues.MIDDLE
     }, {
         title: "Целевое количество",
         field: ModelPortfolioColumnNames.TARGET_QUANTITY,
-        width: 190
+        width: 190,
+        vertAlign: VerticalAlignValues.MIDDLE
     }, {
         title: "В портфеле",
         field: ModelPortfolioColumnNames.QUANTITY,
-        width: 130
+        width: 130,
+        vertAlign: VerticalAlignValues.MIDDLE
     }, {
         title: "Сумма",
         field: BaseColumnNames.AMOUNT,
-        width: 130
+        width: 130,
+        vertAlign: VerticalAlignValues.MIDDLE
     }, {
         field: BaseColumnNames.ACTION,
         formatter: {
@@ -72,7 +81,8 @@ const columns: ColumnDefinition[] = [
                 renderElement: (cellData, rowId) => <NewActionBlock rowId={rowId} />
             }
         },
-        width: 40
+        width: 40,
+        vertAlign: VerticalAlignValues.MIDDLE
     }
 ];
 

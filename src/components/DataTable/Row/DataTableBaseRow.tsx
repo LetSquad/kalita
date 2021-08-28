@@ -4,7 +4,6 @@ import { Ref, Table } from "semantic-ui-react";
 import DataTableCell from "../Cell/DataTableCell";
 import { DataTableBaseRowParams } from "../types/row";
 import { DataTableCellContext } from "../utils/contexts/contexts";
-import { getCssStyleFromColumn } from "../utils/utils";
 import styles from "./styles/DataTableBaseRow.scss";
 import { useDataTableBodyContext, useDataTableContext } from "../utils/contexts/hooks";
 
@@ -35,8 +34,7 @@ export default function DataTableBaseRow({ row }: DataTableBaseRowParams) {
                                     id: row.id,
                                     column,
                                     row,
-                                    cell: row[column.field],
-                                    style: getCssStyleFromColumn(column)
+                                    cell: row[column.field]
                                 }}
                             >
                                 <DataTableCell key={`cell-${column.field}-${row.id}`} />

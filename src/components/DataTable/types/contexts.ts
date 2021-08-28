@@ -1,4 +1,3 @@
-import { CSSProperties } from "react";
 import { DataTableData } from "./base";
 import { ColumnDefinition } from "./column";
 
@@ -8,7 +7,7 @@ export interface DataTableContextParams {
 }
 
 export interface DataTableBaseCellContextParams {
-    style?: CSSProperties;
+    column: ColumnDefinition;
 }
 
 export interface DataTableElementFormatterCellContextParams {

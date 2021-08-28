@@ -4,7 +4,9 @@ import { DataTableCellParams, DataTableFormatterCellParams } from "../../types/c
 import {
     DataTableBaseCellContextParams,
     DataTableContextParams,
-    DataTableElementFormatterCellContextParams, DataTableMoneyFormatterCellContextParams, DataTablePercentageFormatterCellContextParams
+    DataTableElementFormatterCellContextParams,
+    DataTableMoneyFormatterCellContextParams,
+    DataTablePercentageFormatterCellContextParams
 } from "../../types/contexts";
 import { DataTableBodyContext, DataTableCellContext, DataTableContext } from "./contexts";
 

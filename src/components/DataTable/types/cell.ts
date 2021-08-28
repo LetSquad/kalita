@@ -5,7 +5,6 @@ import { ElementFormatterParams, MoneyFormatterParams, PercentageFormatterParams
 
 export interface DataTableHeaderCellParams {
     column: ColumnDefinition;
-    style?: CSSProperties;
 }
 
 export interface DataTableCellParams {
@@ -13,7 +12,6 @@ export interface DataTableCellParams {
     column: ColumnDefinition;
     row: DataTableData;
     cell: string | number | undefined;
-    style?: CSSProperties;
 }
 
 export interface DataTableBaseCellParams {
