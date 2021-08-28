@@ -23,7 +23,13 @@ const columns: ColumnDefinition[] = [
     }, {
         title: "Доля",
         field: BaseColumnNames.PERCENTAGE,
-        width: 85
+        width: 85,
+        formatter: {
+            type: FormatterTypes.PERCENTAGE,
+            params: {
+                additionalSpace: true
+            }
+        }
     }, {
         title: "Целевая сумма",
         field: ModelPortfolioColumnNames.TARGET_AMOUNT,

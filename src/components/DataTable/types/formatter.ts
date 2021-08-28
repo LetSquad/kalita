@@ -42,13 +42,13 @@ export interface MoneyFormatterParams {
  * Interface that represent a params for percentage formatter.
  *
  * @interface PercentageFormatterParams
- * @param {boolean} [spaceAfter=false] - Whether to add a space between the number and the currency symbol
- * @param {number} [precision=2]       - The number of digits after the decimal point to which the number will be rounded
- * @param {boolean} [zerosRemove=false] - Whether to remove extra zeros at the end
+ * @param {boolean} [additionalSpace=false] - Whether to add a space between the number and the currency symbol
+ * @param {number | false} [precision=2]    - The number of digits after the decimal point to which the number will be rounded
+ * @param {boolean} [zerosRemove=false]     - Whether to remove extra zeros at the end
  */
 export interface PercentageFormatterParams {
-    spaceAfter?: boolean;
-    precision?: number;
+    additionalSpace?: boolean;
+    precision?: number | false;
     zerosRemove?: boolean;
 }
 

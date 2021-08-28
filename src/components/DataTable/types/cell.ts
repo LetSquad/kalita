@@ -1,7 +1,7 @@
 import { CSSProperties } from "react";
 import { DataTableData } from "./base";
 import { ColumnDefinition } from "./column";
-import { ElementFormatterParams, MoneyFormatterParams } from "./formatter";
+import { ElementFormatterParams, MoneyFormatterParams, PercentageFormatterParams } from "./formatter";
 
 export interface DataTableHeaderCellParams {
     column: ColumnDefinition;
@@ -33,4 +33,8 @@ export interface DataTableElementFormatterCellParams {
 
 export interface DataTableMoneyFormatterCellParams {
     params?: MoneyFormatterParams;
+}
+
+export interface DataTablePercentageFormatterCellParams {
+    params?: PercentageFormatterParams;
 }

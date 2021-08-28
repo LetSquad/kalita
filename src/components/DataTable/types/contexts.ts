@@ -20,3 +20,7 @@ export interface DataTableElementFormatterCellContextParams {
 export interface DataTableMoneyFormatterCellContextParams {
     cell: number;
 }
+
+export interface DataTablePercentageFormatterCellContextParams {
+    cell: number;
+}
