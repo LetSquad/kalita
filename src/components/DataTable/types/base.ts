@@ -5,6 +5,7 @@ export type DataTableData = {
 
 export interface DataTable {
     data: DataTableData[];
+    emptyTablePlaceholder?: string;
     groupBy?: keyof DataTableData;
     expandableGroup?: boolean;
     onGroupNameEdit?: (oldGroupName: string, newGroupName: string) => void;

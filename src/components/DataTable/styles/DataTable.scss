@@ -1,3 +1,4 @@
+@use '../../../styles/parts' as *;
 @use '../../BrokeragePortfolioTable/AdditionalHeader/styles/AdditionalHeader' as additionalHeader;
 @use './variables' as dataTableVariables;
 
@@ -14,6 +15,7 @@
     @extend %data-table-inner-table;
     display: inline-table;
     grid-row: 1;
+    height: dataTableVariables.$head-height;
     position: sticky;
     top: 0;
     z-index: 1;
@@ -22,6 +24,14 @@
   &-body {
     @extend %data-table-inner-table;
     display: table;
+    height: calc(100% - #{dataTableVariables.$head-height} - 1px);
     overflow: hidden;
+  }
+
+  &-placeholder {
+    @extend %flex-center-container;
+    font-size: 16px;
+    font-weight: bold;
+    height: calc(100% - #{dataTableVariables.$head-height} - 1px);
   }
 }

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { Table } from "semantic-ui-react";
 import { VerticalAlignValues } from "../../../custom_typings/react-tabulator/enums";
@@ -92,13 +92,34 @@ export default function DataTable({
     onGroupNameEdit,
     onAddRowToGroup,
     onRowMoved,
-    expandableGroup
+    expandableGroup,
+    emptyTablePlaceholder
 }: DataTableType) {
     const onDragEnd = useCallback((result: DropResult) => {
         if (onRowMoved && result.destination) {
             onRowMoved(result.draggableId, result.source.index, result.destination.index, result.destination.droppableId);
         }
     }, [onRowMoved]);
+
+    const content = useMemo(() => data.length > 0
+        ? (
+            <Table className={styles.innerTableBody}>
+                <DataTableBodyContext.Provider
+                    value={{
+                        groupBy,
+                        onAddRowToGroup,
+                        onGroupNameEdit,
+                        expandableGroup,
+                        onDragEnd,
+                        isRowMovedEnabled: !!onRowMoved
+                    }}
+                >
+                    <DataTableBody />
+                </DataTableBodyContext.Provider>
+            </Table>
+        )
+        : <div className={styles.innerTablePlaceholder}>{emptyTablePlaceholder ?? "Данные недоступны"}</div>,
+    [data.length, emptyTablePlaceholder, expandableGroup, groupBy, onAddRowToGroup, onDragEnd, onGroupNameEdit, onRowMoved]);
 
     return (
         <DataTableContext.Provider
@@ -111,21 +132,7 @@ export default function DataTable({
                 <Table className={styles.innerTableHeader}>
                     <DataTableHeader />
                 </Table>
-
-                <Table className={styles.innerTableBody}>
-                    <DataTableBodyContext.Provider
-                        value={{
-                            groupBy,
-                            onAddRowToGroup,
-                            onGroupNameEdit,
-                            expandableGroup,
-                            onDragEnd,
-                            isRowMovedEnabled: !!onRowMoved
-                        }}
-                    >
-                        <DataTableBody />
-                    </DataTableBodyContext.Provider>
-                </Table>
+                {content}
             </div>
         </DataTableContext.Provider>
     );
