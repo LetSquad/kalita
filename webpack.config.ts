@@ -10,6 +10,7 @@ export const PATHS = {
     src: path.join(__dirname, "./src"),
     dist: path.join(__dirname, "./app/dist"),
     global: path.resolve(__dirname, "./src/styles/globals.scss"),
+    semantic: path.resolve(__dirname, "./src/styles/semantic.css"),
     assets: "assets/",
     nodeModules: path.resolve(__dirname, "./node_modules"),
     app: path.resolve(__dirname, "./app")
@@ -50,11 +51,15 @@ module.exports = () => {
 
     const devOptions: Configuration = {
         devServer: {
-            contentBase: PATHS.dist,
+            static: {
+                directory: PATHS.dist
+            },
             port: 8085,
-            overlay: {
-                warnings: false,
-                errors: true
+            client: {
+                overlay: {
+                    warnings: false,
+                    errors: true
+                }
             },
             hot: true,
             historyApiFallback: true
@@ -74,6 +79,10 @@ module.exports = () => {
         },
         module: {
             rules: [{
+                test: /\.css$/,
+                include: [PATHS.semantic],
+                use: ["style-loader", "css-loader"]
+            }, {
                 test: /\.scss$/,
                 include: [PATHS.global],
                 use: ["style-loader", "css-loader", "sass-loader"]
