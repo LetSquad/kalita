@@ -33,6 +33,10 @@ export function useDataTableFormatterCellContext() {
     return useContext(DataTableCellContext) as DataTableFormatterCellParams;
 }
 
+export function useDataTableBaseFormatterCellContext() {
+    return useContext(DataTableCellContext) as DataTableBaseCellFormatterContextParams<string | number | undefined>;
+}
+
 export function useDataTableElementFormatterCellContext() {
     return useContext(DataTableCellContext) as DataTableElementFormatterCellContextParams;
 }
