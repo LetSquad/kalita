@@ -7,7 +7,7 @@ import { getCellContentCssStyleFromColumn, getCellCssStyleFromColumn } from "../
 
 export default function DataTableBaseCell({ children, style, className }: DataTableBaseCellParams) {
     const { id, cell: cellData, row, column, field } = useDataTableBaseCellContext();
-    const { tooltip } = column;
+    const { tooltip, validator } = column;
 
     const cellContent = useMemo(() => (
         children !== undefined && (
@@ -23,9 +23,19 @@ export default function DataTableBaseCell({ children, style, className }: DataTa
             : tooltip;
     }, [cellData, field, id, row, tooltip]);
 
+    const isValid = useMemo(() => {
+        if (validator) {
+            if (typeof validator.validate === "boolean") {
+                return validator.validate;
+            }
+            return validator.validate(id, field, cellData, row);
+        }
+        return true;
+    }, [cellData, field, id, row, validator]);
+
     return (
         <Table.Cell className={className ?? baseStyles.baseCell} style={style ?? getCellCssStyleFromColumn(column)}>
-            {tooltip && tooltipText && children !== undefined
+            {tooltip && tooltipText && children !== undefined && isValid
                 ? (
                     <Popup
                         trigger={cellContent}

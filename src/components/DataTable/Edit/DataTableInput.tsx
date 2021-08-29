@@ -1,6 +1,6 @@
 import classNames from "classnames";
-import React, { FocusEvent, MouseEvent } from "react";
-import { Icon, Input } from "semantic-ui-react";
+import React, { FocusEvent, MouseEvent, useEffect, useMemo, useRef } from "react";
+import { Icon, Input, Popup } from "semantic-ui-react";
 import { DataTableInputParams, InputEditParams } from "../types/edit";
 import { useDataTableBodyContext, useDataTableEditContext } from "../utils/contexts/hooks";
 import styles from "./styles/DataTableInput.scss";
@@ -12,8 +12,10 @@ const defaultParams: InputEditParams = {
 };
 
 export default function DataTableInput({ params = defaultParams, label }: DataTableInputParams) {
-    const { cell, id, column: { field } } = useDataTableEditContext();
+    const { cell, id, column: { field, validator }, row } = useDataTableEditContext();
     const { onCellChanged: onGlobalCellChanged, onCellBlur: onGlobalCellBlur } = useDataTableBodyContext();
+
+    const inputRef = useRef<Input>(null);
 
     const {
         transparent = false,
@@ -26,13 +28,25 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         datalist
     } = params;
 
-    return (
+    const isValid = useMemo(() => {
+        if (validator) {
+            if (typeof validator.validate === "boolean") {
+                return validator.validate;
+            }
+            return validator.validate(id, field, cell, row);
+        }
+        return true;
+    }, [cell, field, id, row, validator]);
+
+    const input = useMemo(() => (
         <>
             <Input
+                ref={inputRef}
                 label={label ? { basic: true, content: label } : undefined}
                 defaultValue={onCellChange || onGlobalCellChanged ? undefined : cell}
                 value={onCellChange || onGlobalCellChanged ? cell : undefined}
                 placeholder={placeholder}
+                error={!isValid}
                 onChange={(event, data) => {
                     if (onCellChange) {
                         onCellChange(id, field, event, data.value);
@@ -90,5 +104,44 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                 )
             }
         </>
-    );
+    ), [
+        cell,
+        className,
+        clearable,
+        dashed,
+        datalist,
+        field,
+        id,
+        label,
+        onCellBlur,
+        onCellChange,
+        onGlobalCellBlur,
+        onGlobalCellChanged,
+        placeholder,
+        transparent,
+        isValid
+    ]);
+
+    const validatorTooltipText = useMemo(() => {
+        return validator && validator.tooltip && typeof validator.tooltip.text === "function"
+            ? validator.tooltip.text(id, field, cell, row)
+            : validator?.tooltip;
+    }, [cell, field, id, row, validator]);
+
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [isValid]);
+
+    return validator?.tooltip && validatorTooltipText && !isValid
+        ? (
+            <Popup
+                trigger={input}
+                position={validator.tooltip.position}
+                content={validatorTooltipText}
+                className={validator.tooltip.className}
+            />
+        )
+        : input;
 }

@@ -18,7 +18,7 @@ export interface DataTableBaseCellContextParams {
     field: keyof DataTableData;
     cell: string | number | boolean | undefined;
     row: DataTableData;
-    column: ColumnDefinition;
+    column: Pick<ColumnDefinition, "width" | "vertAlign" | "headerVertAlign" | "hozAlign" | "headerHozAlign" | "validator" | "tooltip">;
 }
 
 export interface DataTableNotEditCellFormatterContextParams<T, K extends NotEditFormattersColumnDefinition> {
@@ -55,7 +55,8 @@ export interface DataTableColorCellFormatterContextParams {
 export interface DataTableEditContextParams<T> {
     id: string;
     cell: T;
-    column: Required<Pick<BaseFormatterColumnDefinition, "field">>
+    row: DataTableData;
+    column: Required<Pick<BaseFormatterColumnDefinition, "field">> & Pick<BaseFormatterColumnDefinition, "validator">
 }
 
 

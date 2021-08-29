@@ -130,6 +130,7 @@ export type Edit<T = string | number | undefined> = InputEdit | DropdownEdit<T> 
 export interface DataTableInputParams {
     params?: InputEditParams;
     label?: string;
+    isValid?: boolean;
 }
 
 export interface DataTableDropdownParams<T> {
