@@ -2,4 +2,8 @@
 
 .row {
   @extend %data-table-base-row;
+
+  &:focus-visible {
+    outline: transparent;
+  }
 }

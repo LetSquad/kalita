@@ -17,13 +17,13 @@ export interface DataTableBodyParams {
         ChangeEvent<HTMLInputElement> |
         MouseEvent<HTMLElement> |
         SyntheticEvent<HTMLElement>,
-        value: string
+        value: string | number | boolean | undefined
     ) => void,
     onCellBlur?: (
         rowId: string,
         field: keyof DataTableData,
         event: FocusEvent<HTMLInputElement>,
-        value: string
+        value: string | number | boolean | undefined
     ) => void
 }
 

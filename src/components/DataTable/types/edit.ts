@@ -15,8 +15,8 @@ export enum EditTypes {
  * @param {string} value  - Specific option key
  * @param {string} [text] - The text displayed in a specific option. If missing, value is displayed
  */
-export interface Options {
-    value: string;
+export interface Options<T> {
+    value: T;
     text?: string;
 }
 
@@ -40,7 +40,7 @@ export interface InputEditParams {
     dashed?: boolean;
     placeholder?: string;
     clearable?: boolean;
-    datalist?: Options;
+    datalist?: Options<string>[];
     className?: string;
     onCellChange?: (
         rowId: string,
@@ -65,13 +65,13 @@ export interface InputEditParams {
  * @param {Options} options                                                                      - List with options
  * @param {(rowId: string, event: SyntheticEvent<HTMLElement>, value: T) => void} [onCellChange] - Callback when changing dropdown value
  */
-export interface DropdownEditParams<T = string | number | undefined> {
+export interface DropdownEditParams<T = string | number | undefined | boolean> {
     multiple?: boolean;
     search?: boolean;
     clearable?: boolean;
     inline?: boolean;
     placeholder?: string;
-    options: Options;
+    options: Options<string | number | boolean | undefined>[];
     onCellChange?: (rowId: string, field: keyof DataTableData, event: SyntheticEvent<HTMLElement>, value: T) => void;
 }
 
@@ -133,5 +133,5 @@ export interface DataTableInputParams {
 }
 
 export interface DataTableDropdownParams<T> {
-    params?: DropdownEditParams<T>;
+    params: DropdownEditParams<T>;
 }

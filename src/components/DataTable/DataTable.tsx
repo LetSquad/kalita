@@ -30,7 +30,16 @@ const columns: ColumnDefinition[] = [
                 onCellChange: console.log,
                 dashed: true,
                 onCellBlur: console.log,
-                clearable: true
+                clearable: true,
+                datalist: [
+                    {
+                        value: "MOEX"
+                    }, {
+                        value: "SBER"
+                    }, {
+                        value: "123"
+                    }
+                ]
             }
         }
     }, {
