@@ -50,12 +50,12 @@ export interface ElementFormatterColumnDefinition extends BaseColumnDefinition {
 
 export interface MoneyFormatterColumnDefinition extends BaseColumnDefinition {
     formatter?: MoneyFormatter;
-    edit?: DropdownEdit<number> | InputEdit<number>;
+    edit?: DropdownEdit<number> | InputEdit;
 }
 
 export interface PercentageFormatterColumnDefinition extends BaseColumnDefinition {
     formatter?: PercentageFormatter;
-    edit?: DropdownEdit<number> | InputEdit<number>;
+    edit?: DropdownEdit<number> | InputEdit;
 }
 
 export interface ImageFormatterColumnDefinition extends BaseColumnDefinition {

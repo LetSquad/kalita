@@ -12,7 +12,7 @@ import {
     DataTableColorCellFormatterContextParams,
     DataTableContextParams,
     DataTableEditCellContextParams,
-    DataTableEditCellFormatterContextParams,
+    DataTableEditCellFormatterContextParams, DataTableEditContextParams,
     DataTableElementCellFormatterContextParams, DataTableNotEditCellFormatterContextParams
 } from "../../types/contexts";
 import { DataTableBodyContext, DataTableCellContext, DataTableContext } from "./contexts";
@@ -81,4 +81,8 @@ export function useDataTableStarFormatterCellContext() {
 
 export function useDataTableProgressFormatterCellContext() {
     return useContext(DataTableCellContext) as DataTableNotEditCellFormatterContextParams<number, ProgressFormatterColumnDefinition>;
+}
+
+export function useDataTableEditContext() {
+    return useContext(DataTableCellContext) as DataTableEditContextParams<number | string | undefined>;
 }

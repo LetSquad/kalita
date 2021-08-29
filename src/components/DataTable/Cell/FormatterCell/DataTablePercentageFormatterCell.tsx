@@ -1,4 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
+import DataTableDropdown from "../../Edit/DataTableDropdown";
+import DataTableInput from "../../Edit/DataTableInput";
+import { DropdownEdit, EditTypes, InputEdit } from "../../types/edit";
 import { PercentageFormatterParams } from "../../types/formatter";
 import { useDataTablePercentageFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
@@ -33,5 +36,13 @@ export default function DataTablePercentageFormatterCell() {
         return `${precisionValue}${additionalSpace ? " " : ""}%`;
     }, [additionalSpace, cell, precision, zerosRemove]);
 
-    return <DataTableBaseCell>{formattedValue}</DataTableBaseCell>;
+    const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => {
+        return _edit.type === EditTypes.INPUT
+            ? <DataTableInput params={_edit.params} label="%" />
+            : <DataTableDropdown params={_edit.params} />;
+    }, []);
+
+    return edit
+        ? <DataTableBaseCell>{editContent(edit)}</DataTableBaseCell>
+        : <DataTableBaseCell>{formattedValue}</DataTableBaseCell>;
 }

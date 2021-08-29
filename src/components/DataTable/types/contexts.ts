@@ -48,4 +48,10 @@ export interface DataTableColorCellFormatterContextParams {
     style?: CSSProperties;
 }
 
+export interface DataTableEditContextParams<T> {
+    id: string;
+    cell: T;
+    column: Required<Pick<BaseFormatterColumnDefinition, "field">>
+}
+
 

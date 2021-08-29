@@ -1,4 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
+import DataTableDropdown from "../../Edit/DataTableDropdown";
+import DataTableInput from "../../Edit/DataTableInput";
+import { DropdownEdit, EditTypes, InputEdit } from "../../types/edit";
 import { CurrencyPosition, MoneyFormatterParams } from "../../types/formatter";
 import { useDataTableMoneyFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
@@ -52,5 +55,13 @@ export default function DataTableMoneyFormatterCell() {
             : `${integer}${decimal}${additionalSpace ? " " : ""}${currency}`;
     }, [additionalSpace, cell, currency, currencyPosition, decimalSym, precision, thousandSym, zerosRemove]);
 
-    return <DataTableBaseCell>{formattedValue}</DataTableBaseCell>;
+    const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => {
+        return _edit.type === EditTypes.INPUT
+            ? <DataTableInput params={_edit.params} label={currency} />
+            : <DataTableDropdown params={_edit.params} />;
+    }, [currency]);
+
+    return edit
+        ? <DataTableBaseCell>{editContent(edit)}</DataTableBaseCell>
+        : <DataTableBaseCell>{formattedValue}</DataTableBaseCell>;
 }

@@ -9,6 +9,7 @@ import DataTableHeader from "./Header/DataTableHeader";
 import styles from "./styles/DataTable.scss";
 import { DataTable as DataTableType } from "./types/base";
 import { ColumnDefinition } from "./types/column";
+import { EditTypes } from "./types/edit";
 import { FormatterTypes } from "./types/formatter";
 import { DataTableBodyContext, DataTableContext } from "./utils/contexts/contexts";
 
@@ -22,7 +23,16 @@ const columns: ColumnDefinition[] = [
         title: "Вес",
         field: ModelPortfolioColumnNames.WEIGHT,
         vertAlign: VerticalAlignValues.MIDDLE,
-        width: 80
+        width: 80,
+        edit: {
+            type: EditTypes.INPUT,
+            params: {
+                onCellChange: console.log,
+                dashed: true,
+                onCellBlur: console.log,
+                clearable: true
+            }
+        }
     }, {
         title: "Доля",
         field: BaseColumnNames.PERCENTAGE,
@@ -93,7 +103,9 @@ export default function DataTable({
     onAddRowToGroup,
     onRowMoved,
     expandableGroup,
-    emptyTablePlaceholder
+    emptyTablePlaceholder,
+    onCellChanged,
+    onCellBlur
 }: DataTableType) {
     const onDragEnd = useCallback((result: DropResult) => {
         if (onRowMoved && result.destination) {
@@ -111,7 +123,9 @@ export default function DataTable({
                         onGroupNameEdit,
                         expandableGroup,
                         onDragEnd,
-                        isRowMovedEnabled: !!onRowMoved
+                        isRowMovedEnabled: !!onRowMoved,
+                        onCellChanged,
+                        onCellBlur
                     }}
                 >
                     <DataTableBody />
@@ -119,7 +133,18 @@ export default function DataTable({
             </Table>
         )
         : <div className={styles.innerTablePlaceholder}>{emptyTablePlaceholder ?? "Данные недоступны"}</div>,
-    [data.length, emptyTablePlaceholder, expandableGroup, groupBy, onAddRowToGroup, onDragEnd, onGroupNameEdit, onRowMoved]);
+    [
+        data.length,
+        emptyTablePlaceholder,
+        expandableGroup,
+        groupBy,
+        onAddRowToGroup,
+        onCellChanged,
+        onDragEnd,
+        onGroupNameEdit,
+        onRowMoved,
+        onCellBlur
+    ]);
 
     return (
         <DataTableContext.Provider

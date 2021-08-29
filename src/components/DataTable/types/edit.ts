@@ -1,4 +1,5 @@
-import { KeyboardEvent, FocusEvent, SyntheticEvent } from "react";
+import { FocusEvent, SyntheticEvent, ChangeEvent, MouseEvent, KeyboardEvent } from "react";
+import { DataTableData } from "./base";
 
 export enum EditTypes {
     INPUT = "input",
@@ -24,22 +25,31 @@ export interface Options {
  *
  * @interface
  * @name InputEditParams
- * @param {boolean} [transparent=false]                                                              - Are the fields displayed at the input
- * @param {string} [placeholder]                                                                     - Placeholder label in input, when value is empty
- * @param {boolean} [clearable=false]                                                                - Will there be an icon for instantly clearing the contents of the input
- * @param {Options} [datalist]                                                                       - List with tips
- * @param {string} [className]                                                                       - The class name that will be passed to the input element
- * @param {(rowId: string, event: KeyboardEvent<HTMLInputElement>, value: T) => void} [onCellChange] - Callback when changing input value
- * @param {(rowId: string, event: FocusEvent<HTMLInputElement>, value: T) => void} [onCellBlur]      - Blur input callback
+ * @param {boolean} [transparent=false]                                                                                                                       - Are the borders displayed at the input
+ * @param {boolean} [dashed=false]                                                                                                                            - Reduced padding and dashed borders
+ * @param {string} [placeholder]                                                                                                                              - Placeholder label in input, when value is empty
+ * @param {boolean} [clearable=false]                                                                                                                         - Will there be an icon for instantly clearing the contents of the input
+ * @param {Options} [datalist]                                                                                                                                - List with tips
+ * @param {string} [className]                                                                                                                                - The class name that will be passed to the input element
+ * @param {(rowId: string, field: keyof DataTableData, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLElement>, value: string) => void} [onCellChange] - Callback when changing input value
+ * @param {(rowId: string, field: keyof DataTableData, event: FocusEvent<HTMLInputElement>, value: string) => void} [onCellBlur]                              - Blur input callback
+ * @param {(rowId: string, field: keyof DataTableData, event: KeyboardEvent<HTMLInputElement>, value: string) => void} [onKeyEnter]                           - Enter key input callback
  */
-export interface InputEditParams<T = string | number | undefined> {
+export interface InputEditParams {
     transparent?: boolean;
+    dashed?: boolean;
     placeholder?: string;
     clearable?: boolean;
     datalist?: Options;
     className?: string;
-    onCellChange?: (rowId: string, event: KeyboardEvent<HTMLInputElement>, value: T) => void;
-    onCellBlur?: (rowId: string, event: FocusEvent<HTMLInputElement>, value: T) => void;
+    onCellChange?: (
+        rowId: string,
+        field: keyof DataTableData,
+        event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLElement>,
+        value: string
+    ) => void;
+    onCellBlur?: (rowId: string, field: keyof DataTableData, event: FocusEvent<HTMLInputElement>, value: string) => void;
+    onKeyEnter?: (rowId: string, field: keyof DataTableData, event: KeyboardEvent<HTMLInputElement>, value: string) => void;
 }
 
 /**
@@ -62,7 +72,7 @@ export interface DropdownEditParams<T = string | number | undefined> {
     inline?: boolean;
     placeholder?: string;
     options: Options;
-    onCellChange?: (rowId: string, event: SyntheticEvent<HTMLElement>, value: T) => void;
+    onCellChange?: (rowId: string, field: keyof DataTableData, event: SyntheticEvent<HTMLElement>, value: T) => void;
 }
 
 /**
@@ -84,9 +94,9 @@ export interface StarEditParams {
  * @param {EditTypes.INPUT} type     - Edit type
  * @param {InputEditParams} [params] - Edit params
  */
-export interface InputEdit<T = string | number | undefined> {
+export interface InputEdit {
     type: EditTypes.INPUT;
-    params?: InputEditParams<T>;
+    params?: InputEditParams;
 }
 
 /**
@@ -115,4 +125,13 @@ export interface StarEdit {
     params: StarEditParams;
 }
 
-export type Edit<T = string | number | undefined> = InputEdit<T> | DropdownEdit<T> | StarEdit;
+export type Edit<T = string | number | undefined> = InputEdit | DropdownEdit<T> | StarEdit;
+
+export interface DataTableInputParams {
+    params?: InputEditParams;
+    label?: string;
+}
+
+export interface DataTableDropdownParams<T> {
+    params?: DropdownEditParams<T>;
+}

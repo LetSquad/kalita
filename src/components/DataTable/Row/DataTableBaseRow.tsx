@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { Ref, Table } from "semantic-ui-react";
 import DataTableCell from "../Cell/DataTableCell";
@@ -26,6 +26,7 @@ export default function DataTableBaseRow({ row }: DataTableBaseRowParams) {
                         {...itemProvided.draggableProps}
                         /* eslint-disable-next-line react/jsx-props-no-spreading */
                         {...itemProvided.dragHandleProps}
+                        onMouseDown={(e: MouseEvent<HTMLTableRowElement>) => e.currentTarget.focus()}
                     >
                         {columns.map((column) => (
                             <DataTableCellContext.Provider
