@@ -5,8 +5,12 @@ import {
     ImageFormatter,
     LinkFormatter,
     MoneyFormatter,
-    PercentageFormatter, ProgressFormatter, StarFormatter
+    PercentageFormatter,
+    ProgressFormatter,
+    StarFormatter
 } from "./formatter";
+import { Tooltip } from "./tooltip";
+import { Validator } from "./validator";
 
 export enum HorizontalAlignValues {
     LEFT = "left",
@@ -37,6 +41,8 @@ export type ColumnDefinition = FormatterColumnDefinition | BaseFormatterColumnDe
 export interface BaseColumnDefinition {
     field: string;
     title?: string;
+    tooltip?: Tooltip;
+    validator?: Validator;
     width?: number;
     vertAlign?: VerticalAlignValues;
     hozAlign?: HorizontalAlignValues;

@@ -86,7 +86,15 @@ const columns: ColumnDefinition[] = [
         title: "В портфеле",
         field: ModelPortfolioColumnNames.QUANTITY,
         width: 130,
-        vertAlign: VerticalAlignValues.MIDDLE
+        vertAlign: VerticalAlignValues.MIDDLE,
+        tooltip: {
+            text: (rowId, field, cell, rowData) => {
+                if (typeof rowData.targetQuantity === "number" && typeof cell === "number" && rowData.targetQuantity > cell) {
+                    return String(rowData.targetQuantity - cell);
+                }
+                return undefined;
+            }
+        }
     }, {
         title: "Сумма",
         field: BaseColumnNames.AMOUNT,

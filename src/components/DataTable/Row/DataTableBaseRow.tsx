@@ -33,6 +33,7 @@ export default function DataTableBaseRow({ row }: DataTableBaseRowParams) {
                                 key={`cell-context-${column.field}-${row.id}`}
                                 value={{
                                     id: row.id,
+                                    field: column.field,
                                     column,
                                     row,
                                     cell: row[column.field]

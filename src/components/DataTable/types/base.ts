@@ -2,7 +2,7 @@ import { KeyboardEvent, FocusEvent, ChangeEvent, MouseEvent, SyntheticEvent } fr
 
 export type DataTableData = {
     id: string;
-    [key: string]: string | number | undefined;
+    [key: string]: string | number | boolean | undefined;
 };
 
 export interface DataTable {

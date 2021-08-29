@@ -8,18 +8,19 @@ export interface DataTableHeaderCellParams {
 
 export interface DataTableCellParams {
     id: string;
+    field: keyof DataTableData;
     column: ColumnDefinition;
     row: DataTableData;
-    cell: string | number | undefined;
+    cell: string | number | boolean | undefined;
 }
 
 export interface DataTableBaseCellParams {
-    children?: string | number | JSX.Element | JSX.Element[] | undefined;
+    children?: string | number | boolean | JSX.Element | JSX.Element[] | undefined;
     style?: CSSProperties;
     className?: string;
 }
 
 export interface DataTableFormatterCellParams {
-    cell: string | number | undefined;
+    cell: string | number | boolean | undefined;
     column: Required<Pick<FormatterColumnDefinition, "formatter">>;
 }

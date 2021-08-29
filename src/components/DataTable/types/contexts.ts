@@ -14,6 +14,10 @@ export interface DataTableContextParams {
 }
 
 export interface DataTableBaseCellContextParams {
+    id: string;
+    field: keyof DataTableData;
+    cell: string | number | boolean | undefined;
+    row: DataTableData;
     column: ColumnDefinition;
 }
 

@@ -2,6 +2,10 @@
 %data-table-input {
   max-width: 100%;
 
+  [list]::-webkit-calendar-picker-indicator {
+    display: none !important;
+  }
+
   &-small {
     > input {
       background: transparent !important;
@@ -31,5 +35,10 @@
     > input {
       border: 1px dashed rgba(0, 0, 0, 0.2) !important;
     }
+  }
+
+  &-remove-icon {
+    margin-right: 5px !important;
+    width: 14px !important;
   }
 }

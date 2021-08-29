@@ -60,6 +60,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                     clearable && cell && cell.toString().length > 0
                         ? (
                             <Icon
+                                className={styles.inputRemoveIcon}
                                 name="remove"
                                 link
                                 onClick={(event: MouseEvent<HTMLElement>) => {
