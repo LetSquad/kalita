@@ -122,7 +122,8 @@ export default function DataTable({
     expandableGroup,
     emptyTablePlaceholder,
     onCellChanged,
-    onCellBlur
+    onCellBlur,
+    onCellKeyEnter
 }: DataTableType) {
     const onDragEnd = useCallback((result: DropResult) => {
         if (onRowMoved && result.destination) {
@@ -142,7 +143,8 @@ export default function DataTable({
                         onDragEnd,
                         isRowMovedEnabled: !!onRowMoved,
                         onCellChanged,
-                        onCellBlur
+                        onCellBlur,
+                        onCellKeyEnter
                     }}
                 >
                     <DataTableBody />
@@ -160,7 +162,8 @@ export default function DataTable({
         onDragEnd,
         onGroupNameEdit,
         onRowMoved,
-        onCellBlur
+        onCellBlur,
+        onCellKeyEnter
     ]);
 
     return (

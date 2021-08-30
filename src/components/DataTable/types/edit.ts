@@ -49,7 +49,7 @@ export interface InputEditParams {
         value: string
     ) => void;
     onCellBlur?: (rowId: string, field: keyof DataTableData, event: FocusEvent<HTMLInputElement>, value: string) => void;
-    onKeyEnter?: (rowId: string, field: keyof DataTableData, event: KeyboardEvent<HTMLInputElement>, value: string) => void;
+    onCellKeyEnter?: (rowId: string, field: keyof DataTableData, event: KeyboardEvent<HTMLInputElement>, value: string) => void;
 }
 
 /**

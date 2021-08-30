@@ -27,6 +27,12 @@ export interface DataTable {
         field: keyof DataTableData,
         event: FocusEvent<HTMLInputElement>,
         value: string | number | boolean | undefined
-    ) => void
+    ) => void;
+    onCellKeyEnter?: (
+        rowId: string,
+        field: keyof DataTableData,
+        event: KeyboardEvent<HTMLInputElement>,
+        value: string | number | boolean | undefined
+    ) => void;
 }
 

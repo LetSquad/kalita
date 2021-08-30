@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { FocusEvent, MouseEvent, useEffect, useMemo, useRef } from "react";
+import React, { FocusEvent, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { Icon, Input, Popup } from "semantic-ui-react";
 import { DataTableInputParams, InputEditParams } from "../types/edit";
 import { useDataTableBodyContext, useDataTableEditContext } from "../utils/contexts/hooks";
@@ -13,7 +13,11 @@ const defaultParams: InputEditParams = {
 
 export default function DataTableInput({ params = defaultParams, label }: DataTableInputParams) {
     const { cell, id, column: { field, validator }, row } = useDataTableEditContext();
-    const { onCellChanged: onGlobalCellChanged, onCellBlur: onGlobalCellBlur } = useDataTableBodyContext();
+    const {
+        onCellChanged: onGlobalCellChanged,
+        onCellBlur: onGlobalCellBlur,
+        onCellKeyEnter: onGlobalCellKeyEnter
+    } = useDataTableBodyContext();
 
     const inputRef = useRef<Input>(null);
 
@@ -24,19 +28,22 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         className,
         onCellBlur,
         onCellChange,
+        onCellKeyEnter,
         placeholder,
         datalist
     } = params;
 
-    const isValid = useMemo(() => {
+    const getIsValid = useCallback((_cell: string | number | boolean | undefined) => {
         if (validator) {
             if (typeof validator.validate === "boolean") {
                 return validator.validate;
             }
-            return validator.validate(id, field, cell, row);
+            return validator.validate(id, field, _cell, row);
         }
         return true;
-    }, [cell, field, id, row, validator]);
+    }, [field, id, row, validator]);
+
+    const isValid = useMemo(() => getIsValid(cell), [cell, getIsValid]);
 
     const input = useMemo(() => (
         <>
@@ -56,6 +63,9 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                     }
                 }}
                 onBlur={(event: FocusEvent<HTMLInputElement>) => {
+                    if (!isValid || !getIsValid(event.target.value)) {
+                        event.preventDefault();
+                    }
                     if (onCellBlur) {
                         onCellBlur(id, field, event, event.target.value);
                     }
@@ -63,6 +73,22 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                         onGlobalCellBlur(id, field, event, event.target.value);
                     }
                 }}
+                onKeyPress={(event: KeyboardEvent<HTMLInputElement>) => {
+                    if (event.key === "Enter") {
+                        if (onCellKeyEnter) {
+                            onCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
+                            (event.target as HTMLInputElement).blur();
+                        }
+                        if (onGlobalCellKeyEnter) {
+                            onGlobalCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
+                            (event.target as HTMLInputElement).blur();
+                        }
+                    }
+                    if (event.key === "Escape") {
+                        (event.target as HTMLInputElement).blur();
+                    }
+                }
+                }
                 list={datalist && datalist.length > 0 ? `${id}-${field}-hints` : undefined}
                 className={classNames(
                     { [styles.inputTransparent]: transparent },
@@ -105,21 +131,24 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
             }
         </>
     ), [
+        label,
+        onCellChange,
+        onGlobalCellChanged,
         cell,
+        placeholder,
+        isValid,
+        datalist,
+        id,
+        field,
+        transparent,
+        dashed,
         className,
         clearable,
-        dashed,
-        datalist,
-        field,
-        id,
-        label,
+        getIsValid,
         onCellBlur,
-        onCellChange,
         onGlobalCellBlur,
-        onGlobalCellChanged,
-        placeholder,
-        transparent,
-        isValid
+        onCellKeyEnter,
+        onGlobalCellKeyEnter
     ]);
 
     const validatorTooltipText = useMemo(() => {

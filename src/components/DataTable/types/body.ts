@@ -18,13 +18,19 @@ export interface DataTableBodyParams {
         MouseEvent<HTMLElement> |
         SyntheticEvent<HTMLElement>,
         value: string | number | boolean | undefined
-    ) => void,
+    ) => void;
     onCellBlur?: (
         rowId: string,
         field: keyof DataTableData,
         event: FocusEvent<HTMLInputElement>,
         value: string | number | boolean | undefined
-    ) => void
+    ) => void;
+    onCellKeyEnter?: (
+        rowId: string,
+        field: keyof DataTableData,
+        event: KeyboardEvent<HTMLInputElement>,
+        value: string | number | boolean | undefined
+    ) => void;
 }
 
 export interface DataTableGroupedBodyParams extends DataTableBodyParams {
