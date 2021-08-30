@@ -2,20 +2,23 @@ import React, { useMemo } from "react";
 import { Popup, Table } from "semantic-ui-react";
 import { DataTableBaseCellParams } from "../types/cell";
 import baseStyles from "../styles/base.scss";
-import { useDataTableBaseCellContext } from "../utils/contexts/hooks";
+import { useDataTableBaseCellContext, useDataTableContext } from "../utils/contexts/hooks";
 import { getCellContentCssStyleFromColumn, getCellCssStyleFromColumn } from "../utils/utils";
 
-export default function DataTableBaseCell({ children, style, className }: DataTableBaseCellParams) {
-    const { id, cell: cellData, row, column, field } = useDataTableBaseCellContext();
-    const { tooltip, validator } = column;
+export default function DataTableBaseCell({ children, style, className, withWrapper = true }: DataTableBaseCellParams) {
+    const { id, cell: cellData, row, column } = useDataTableBaseCellContext();
+    const { data: tableData } = useDataTableContext();
+    const { tooltip, validator, className: userClassName, field } = column;
 
     const cellContent = useMemo(() => (
-        children !== undefined && (
-            <div className={baseStyles.baseCellContentWrapper} style={getCellContentCssStyleFromColumn(column)}>
-                {children}
-            </div>
-        )
-    ), [children, column]);
+        children !== undefined && withWrapper
+            ? (
+                <div className={baseStyles.baseCellContentWrapper} style={getCellContentCssStyleFromColumn(column)}>
+                    {children}
+                </div>
+            )
+            : children
+    ), [children, column, withWrapper]);
 
     const tooltipText = useMemo(() => {
         return tooltip && typeof tooltip.text === "function"
@@ -26,15 +29,24 @@ export default function DataTableBaseCell({ children, style, className }: DataTa
     const isValid = useMemo(() => {
         if (validator) {
             if (typeof validator.validate === "boolean") {
-                return validator.validate;
+                return !validator.validate;
             }
-            return validator.validate(id, field, cellData, row);
+            return !validator.validate(tableData, id, field, cellData, cellData, row);
         }
         return true;
-    }, [cellData, field, id, row, validator]);
+    }, [cellData, field, id, row, tableData, validator]);
+
+    const userFormattedClassName = useMemo(() => {
+        return typeof userClassName === "function"
+            ? userClassName(id, field, cellData, row)
+            : userClassName;
+    }, [cellData, field, id, row, userClassName]);
 
     return (
-        <Table.Cell className={className ?? baseStyles.baseCell} style={style ?? getCellCssStyleFromColumn(column)}>
+        <Table.Cell
+            className={`${className ?? baseStyles.baseCell}${userFormattedClassName ? ` ${userFormattedClassName}` : ""}`}
+            style={style ?? getCellCssStyleFromColumn(column)}
+        >
             {tooltip && tooltipText && children !== undefined && isValid
                 ? (
                     <Popup

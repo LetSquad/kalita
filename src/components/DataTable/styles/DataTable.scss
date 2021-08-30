@@ -24,7 +24,7 @@
   &-body {
     @extend %data-table-inner-table;
     display: table;
-    height: calc(100% - #{dataTableVariables.$head-height} - 1px);
+    max-height: calc(100% - #{dataTableVariables.$head-height} - 1px);
     overflow: hidden;
   }
 

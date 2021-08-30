@@ -11,13 +11,27 @@ export enum TooltipPosition {
     LEFT_CENTER = "left center"
 }
 
-export interface Tooltip {
+interface BaseTooltip {
+    position?: TooltipPosition;
+    className?: string
+}
+
+export interface Tooltip extends BaseTooltip {
     text: ((
         rowId: string,
         field: keyof DataTableData,
-        cell: string | number | boolean | undefined,
+        value: string | number | boolean | undefined,
         rowData: DataTableData
     ) => string | undefined) | string | undefined;
-    position?: TooltipPosition;
-    className?: string
+}
+
+export interface ValidationTooltip<T = string | number | boolean | undefined> extends BaseTooltip {
+    text: ((
+        tableData: DataTableData[],
+        rowId: string,
+        field: keyof DataTableData,
+        oldValue: T,
+        newValue: T,
+        rowData: DataTableData
+    ) => string | undefined) | string | undefined;
 }

@@ -1,12 +1,14 @@
 import { DataTableData } from "./base";
-import { Tooltip } from "./tooltip";
+import { ValidationTooltip } from "./tooltip";
 
-export interface Validator {
+export interface Validator<T = string | number | boolean | undefined> {
     validate: ((
+        tableData: DataTableData[],
         rowId: string,
         field: keyof DataTableData,
-        cell: string | number | boolean | undefined,
+        oldValue: T,
+        newValue: T,
         rowData: DataTableData
     ) => boolean) | boolean;
-    tooltip?: Tooltip
+    tooltip?: ValidationTooltip
 }

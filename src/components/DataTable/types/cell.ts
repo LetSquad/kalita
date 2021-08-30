@@ -18,6 +18,7 @@ export interface DataTableBaseCellParams {
     children?: string | number | boolean | JSX.Element | JSX.Element[] | undefined;
     style?: CSSProperties;
     className?: string;
+    withWrapper?: boolean;
 }
 
 export interface DataTableFormatterCellParams {

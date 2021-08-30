@@ -1,3 +1,5 @@
+import { DataTableData } from "./base";
+import { Calc } from "./calc";
 import { DropdownEdit, InputEdit, StarEdit } from "./edit";
 import {
     ColorFormatter,
@@ -41,8 +43,14 @@ export type ColumnDefinition = FormatterColumnDefinition | BaseFormatterColumnDe
 export interface BaseColumnDefinition {
     field: string;
     title?: string;
+    className?: ((rowId: string,
+        field: keyof DataTableData,
+        cellData: string | number | boolean | undefined,
+        rowData: DataTableData) => string | undefined) | string;
     tooltip?: Tooltip;
     validator?: Validator;
+    headerCalc?: Calc;
+    groupCalc?: Calc;
     width?: number;
     vertAlign?: VerticalAlignValues;
     hozAlign?: HorizontalAlignValues;

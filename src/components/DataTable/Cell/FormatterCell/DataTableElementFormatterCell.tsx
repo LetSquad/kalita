@@ -10,9 +10,10 @@ export default function DataTableElementFormatterCell() {
         column: {
             formatter: {
                 params
-            }
+            },
+            field
         }
     } = useDataTableElementFormatterCellContext();
 
-    return <DataTableBaseCell>{params.renderElement(cell, id, row)}</DataTableBaseCell>;
+    return <DataTableBaseCell withWrapper={false}>{params.renderElement(id, field, cell, row)}</DataTableBaseCell>;
 }

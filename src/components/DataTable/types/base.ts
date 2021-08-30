@@ -1,4 +1,5 @@
 import { KeyboardEvent, FocusEvent, ChangeEvent, MouseEvent, SyntheticEvent } from "react";
+import { ColumnDefinition } from "./column";
 
 export type DataTableData = {
     id: string;
@@ -7,6 +8,7 @@ export type DataTableData = {
 
 export interface DataTable {
     data: DataTableData[];
+    columns: ColumnDefinition[];
     emptyTablePlaceholder?: string;
     groupBy?: keyof DataTableData;
     expandableGroup?: boolean;

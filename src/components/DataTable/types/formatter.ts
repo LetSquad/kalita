@@ -168,10 +168,15 @@ export interface TotalProgressFormatterParams extends BaseProgressFormatterParam
  *
  * @interface
  * @name ElementFormatterParams
- * @param {(cellData: number, rowId: string, rowData: DataTableData) => JSX.Element} renderElement - Displayed react component
+ * @param {(rowId: string, field: keyof DataTableData, cellData: string | number | boolean | undefined, rowData: DataTableData) => JSX.Element} renderElement - Displayed react component
  */
 export interface ElementFormatterParams {
-    renderElement: (cellData: string | number | undefined, rowId: string, rowData: DataTableData) => JSX.Element;
+    renderElement: (
+        rowId: string,
+        field: keyof DataTableData,
+        cellData: string | number | boolean | undefined,
+        rowData: DataTableData
+    ) => JSX.Element;
 }
 
 /**
