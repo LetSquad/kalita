@@ -1,8 +1,12 @@
-import React, { useCallback } from "react";
+import React, { FocusEvent, useCallback } from "react";
+import { $enum } from "ts-enum-util";
+import { getMoexQuotesForName } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
+import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { useAppDispatch } from "../../store/hooks";
-import { addNewPosition, updateGroupName, updatePosition } from "../../store/portfolios/portfoliosReducer";
+import { addNewPosition, update, updateGroupName, updatePosition } from "../../store/portfolios/portfoliosReducer";
 import DataTable from "../DataTable/DataTable";
+import { DataTableData } from "../DataTable/types/base";
 import { ColumnDefinition } from "../DataTable/types/column";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
@@ -38,6 +42,23 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         }));
     }, [dispatch]);
 
+    const cellUpdated = useCallback((
+        rowId: string,
+        field: keyof DataTableData,
+        event: FocusEvent<HTMLInputElement>,
+        value: string | number | boolean | undefined
+    ) => {
+        dispatch(update({
+            id: rowId,
+            valueKey: $enum(EditableTableColumns)
+                .asValueOrThrow(field as string),
+            newValue: value as string
+        }));
+        if (field === BaseColumnNames.TICKER) {
+            dispatch(getMoexQuotesForName(value as string));
+        }
+    }, [dispatch]);
+
     return (
         <div className={styles.container}>
             <AdditionalHeader
@@ -52,6 +73,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 onGroupNameEdit={updateGroup}
                 expandableGroup
                 onRowMoved={rowMoved}
+                onCellBlur={cellUpdated}
             />
         </div>
     );

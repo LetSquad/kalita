@@ -171,9 +171,9 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     const validatorTooltipText = useMemo(() => {
         return validator && validator.tooltip && typeof validator.tooltip.text === "function"
-            ? validator.tooltip.text(tableData, id, field, oldValue, value || cell, row)
+            ? validator.tooltip.text(tableData, id, field, oldValue, cell, row)
             : validator?.tooltip;
-    }, [cell, field, id, oldValue, row, tableData, validator, value]);
+    }, [cell, field, id, oldValue, row, tableData, validator]);
 
     useEffect(() => {
         getIsValid(oldValue, value || cell);
@@ -190,6 +190,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     return validator?.tooltip && validatorTooltipText && !isValid
         ? (
+            // TODO: Добавить попап ячейки
             <Popup
                 trigger={input}
                 position={validator.tooltip.position}
