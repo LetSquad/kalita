@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { FocusEvent, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { FocusEvent, KeyboardEvent, MouseEvent, useCallback, useMemo, useRef, useState } from "react";
 import { Icon, Input, Popup, Ref } from "semantic-ui-react";
 import { DataTableInputParams, InputEditParams } from "../types/edit";
 import { useDataTableBodyContext, useDataTableContext, useDataTableEditContext } from "../utils/contexts/hooks";
@@ -64,26 +64,35 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                     onChange={(event, data) => {
                         if (onCellChange) {
                             onCellChange(id, field, event, data.value);
+                            setOldValue(cell);
                         }
                         if (onGlobalCellChanged) {
                             onGlobalCellChanged(id, field, event, data.value);
+                            setOldValue(cell);
                         }
                         if (!onCellChange && !onGlobalCellChanged) {
                             setValue(data.value);
+                            setOldValue(value);
                         }
-                        setOldValue(cell);
                     }}
                     onBlur={(event: FocusEvent<HTMLInputElement>) => {
                         if (!getIsValid(oldValue, event.target.value)) {
                             event.target.focus();
+                        } else {
+                            if (onCellBlur) {
+                                onCellBlur(id, field, event, event.target.value);
+                                setOldValue(event.target.value);
+                            }
+                            if (onGlobalCellBlur) {
+                                onGlobalCellBlur(id, field, event, event.target.value);
+                                setOldValue(event.target.value);
+                            }
                         }
-                        if (onCellBlur) {
-                            onCellBlur(id, field, event, event.target.value);
+                    }}
+                    onKeyUp={(event: KeyboardEvent<HTMLInputElement>) => {
+                        if (event.key === "Escape") {
+                            (event.target as HTMLInputElement).blur();
                         }
-                        if (onGlobalCellBlur) {
-                            onGlobalCellBlur(id, field, event, event.target.value);
-                        }
-                        setOldValue(event.target.value);
                     }}
                     onKeyPress={(event: KeyboardEvent<HTMLInputElement>) => {
                         if (event.key === "Enter") {
@@ -96,12 +105,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                                 (event.target as HTMLInputElement).blur();
                             }
                         }
-                        // TODO: Починить
-                        if (event.key === "Escape") {
-                            (event.target as HTMLInputElement).blur();
-                        }
-                    }
-                    }
+                    }}
                     list={datalist && datalist.length > 0 ? `${id}-${field}-hints` : undefined}
                     className={classNames(
                         { [styles.inputTransparent]: transparent },
@@ -170,24 +174,18 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     const validatorTooltipText = useMemo(() => {
         return validator && validator.tooltip && typeof validator.tooltip.text === "function"
-            ? validator.tooltip.text(tableData, id, field, oldValue, cell, row)
+            ? validator.tooltip.text(tableData, id, field, oldValue, value || cell, row)
             : validator?.tooltip;
-    }, [cell, field, id, oldValue, row, tableData, validator]);
+    }, [cell, field, id, oldValue, row, tableData, validator, value]);
 
-    // TODO: Починить
-    /*useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);*/
+    const isPopupOpen = useMemo(() => !isValid && inputRef.current?.children[0] == document.activeElement, [isValid]);
 
     return (
         <>
             {
                 validator?.tooltip && validatorTooltipText && !isValid && (
-                    // TODO: Добавить попап ячейки
                     <Popup
+                        open={isPopupOpen}
                         context={inputRef}
                         position={validator.tooltip.position}
                         content={validatorTooltipText}
