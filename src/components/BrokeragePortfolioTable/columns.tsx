@@ -104,6 +104,17 @@ export const commonColumns: ColumnDefinition[] = [
                     newValue as string
                 )
             }
+        },
+        tooltip: {
+            position: TooltipPosition.TOP_CENTER,
+            text: (
+                rowId,
+                field,
+                value,
+                rowData
+            ) => {
+                return rowData.name as string || undefined;
+            }
         }
     }, {
         title: "Доля",
@@ -254,6 +265,19 @@ const _modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => Col
                         oldValue,
                         newValue
                     ) => quantityValidator(newValue as string)
+                }
+            },
+            tooltip: {
+                position: TooltipPosition.TOP_CENTER,
+                text: (
+                    rowId,
+                    field,
+                    value,
+                    rowData
+                ) => {
+                    return typeof value === "number" && typeof rowData.targetQuantity === "number" && value < rowData.targetQuantity
+                        ? String(rowData.targetQuantity - value)
+                        : undefined;
                 }
             }
         }
