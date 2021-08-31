@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import React, { FocusEvent, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Icon, Input, Popup } from "semantic-ui-react";
+import { Icon, Input, Popup, Ref } from "semantic-ui-react";
 import { DataTableInputParams, InputEditParams } from "../types/edit";
 import { useDataTableBodyContext, useDataTableContext, useDataTableEditContext } from "../utils/contexts/hooks";
 import styles from "./styles/DataTableInput.scss";
@@ -21,7 +21,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     const { data: tableData } = useDataTableContext();
 
-    const inputRef = useRef<Input>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const {
         transparent = false,
@@ -37,8 +37,6 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     const [value, setValue] = useState(onCellChange || onGlobalCellChanged ? undefined : cell);
     const [oldValue, setOldValue] = useState(cell);
-    const [oldIsValid, setOldIsValid] = useState<boolean>();
-    const [isValid, setIsValid] = useState<boolean>();
 
     const getIsValid = useCallback((
         _oldValue: string | number | boolean | undefined,
@@ -50,90 +48,89 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                 ? !validator.validate
                 : !validator.validate(tableData, id, field, _oldValue, newValue, row);
         }
-        if (isValid !== oldIsValid || oldIsValid === undefined) {
-            setOldIsValid(isValid);
-        }
-        setIsValid(_isValid) ;
-    }, [field, id, isValid, oldIsValid, row, tableData, validator]);
+        return _isValid;
+    }, [field, id, row, tableData, validator]);
+
+    const isValid = useMemo(() => getIsValid(oldValue, value || cell), [cell, getIsValid, oldValue, value]);
 
     const input = useMemo(() => (
         <div>
-            <Input
-                ref={inputRef}
-                label={label ? { basic: true, content: label } : undefined}
-                value={onCellChange || onGlobalCellChanged ? cell : value}
-                placeholder={placeholder}
-                error={!isValid}
-                onChange={(event, data) => {
-                    if (onCellChange) {
-                        onCellChange(id, field, event, data.value);
-                    }
-                    if (onGlobalCellChanged) {
-                        onGlobalCellChanged(id, field, event, data.value);
-                    }
-                    if (!onCellChange && !onGlobalCellChanged) {
-                        setValue(data.value);
-                    }
-                    setOldValue(cell);
-                }}
-                onBlur={(event: FocusEvent<HTMLInputElement>) => {
-                    if (!isValid) {
-                        event.target.focus();
-                    }
-                    if (onCellBlur) {
-                        onCellBlur(id, field, event, event.target.value);
-                    }
-                    if (onGlobalCellBlur) {
-                        onGlobalCellBlur(id, field, event, event.target.value);
-                    }
-                    setOldValue(cell);
-                }}
-                onKeyPress={(event: KeyboardEvent<HTMLInputElement>) => {
-                    if (event.key === "Enter") {
-                        if (onCellKeyEnter) {
-                            onCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
-                            (event.target as HTMLInputElement).blur();
+            <Ref innerRef={inputRef}>
+                <Input
+                    label={label ? { basic: true, content: label } : undefined}
+                    value={onCellChange || onGlobalCellChanged ? cell : value}
+                    placeholder={placeholder}
+                    error={!isValid}
+                    onChange={(event, data) => {
+                        if (onCellChange) {
+                            onCellChange(id, field, event, data.value);
                         }
-                        if (onGlobalCellKeyEnter) {
-                            onGlobalCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
-                            (event.target as HTMLInputElement).blur();
+                        if (onGlobalCellChanged) {
+                            onGlobalCellChanged(id, field, event, data.value);
+                        }
+                        if (!onCellChange && !onGlobalCellChanged) {
+                            setValue(data.value);
                         }
                         setOldValue(cell);
+                    }}
+                    onBlur={(event: FocusEvent<HTMLInputElement>) => {
+                        if (!getIsValid(oldValue, event.target.value)) {
+                            event.target.focus();
+                        }
+                        if (onCellBlur) {
+                            onCellBlur(id, field, event, event.target.value);
+                        }
+                        if (onGlobalCellBlur) {
+                            onGlobalCellBlur(id, field, event, event.target.value);
+                        }
+                        setOldValue(event.target.value);
+                    }}
+                    onKeyPress={(event: KeyboardEvent<HTMLInputElement>) => {
+                        if (event.key === "Enter") {
+                            if (onCellKeyEnter) {
+                                onCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
+                                (event.target as HTMLInputElement).blur();
+                            }
+                            if (onGlobalCellKeyEnter) {
+                                onGlobalCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
+                                (event.target as HTMLInputElement).blur();
+                            }
+                        }
+                        // TODO: Починить
+                        if (event.key === "Escape") {
+                            (event.target as HTMLInputElement).blur();
+                        }
                     }
-                    // TODO: Починить
-                    if (event.key === "Escape") {
-                        (event.target as HTMLInputElement).blur();
                     }
-                }
-                }
-                list={datalist && datalist.length > 0 ? `${id}-${field}-hints` : undefined}
-                className={classNames(
-                    { [styles.inputTransparent]: transparent },
-                    { [styles.inputDashed]: dashed },
-                    className,
-                    styles.input
-                )}
-                icon={
-                    clearable && cell && cell.toString().length > 0
-                        ? (
-                            <Icon
-                                className={styles.inputRemoveIcon}
-                                name="remove"
-                                link
-                                onClick={(event: MouseEvent<HTMLElement>) => {
-                                    if (onCellChange) {
-                                        onCellChange(id, field, event, "");
-                                    }
-                                    if (onGlobalCellChanged) {
-                                        onGlobalCellChanged(id, field, event, "");
-                                    }
-                                    setOldValue(cell);
-                                }}
-                            />
-                        )
-                        : undefined
-                }
-            />
+                    list={datalist && datalist.length > 0 ? `${id}-${field}-hints` : undefined}
+                    className={classNames(
+                        { [styles.inputTransparent]: transparent },
+                        { [styles.inputDashed]: dashed },
+                        className,
+                        styles.input
+                    )}
+                    icon={
+                        clearable && cell && cell.toString().length > 0
+                            ? (
+                                <Icon
+                                    className={styles.inputRemoveIcon}
+                                    name="remove"
+                                    link
+                                    onClick={(event: MouseEvent<HTMLElement>) => {
+                                        if (onCellChange) {
+                                            onCellChange(id, field, event, "");
+                                        }
+                                        if (onGlobalCellChanged) {
+                                            onGlobalCellChanged(id, field, event, "");
+                                        }
+                                        setOldValue(cell);
+                                    }}
+                                />
+                            )
+                            : undefined
+                    }
+                />
+            </Ref>
             {
                 datalist && datalist.length > 0 && (
                     <datalist id={`${id}-${field}-hints`}>
@@ -153,6 +150,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         onCellChange,
         onGlobalCellChanged,
         cell,
+        value,
         placeholder,
         isValid,
         datalist,
@@ -162,11 +160,12 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         dashed,
         className,
         clearable,
+        getIsValid,
+        oldValue,
         onCellBlur,
         onGlobalCellBlur,
         onCellKeyEnter,
-        onGlobalCellKeyEnter,
-        value
+        onGlobalCellKeyEnter
     ]);
 
     const validatorTooltipText = useMemo(() => {
@@ -175,28 +174,28 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
             : validator?.tooltip;
     }, [cell, field, id, oldValue, row, tableData, validator]);
 
-    useEffect(() => {
-        getIsValid(oldValue, value || cell);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cell, value]);
-
     // TODO: Починить
-    useEffect(() => {
-        if (inputRef.current && isValid !== oldIsValid) {
+    /*useEffect(() => {
+        if (inputRef.current) {
             inputRef.current.focus();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [oldIsValid]);
+    }, []);*/
 
-    return validator?.tooltip && validatorTooltipText && !isValid
-        ? (
-            // TODO: Добавить попап ячейки
-            <Popup
-                trigger={input}
-                position={validator.tooltip.position}
-                content={validatorTooltipText}
-                className={validator.tooltip.className}
-            />
-        )
-        : input;
+    return (
+        <>
+            {
+                validator?.tooltip && validatorTooltipText && !isValid && (
+                    // TODO: Добавить попап ячейки
+                    <Popup
+                        context={inputRef}
+                        position={validator.tooltip.position}
+                        content={validatorTooltipText}
+                        className={validator.tooltip.className}
+                    />
+                )
+            }
+            {input}
+        </>
+    );
 }

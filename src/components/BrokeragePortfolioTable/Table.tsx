@@ -1,4 +1,4 @@
-import React, { FocusEvent, useCallback } from "react";
+import React, { FocusEvent, KeyboardEvent, useCallback } from "react";
 import { $enum } from "ts-enum-util";
 import { getMoexQuotesForName } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
@@ -45,7 +45,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     const cellUpdated = useCallback((
         rowId: string,
         field: keyof DataTableData,
-        event: FocusEvent<HTMLInputElement>,
+        event: FocusEvent<HTMLInputElement> | KeyboardEvent<HTMLInputElement>,
         value: string | number | boolean | undefined
     ) => {
         dispatch(update({
@@ -74,6 +74,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 expandableGroup
                 onRowMoved={rowMoved}
                 onCellBlur={cellUpdated}
+                onCellKeyEnter={cellUpdated}
             />
         </div>
     );
