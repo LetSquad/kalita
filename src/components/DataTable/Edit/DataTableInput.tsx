@@ -180,10 +180,20 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     const isPopupOpen = useMemo(() => !isValid && inputRef.current?.children[0] == document.activeElement, [isValid]);
 
-    return (
-        <>
-            {
-                validator?.tooltip && validatorTooltipText && !isValid && (
+    return useMemo(() => {
+        if (validator?.tooltip && validatorTooltipText && inputRef.current?.children[0] != document.activeElement && !isValid) {
+            return (
+                <Popup
+                    trigger={input}
+                    position={validator.tooltip.position}
+                    content={validatorTooltipText}
+                    className={validator.tooltip.className}
+                />
+            );
+        }
+        if (validator?.tooltip && validatorTooltipText && !isValid) {
+            return (
+                <>
                     <Popup
                         open={isPopupOpen}
                         context={inputRef}
@@ -191,9 +201,11 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                         content={validatorTooltipText}
                         className={validator.tooltip.className}
                     />
-                )
-            }
-            {input}
-        </>
-    );
+                    {input}
+                </>
+            );
+        }
+
+        return input;
+    }, [input, isPopupOpen, isValid, validator?.tooltip, validatorTooltipText]);
 }

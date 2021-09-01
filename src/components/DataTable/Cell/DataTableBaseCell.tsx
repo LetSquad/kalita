@@ -2,13 +2,12 @@ import React, { useMemo } from "react";
 import { Popup, Table } from "semantic-ui-react";
 import { DataTableBaseCellParams } from "../types/cell";
 import baseStyles from "../styles/base.scss";
-import { useDataTableBaseCellContext, useDataTableContext } from "../utils/contexts/hooks";
+import { useDataTableBaseCellContext } from "../utils/contexts/hooks";
 import { getCellContentCssStyleFromColumn, getCellCssStyleFromColumn } from "../utils/utils";
 
 export default function DataTableBaseCell({ children, style, className, withWrapper = true }: DataTableBaseCellParams) {
     const { id, cell: cellData, row, column } = useDataTableBaseCellContext();
-    const { data: tableData } = useDataTableContext();
-    const { tooltip, validator, className: userClassName, field } = column;
+    const { tooltip, className: userClassName, field } = column;
 
     const cellContent = useMemo(() => (
         children !== undefined && withWrapper
@@ -26,16 +25,6 @@ export default function DataTableBaseCell({ children, style, className, withWrap
             : tooltip;
     }, [cellData, field, id, row, tooltip]);
 
-    const isValid = useMemo(() => {
-        if (validator) {
-            if (typeof validator.validate === "boolean") {
-                return !validator.validate;
-            }
-            return !validator.validate(tableData, id, field, cellData, cellData, row);
-        }
-        return true;
-    }, [cellData, field, id, row, tableData, validator]);
-
     const userFormattedClassName = useMemo(() => {
         return typeof userClassName === "function"
             ? userClassName(id, field, cellData, row)
@@ -47,7 +36,7 @@ export default function DataTableBaseCell({ children, style, className, withWrap
             className={`${className ?? baseStyles.baseCell}${userFormattedClassName ? ` ${userFormattedClassName}` : ""}`}
             style={style ?? getCellCssStyleFromColumn(column)}
         >
-            {tooltip && tooltipText && children !== undefined && isValid
+            {tooltip && tooltipText && children !== undefined
                 ? (
                     <Popup
                         trigger={cellContent}

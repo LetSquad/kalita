@@ -91,7 +91,7 @@ export const commonColumns: ColumnDefinition[] = [
                 newValue as string
             ),
             tooltip: {
-                position: TooltipPosition.TOP_CENTER,
+                position: TooltipPosition.LEFT_CENTER,
                 text: (
                     tableData,
                     rowId,
@@ -206,7 +206,7 @@ const _modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => Col
                     newValue
                 ) => !!weightValidator(newValue as string),
                 tooltip: {
-                    position: TooltipPosition.TOP_CENTER,
+                    position: TooltipPosition.LEFT_CENTER,
                     text: (
                         tableData,
                         rowId,
@@ -257,7 +257,7 @@ const _modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => Col
                     newValue
                 ) => !!quantityValidator(newValue as string),
                 tooltip: {
-                    position: TooltipPosition.TOP_CENTER,
+                    position: TooltipPosition.LEFT_CENTER,
                     text: (
                         tableData,
                         rowId,

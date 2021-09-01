@@ -24,7 +24,6 @@ export interface DataTableBaseCellContextParams {
     "headerVertAlign" |
     "hozAlign" |
     "headerHozAlign" |
-    "validator" |
     "tooltip" |
     "className" |
     "field"
