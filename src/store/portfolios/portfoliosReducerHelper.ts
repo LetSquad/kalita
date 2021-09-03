@@ -170,10 +170,14 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
 
 export function recalculateRowsPrice(
     portfolio: Portfolio,
-    quotes: Map<string, Quote>
+    quotes: Quote[]
 ): ModelPortfolioPosition[] | BrokerAccountPosition[] {
+    const quotesByTickers = new Map<string, Quote>();
+    for (const quote of quotes) {
+        quotesByTickers.set(quote.ticker, quote);
+    }
     return portfolio.positions.map((row) => {
-        const quote = quotes.get(row.ticker);
+        const quote = quotesByTickers.get(row.ticker);
         if (quote) {
             return {
                 ...row,
