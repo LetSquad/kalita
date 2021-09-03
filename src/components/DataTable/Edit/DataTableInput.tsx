@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { FocusEvent, KeyboardEvent, MouseEvent, useCallback, useMemo, useRef, useState } from "react";
+import React, { FocusEvent, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon, Input, Popup, Ref } from "semantic-ui-react";
 import { DataTableInputParams, InputEditParams } from "../types/edit";
 import { useDataTableBodyContext, useDataTableContext, useDataTableEditContext } from "../utils/contexts/hooks";
@@ -38,6 +38,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
     const [value, setValue] = useState(onCellChange || onGlobalCellChanged ? undefined : cell);
     const [oldValue, setOldValue] = useState(cell);
     const [isFocus, setIsFocus] = useState(false);
+    const [isHover, setIsHover] = useState(false);
 
     const getIsValid = useCallback((
         _oldValue: string | number | boolean | undefined,
@@ -64,6 +65,8 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                     placeholder={placeholder}
                     error={!isValid}
                     onFocus={() => setIsFocus(true)}
+                    onMouseOver={() => setIsHover(true)}
+                    onMouseLeave={() => setIsHover(false)}
                     onChange={(event, data) => {
                         if (onCellChange) {
                             onCellChange(id, field, event, data.value);
@@ -99,7 +102,9 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                         }
                     }}
                     onKeyPress={(event: KeyboardEvent<HTMLInputElement>) => {
-                        if (event.key === "Enter") {
+                        if (!getIsValid(oldValue, (event.target as HTMLInputElement).value)) {
+                            (event.target as HTMLInputElement).focus();
+                        } else if (event.key === "Enter") {
                             if (onCellKeyEnter) {
                                 onCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
                                 (event.target as HTMLInputElement).blur();
@@ -182,34 +187,26 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
             : validator?.tooltip;
     }, [cell, field, id, oldValue, row, tableData, validator, value]);
 
-    const isPopupOpen = useMemo(() => !isValid && isFocus, [isFocus, isValid]);
-
-    return useMemo(() => {
-        if (validator?.tooltip && validatorTooltipText && !isFocus && !isValid) {
-            return (
-                <Popup
-                    trigger={input}
-                    position={validator.tooltip.position}
-                    content={validatorTooltipText}
-                    className={validator.tooltip.className}
-                />
-            );
+    useEffect(() => {
+        if (isFocus && document.activeElement != inputRef.current?.children[0]) {
+            inputRef.current?.focus();
         }
-        return (
-            <>
-                <Popup
-                    open={isPopupOpen}
-                    context={inputRef}
-                    position={validator?.tooltip
-                        ? validator.tooltip.position
-                        : undefined}
-                    content={validatorTooltipText}
-                    className={validator?.tooltip
-                        ? validator.tooltip.className
-                        : undefined}
-                />
-                {input}
-            </>
-        );
-    }, [input, isFocus, isPopupOpen, isValid, validator?.tooltip, validatorTooltipText]);
+    }, [isFocus]);
+
+    return useMemo(() => (
+        <>
+            <Popup
+                open={isFocus ? !isValid : isHover && !isValid}
+                context={inputRef}
+                position={validator?.tooltip
+                    ? validator.tooltip.position
+                    : undefined}
+                content={validatorTooltipText}
+                className={validator?.tooltip
+                    ? validator.tooltip.className
+                    : undefined}
+            />
+            {input}
+        </>
+    ), [input, isFocus, isHover, isValid, validator?.tooltip, validatorTooltipText]);
 }
