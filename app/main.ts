@@ -52,7 +52,8 @@ function loadMain() {
             devTools: isElectronDev,
             nodeIntegration: true,
             nodeIntegrationInWorker: true,
-            contextIsolation: false
+            contextIsolation: false,
+            enableRemoteModule: true
         }
     });
     mainWindow.loadURL(isElectronDev ? "http://localhost:8085" : `file://${__dirname}/index.html`);
