@@ -37,6 +37,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     const [value, setValue] = useState(onCellChange || onGlobalCellChanged ? undefined : cell);
     const [oldValue, setOldValue] = useState(cell);
+    const [isFocus, setIsFocus] = useState(false);
 
     const getIsValid = useCallback((
         _oldValue: string | number | boolean | undefined,
@@ -62,6 +63,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                     value={onCellChange || onGlobalCellChanged ? cell : value}
                     placeholder={placeholder}
                     error={!isValid}
+                    onFocus={() => setIsFocus(true)}
                     onChange={(event, data) => {
                         if (onCellChange) {
                             onCellChange(id, field, event, data.value);
@@ -80,6 +82,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                         if (!getIsValid(oldValue, event.target.value)) {
                             event.target.focus();
                         } else {
+                            setIsFocus(false);
                             if (onCellBlur) {
                                 onCellBlur(id, field, event, event.target.value);
                                 setOldValue(event.target.value);
@@ -179,10 +182,10 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
             : validator?.tooltip;
     }, [cell, field, id, oldValue, row, tableData, validator, value]);
 
-    const isPopupOpen = useMemo(() => !isValid && inputRef.current?.children[0] == document.activeElement, [isValid]);
+    const isPopupOpen = useMemo(() => !isValid && isFocus, [isFocus, isValid]);
 
     return useMemo(() => {
-        if (validator?.tooltip && validatorTooltipText && inputRef.current?.children[0] != document.activeElement && !isValid) {
+        if (validator?.tooltip && validatorTooltipText && !isFocus && !isValid) {
             return (
                 <Popup
                     trigger={input}
@@ -192,21 +195,21 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                 />
             );
         }
-        if (validator?.tooltip && validatorTooltipText && !isValid) {
-            return (
-                <>
-                    <Popup
-                        open={isPopupOpen}
-                        context={inputRef}
-                        position={validator.tooltip.position}
-                        content={validatorTooltipText}
-                        className={validator.tooltip.className}
-                    />
-                    {input}
-                </>
-            );
-        }
-
-        return input;
-    }, [input, isPopupOpen, isValid, validator?.tooltip, validatorTooltipText]);
+        return (
+            <>
+                <Popup
+                    open={isPopupOpen}
+                    context={inputRef}
+                    position={validator?.tooltip
+                        ? validator.tooltip.position
+                        : undefined}
+                    content={validatorTooltipText}
+                    className={validator?.tooltip
+                        ? validator.tooltip.className
+                        : undefined}
+                />
+                {input}
+            </>
+        );
+    }, [input, isFocus, isPopupOpen, isValid, validator?.tooltip, validatorTooltipText]);
 }
