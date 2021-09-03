@@ -1,6 +1,6 @@
 import React, { FocusEvent, KeyboardEvent, lazy, useCallback } from "react";
 import { $enum } from "ts-enum-util";
-import { getMoexQuotesForName } from "../../apis/moexApi";
+import { loadMoexQuotesByTickers } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { useAppDispatch } from "../../store/hooks";
@@ -57,7 +57,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
             newValue: value as string
         }));
         if (field === BaseColumnNames.TICKER) {
-            dispatch(getMoexQuotesForName(value as string));
+            dispatch(loadMoexQuotesByTickers([value as string]));
         }
     }, [dispatch]);
 
@@ -77,6 +77,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 onRowMoved={rowMoved}
                 onCellBlur={cellUpdated}
                 onCellKeyEnter={cellUpdated}
+                tableClassName={styles.table}
             />
         </div>
     );
