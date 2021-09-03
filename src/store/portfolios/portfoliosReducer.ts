@@ -254,7 +254,7 @@ export const portfoliosSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadMoexQuotesByTickers.fulfilled, (state: PortfoliosState, action: PayloadAction<Map<string, Quote>>) => {
+            .addCase(loadMoexQuotesByTickers.fulfilled, (state: PortfoliosState, action: PayloadAction<Quote[]>) => {
                 if (state.currentTable) {
                     const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                     if (currentPortfolio) {

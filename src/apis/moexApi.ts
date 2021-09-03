@@ -79,9 +79,9 @@ function parseQuotes(json: MoexData): Quote[] {
     return [];
 }
 
-export const loadMoexQuotesByTickers = createAsyncThunk<Map<string, Quote>, string[]>(
+export const loadMoexQuotesByTickers = createAsyncThunk<Quote[], string[]>(
     "loadMoexQuotesByTickers",
-    async (tickers: string[]) => getMoexQuotesByTickers(tickers)
+    async (tickers: string[]) => getMoexQuotes(tickers)
 );
 
 export function getMoexQuotesByTickers(tickers: string[]): Promise<Map<string, Quote>> {
