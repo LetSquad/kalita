@@ -77,7 +77,16 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 onRowMoved={rowMoved}
                 onCellBlur={cellUpdated}
                 onCellKeyEnter={cellUpdated}
-                tableClassName={styles.table}
+                classes={{
+                    tableClassName: styles.table,
+                    headerRowClassName: styles.headerRow,
+                    groupRowClassName: styles.specificRow,
+                    calcRowClassName: styles.specificRow,
+                    rowClassName: styles.baseRow,
+                    rowCellClassName: styles.baseCell,
+                    calcRowCellClassName: styles.specificCell,
+                    groupRowCellClassName: styles.specificCell
+                }}
             />
         </div>
     );

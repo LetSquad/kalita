@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React, { useMemo } from "react";
 import { Table } from "semantic-ui-react";
 import DataTableCalcFormatterCell from "../Cell/CalcCell/CalcFormatterCell/DataTableCalcFormatterCell";
@@ -9,7 +10,7 @@ import { useDataTableCalcContext, useDataTableContext } from "../utils/contexts/
 import styles from "./styles/DataTableCalcRow.scss";
 
 export default function DataTableCalcRow() {
-    const { columns } = useDataTableContext();
+    const { columns, classes } = useDataTableContext();
 
     const { data, position, type } = useDataTableCalcContext();
 
@@ -61,7 +62,7 @@ export default function DataTableCalcRow() {
 
     return cells
         ? (
-            <Table.Row className={styles.row}>
+            <Table.Row className={classNames(styles.row, classes?.calcRowClassName)} data-row-role="calc">
                 {cells}
             </Table.Row>
         )

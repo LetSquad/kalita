@@ -6,6 +6,22 @@ export type DataTableData = {
     [key: string]: string | number | boolean | undefined;
 };
 
+export interface UserDataTableClasses {
+    tableClassName?: string;
+    rowClassName?: string;
+    rowCellClassName?: string;
+    groupRowClassName?: string;
+    groupRowCellClassName?: string;
+    calcRowClassName?: string;
+    calcRowCellClassName?: string;
+    headerClassName?: string;
+    headerRowClassName?: string;
+    headerRowCellClassName?: string;
+    footerClassName?: string;
+    footerRowClassName?: string;
+    footerRowCellClassName?: string;
+}
+
 export interface DataTable {
     data: DataTableData[];
     columns: ColumnDefinition[];
@@ -36,5 +52,6 @@ export interface DataTable {
         event: KeyboardEvent<HTMLInputElement>,
         value: string | number | boolean | undefined
     ) => void;
+    classes?: UserDataTableClasses;
 }
 

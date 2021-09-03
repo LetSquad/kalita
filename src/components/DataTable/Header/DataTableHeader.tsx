@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React from "react";
 import { Table } from "semantic-ui-react";
 import DataTableCalcRow from "../Row/DataTableCalcRow";
@@ -8,10 +9,10 @@ import { useDataTableContext } from "../utils/contexts/hooks";
 import styles from "./styles/DataTableHeader.scss";
 
 export default function DataTableHeader() {
-    const { data } = useDataTableContext();
+    const { data, classes } = useDataTableContext();
 
     return (
-        <Table.Header className={styles.header}>
+        <Table.Header className={classNames(styles.header, classes?.headerClassName)}>
             <DataTableHeaderRow />
             <DataTableCalcContext.Provider
                 value={{

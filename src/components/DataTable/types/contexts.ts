@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { DataTableData } from "./base";
+import { DataTableData, UserDataTableClasses } from "./base";
 import {
     BaseFormatterColumnDefinition,
     ColumnDefinition,
@@ -11,6 +11,7 @@ import {
 export interface DataTableContextParams {
     columns: ColumnDefinition[];
     data: DataTableData[];
+    classes?: Omit<UserDataTableClasses, "tableClassName">;
 }
 
 export interface DataTableBaseCellContextParams {

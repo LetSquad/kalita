@@ -21,7 +21,8 @@ export default function DataTable({
     emptyTablePlaceholder,
     onCellChanged,
     onCellBlur,
-    onCellKeyEnter
+    onCellKeyEnter,
+    classes
 }: DataTableType) {
     const onDragEnd = useCallback((result: DropResult) => {
         if (onRowMoved && result.destination) {
@@ -29,20 +30,12 @@ export default function DataTable({
         }
     }, [onRowMoved]);
 
-    const hasHeaderCalc = useMemo(() => columns.map((column) =>
-        column.tableCalc && column.tableCalc.position === CalcPosition.TOP).includes(true), [columns]);
-
     const hasFooterCalc = useMemo(() => columns.map((column) =>
         column.tableCalc && column.tableCalc.position === CalcPosition.BOTTOM).includes(true), [columns]);
 
     const content = useMemo(() => data.length > 0
         ? (
-            <Table className={classNames(
-                { [styles.innerTableBodyCalcBoth]: hasFooterCalc && hasHeaderCalc },
-                { [styles.innerTableBodyEmpty]: !hasFooterCalc && !hasHeaderCalc },
-                { [styles.innerTableBodyCalcHeader]: !hasFooterCalc && hasHeaderCalc },
-                { [styles.innerTableBodyCalcFooter]: hasFooterCalc && !hasHeaderCalc }
-            )}>
+            <Table className={styles.innerTableBody}>
                 <DataTableBodyContext.Provider
                     value={{
                         groupBy,
@@ -63,8 +56,6 @@ export default function DataTable({
         : <div className={styles.innerTablePlaceholder}>{emptyTablePlaceholder ?? "Данные недоступны"}</div>,
     [
         data.length,
-        hasFooterCalc,
-        hasHeaderCalc,
         groupBy,
         onAddRowToGroup,
         onGroupNameEdit,
@@ -81,15 +72,16 @@ export default function DataTable({
         <DataTableContext.Provider
             value={{
                 columns,
-                data
+                data,
+                classes
             }}
         >
-            <div className={styles.tableContainer}>
-                <Table className={hasHeaderCalc ? styles.innerTableHeaderCalc : styles.innerTableHeaderEmpty}>
+            <div className={classNames(styles.tableContainer, classes?.tableClassName)}>
+                <Table className={styles.innerTableHeader}>
                     <DataTableHeader />
                 </Table>
                 {content}
-                <Table className={hasFooterCalc ? styles.innerTableFooterCalc : styles.innerTableFooterEmpty}>
+                <Table className={hasFooterCalc ? styles.innerTableFooter : styles.innerTableFooterEmpty}>
                     <DataTableFooter />
                 </Table>
             </div>

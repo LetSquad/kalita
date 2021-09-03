@@ -1,15 +1,17 @@
+import classNames from "classnames";
 import React, { FocusEvent, KeyboardEvent } from "react";
 import { Icon, Input, Table } from "semantic-ui-react";
 import { DataTableGroupRowParams } from "../types/row";
 import styles from "./styles/DataTableGroupRow.scss";
-import { useDataTableBodyGroupedContext } from "../utils/contexts/hooks";
+import { useDataTableBodyGroupedContext, useDataTableContext } from "../utils/contexts/hooks";
 
 export default function DataTableGroupRow({ groupName, expandState, setExpandState }: DataTableGroupRowParams) {
+    const { classes } = useDataTableContext();
     const { onGroupNameEdit, onAddRowToGroup, expandableGroup } = useDataTableBodyGroupedContext();
 
     return (
-        <Table.Row className={styles.row}>
-            <Table.Cell className={styles.cell}>
+        <Table.Row className={classNames(styles.row, classes?.groupRowClassName)} data-row-role="group">
+            <Table.Cell className={classNames(styles.cell, classes?.groupRowCellClassName)} data-cell-role="group">
                 <div className={styles.container}>
                     {
                         expandableGroup && (

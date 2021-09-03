@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React from "react";
 import { Table } from "semantic-ui-react";
 import DataTableCalcRow from "../Row/DataTableCalcRow";
@@ -7,10 +8,10 @@ import { useDataTableContext } from "../utils/contexts/hooks";
 import styles from "./styles/DataTableFooter.scss";
 
 export default function DataTableFooter() {
-    const { data } = useDataTableContext();
+    const { data, classes } = useDataTableContext();
 
     return (
-        <Table.Footer className={styles.footer}>
+        <Table.Footer className={classNames(styles.footer, classes?.footerClassName)}>
             <DataTableCalcContext.Provider
                 value={{
                     position: CalcPosition.BOTTOM,

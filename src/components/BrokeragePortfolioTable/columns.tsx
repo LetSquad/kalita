@@ -9,7 +9,7 @@ import { ColumnDefinition, VerticalAlignValues } from "../DataTable/types/column
 import { EditTypes } from "../DataTable/types/edit";
 import { FormatterTypes } from "../DataTable/types/formatter";
 import { TooltipPosition } from "../DataTable/types/tooltip";
-import { NewActionBlock } from "./NewActionBlock";
+import { ActionBlock } from "./ActionBlock";
 import styles from "./styles/columns.scss";
 
 const TICKER_INVALID_FORMAT = "Тикер должен состоять только из больших латинских букв и цифр и быть от 1 до 12 символов";
@@ -187,7 +187,7 @@ export const commonColumns: ColumnDefinition[] = [
         formatter: {
             type: FormatterTypes.ELEMENT,
             params: {
-                renderElement: (rowId) => <NewActionBlock rowId = { rowId } />
+                renderElement: (rowId) => <ActionBlock rowId = { rowId } />
             }
         },
         vertAlign: VerticalAlignValues.MIDDLE

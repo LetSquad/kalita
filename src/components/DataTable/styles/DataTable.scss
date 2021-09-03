@@ -1,9 +1,7 @@
 @use '../../../styles/parts' as *;
-@use '../../BrokeragePortfolioTable/AdditionalHeader/styles/AdditionalHeader' as additionalHeader;
 @use './variables' as dataTableVariables;
 
 .table-container {
-  height: calc(100% - #{additionalHeader.$additional-header-height});
   overflow: auto;
 }
 
@@ -18,46 +16,12 @@
     position: sticky;
     top: 0;
     z-index: 1;
-
-    &-calc {
-      @extend %data-table-inner-table-header;
-      height: calc(#{dataTableVariables.$head-height} + #{dataTableVariables.$calc-height});
-    }
-
-    &-empty {
-      @extend %data-table-inner-table-header;
-      height: dataTableVariables.$head-height;
-    }
   }
 
   &-body {
     @extend %data-table-inner-table;
     display: table;
-    max-height: calc(100% - #{dataTableVariables.$head-height} - 1px);
     overflow: hidden;
-
-    &-calc-footer {
-      @extend %data-table-inner-table-body;
-      max-height: calc(100% - #{dataTableVariables.$head-height} - #{dataTableVariables.$footer-height}
-      - #{dataTableVariables.$head-height} - 2 * 1px);
-    }
-
-    &-calc-header {
-      @extend %data-table-inner-table-body;
-      max-height: calc(100% - #{dataTableVariables.$head-height} - #{dataTableVariables.$footer-height}
-      - #{dataTableVariables.$head-height} - 1px);
-    }
-
-    &-calc-both {
-      @extend %data-table-inner-table-body;
-      max-height: calc(100% - #{dataTableVariables.$head-height} - #{dataTableVariables.$footer-height}
-      - 2 * #{dataTableVariables.$head-height} - 2 * 1px);
-    }
-
-    &-empty {
-      @extend %data-table-inner-table-body;
-      max-height: calc(100% - #{dataTableVariables.$head-height} - #{dataTableVariables.$footer-height} - 1px);
-    }
   }
 
   &-footer {
@@ -68,16 +32,9 @@
     position: sticky;
     z-index: 1;
 
-    &-calc {
-      @extend %data-table-inner-table-footer;
-      height: calc(#{dataTableVariables.$footer-height} + #{dataTableVariables.$calc-height});
-    }
-
     &-empty {
       @extend %data-table-inner-table-footer;
-      border: 0 !important;
       display: none;
-      height: dataTableVariables.$footer-height;
     }
   }
 

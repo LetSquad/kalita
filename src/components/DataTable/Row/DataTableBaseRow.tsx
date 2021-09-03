@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React, { MouseEvent } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { Ref, Table } from "semantic-ui-react";
@@ -8,7 +9,7 @@ import styles from "./styles/DataTableBaseRow.scss";
 import { useDataTableBodyContext, useDataTableContext } from "../utils/contexts/hooks";
 
 export default function DataTableBaseRow({ row }: DataTableBaseRowParams) {
-    const { columns, data } = useDataTableContext();
+    const { columns, data, classes } = useDataTableContext();
     const { isRowMovedEnabled } = useDataTableBodyContext();
 
     return (
@@ -21,7 +22,8 @@ export default function DataTableBaseRow({ row }: DataTableBaseRowParams) {
             {(itemProvided) => (
                 <Ref innerRef={itemProvided.innerRef}>
                     <Table.Row
-                        className={styles.row}
+                        data-row-role="base"
+                        className={classNames(styles.row, classes?.rowClassName)}
                         /* eslint-disable-next-line react/jsx-props-no-spreading */
                         {...itemProvided.draggableProps}
                         /* eslint-disable-next-line react/jsx-props-no-spreading */

@@ -4,5 +4,4 @@
 .row {
   @extend %data-table-base-row;
   background-color: #eaeaea;
-  height: dataTableVariables.$calc-height;
 }

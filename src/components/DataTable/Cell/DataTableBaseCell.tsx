@@ -1,11 +1,13 @@
+import classNames from "classnames";
 import React, { useMemo } from "react";
 import { Popup, Table } from "semantic-ui-react";
 import { DataTableBaseCellParams } from "../types/cell";
 import baseStyles from "../styles/base.scss";
-import { useDataTableBaseCellContext } from "../utils/contexts/hooks";
+import { useDataTableBaseCellContext, useDataTableContext } from "../utils/contexts/hooks";
 import { getCellContentCssStyleFromColumn, getCellCssStyleFromColumn } from "../utils/utils";
 
 export default function DataTableBaseCell({ children, style, className, withWrapper = true }: DataTableBaseCellParams) {
+    const { classes } = useDataTableContext();
     const { id, cell: cellData, row, column } = useDataTableBaseCellContext();
     const { tooltip, className: userClassName, field } = column;
 
@@ -33,8 +35,14 @@ export default function DataTableBaseCell({ children, style, className, withWrap
 
     return (
         <Table.Cell
-            className={`${className ?? baseStyles.baseCell}${userFormattedClassName ? ` ${userFormattedClassName}` : ""}`}
+            className={classNames(
+                className,
+                classes?.rowCellClassName,
+                { [baseStyles.baseCell]: !className },
+                userFormattedClassName
+            )}
             style={style ?? getCellCssStyleFromColumn(column)}
+            data-cell-role="base"
         >
             {tooltip && tooltipText && children !== undefined
                 ? (
