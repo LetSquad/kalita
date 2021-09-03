@@ -115,28 +115,38 @@ export interface StarFormatterParams {
 }
 
 /**
+ * Interface that represent a params for default progress formatter with default fields.
+ *
+ * @interface
+ * @name BaseProgressFormatterParams
+ * @param {string} [label]             - Label displayed under the progress bar
+ * @param {boolean} [progress=false]   - Should the current fill percentage be displayed on the progress bar?
+ * @param {boolean} [indicating=false] - Will there be a visual progress indicator showing the current level of task completion
+ * @param {string} [className]         - The class name that will be passed to the progress bar element
+ * @param {string} [color=#888]        - Progress bar color in format #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)
+ */
+export interface DefaultProgressFormatterParams {
+    label?: string;
+    progress?: boolean;
+    indicating?: boolean;
+    className?: string;
+    color?: string;
+}
+
+/**
  * Interface that represent a params for base progress formatter.
  *
  * @interface
  * @name BaseProgressFormatterParams
- * @param {string} [label]                                                                 - Label displayed under the progress bar
- * @param {boolean} [progress=false]                                                       - Should the current fill percentage be displayed on the progress bar?
- * @param {boolean} [indicating=false]                                                     - Will there be a visual progress indicator showing the current level of task completion
+ * @augments DefaultProgressFormatterParams
  * @param {(cellData: number, rowId: string, rowData: DataTableData) => boolean} [success] - Progress bar shows success
  * @param {(cellData: number, rowId: string, rowData: DataTableData) => boolean} [error]   - Progress bar shows error
  * @param {(cellData: number, rowId: string, rowData: DataTableData) => boolean} [warning] - Progress bar shows warning
- * @param {string} [className]                                                             - The class name that will be passed to the progress bar element
- * @param {string} [color=#888]                                                            - Progress bar color in format #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)
  */
-export interface BaseProgressFormatterParams {
-    label?: string;
-    progress?: boolean;
-    indicating?: boolean;
+export interface BaseProgressFormatterParams extends DefaultProgressFormatterParams{
     success?: (cellData: number, rowId: string, rowData: DataTableData) => boolean;
     error?: (cellData: number, rowId: string, rowData: DataTableData) => boolean;
     warning?: (cellData: number, rowId: string, rowData: DataTableData) => boolean;
-    className?: string;
-    color?: string;
 }
 
 /**
@@ -160,6 +170,46 @@ export interface PercentageProgressFormatterParams extends BaseProgressFormatter
  * @param {number} [total=100] - Maximum value of the progress bar (Used if no percentage mode is selected)
  */
 export interface TotalProgressFormatterParams extends BaseProgressFormatterParams {
+    total?: number;
+}
+
+/**
+ * Interface that represent a params for base progress formatter for calc cell.
+ *
+ * @interface
+ * @name BaseCalcProgressFormatterParams
+ * @augments DefaultProgressFormatterParams
+ * @param {(cellData: number, columnData: number[]) => boolean} [success] - Progress bar shows success
+ * @param {(cellData: number, columnData: number[]) => boolean} [error]   - Progress bar shows error
+ * @param {(cellData: number, columnData: number[]) => boolean} [warning] - Progress bar shows warning
+ */
+export interface BaseCalcProgressFormatterParams extends DefaultProgressFormatterParams{
+    success?: (cellData: number, columnData: number[]) => boolean;
+    error?: (cellData: number, columnData: number[]) => boolean;
+    warning?: (cellData: number, columnData: number[]) => boolean;
+}
+
+/**
+ * Interface that represent a params for percentage progress formatter for calc cell.
+ *
+ * @interface
+ * @name PercentageCalcProgressFormatterParams
+ * @augments BaseCalcProgressFormatterParams
+ * @param {boolean} [percent=false] - Is the input parameter passed as a percentage? (Cannot be used with maximum value mode)
+ */
+export interface PercentageCalcProgressFormatterParams extends BaseCalcProgressFormatterParams {
+    percent?: boolean;
+}
+
+/**
+ * Interface that represent a params for total progress formatter for calc cell.
+ *
+ * @interface
+ * @name TotalCalcProgressFormatterParams
+ * @augments BaseCalcProgressFormatterParams
+ * @param {number} [total=100] - Maximum value of the progress bar (Used if no percentage mode is selected)
+ */
+export interface TotalCalcProgressFormatterParams extends BaseCalcProgressFormatterParams {
     total?: number;
 }
 
@@ -269,6 +319,19 @@ export interface ProgressFormatter {
 }
 
 /**
+ * Interface that represent progress formatter for calc cell. Accepts a number as input and displays progress bar with the parameters
+ *
+ * @interface
+ * @name ProgressFormatter
+ * @param {FormatterTypes.PROGRESS} type                                                      - Formatter type
+ * @param {TotalCalcProgressFormatterParams | PercentageCalcProgressFormatterParams} [params] - Formatter params
+ */
+export interface ProgressCalcFormatter {
+    type: FormatterTypes.PROGRESS;
+    params?: TotalCalcProgressFormatterParams | PercentageCalcProgressFormatterParams
+}
+
+/**
  * Interface that represent element formatter. Accepts a number, string or undefined as input and displays element from parameters
  *
  * @interface
@@ -280,17 +343,3 @@ export interface ElementFormatter {
     type: FormatterTypes.ELEMENT;
     params: ElementFormatterParams
 }
-
-/**
- * Union type that combines all formatters.
- *
- * @type Formatter
- */
-export type Formatter = MoneyFormatter |
-PercentageFormatter |
-ImageFormatter |
-LinkFormatter |
-ColorFormatter |
-StarFormatter |
-ProgressFormatter |
-ElementFormatter;

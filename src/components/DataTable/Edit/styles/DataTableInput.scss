@@ -10,6 +10,8 @@
     > input {
       background: transparent !important;
       font-size: 14px !important;
+      height: max-content !important;
+      max-width: 90% !important;
       padding: 1px !important;
       width: 100% !important;
 
@@ -18,6 +20,11 @@
         margin-left: -2px !important;
         margin-top: -2px !important;
       }
+    }
+
+    > div {
+      height: max-content !important;
+      padding: 2.5px 5px !important;
     }
   }
 

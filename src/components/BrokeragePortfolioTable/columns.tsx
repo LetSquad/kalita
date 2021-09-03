@@ -1,8 +1,10 @@
+import _ from "lodash";
 import React from "react";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { ModelPortfolioSettings } from "../../models/settings/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
+import { CalcPosition } from "../DataTable/types/calc";
 import { ColumnDefinition, VerticalAlignValues } from "../DataTable/types/column";
 import { EditTypes } from "../DataTable/types/edit";
 import { FormatterTypes } from "../DataTable/types/formatter";
@@ -125,7 +127,17 @@ export const commonColumns: ColumnDefinition[] = [
                 additionalSpace: true
             }
         },
-        vertAlign: VerticalAlignValues.MIDDLE
+        vertAlign: VerticalAlignValues.MIDDLE,
+        groupCalc: {
+            position: CalcPosition.TOP,
+            calcFunction: (column) => _.sum(column),
+            formatter: {
+                type: FormatterTypes.PERCENTAGE,
+                params: {
+                    additionalSpace: true
+                }
+            }
+        }
     }, {
         title: "Цена",
         field: BaseColumnNames.CURRENT_PRICE,
@@ -147,7 +159,29 @@ export const commonColumns: ColumnDefinition[] = [
                 additionalSpace: true
             }
         },
-        vertAlign: VerticalAlignValues.MIDDLE
+        vertAlign: VerticalAlignValues.MIDDLE,
+        groupCalc: {
+            position: CalcPosition.TOP,
+            calcFunction: (column) => _.sum(column),
+            formatter: {
+                type: FormatterTypes.MONEY,
+                params: {
+                    currency: "₽",
+                    additionalSpace: true
+                }
+            }
+        },
+        tableCalc: {
+            position: CalcPosition.TOP,
+            calcFunction: (column) => _.sum(column),
+            formatter: {
+                type: FormatterTypes.MONEY,
+                params: {
+                    currency: "₽",
+                    additionalSpace: true
+                }
+            }
+        }
     }, {
         field: BaseColumnNames.ACTION,
         formatter: {
@@ -215,6 +249,14 @@ const _modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => Col
                         newValue
                     ) => weightValidator(newValue as string)
                 }
+            },
+            groupCalc: {
+                position: CalcPosition.TOP,
+                calcFunction: (column) => _.sum(column)
+            },
+            tableCalc: {
+                position: CalcPosition.TOP,
+                calcFunction: (column) => _.sum(column)
             }
         }, {
             title: "Целевая сумма",
@@ -226,7 +268,29 @@ const _modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => Col
                     additionalSpace: true
                 }
             },
-            vertAlign: VerticalAlignValues.MIDDLE
+            vertAlign: VerticalAlignValues.MIDDLE,
+            groupCalc: {
+                position: CalcPosition.TOP,
+                calcFunction: (column) => _.sum(column),
+                formatter: {
+                    type: FormatterTypes.MONEY,
+                    params: {
+                        currency: "₽",
+                        additionalSpace: true
+                    }
+                }
+            },
+            tableCalc: {
+                position: CalcPosition.TOP,
+                calcFunction: (column) => _.sum(column),
+                formatter: {
+                    type: FormatterTypes.MONEY,
+                    params: {
+                        currency: "₽",
+                        additionalSpace: true
+                    }
+                }
+            }
         }, {
             title: "Целевое количество",
             field: ModelPortfolioColumnNames.TARGET_QUANTITY,

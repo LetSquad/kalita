@@ -1,21 +1,44 @@
 import { useContext } from "react";
 import { DataTableBodyParams, DataTableGroupedBodyParams } from "../../types/body";
-import { DataTableCellParams, DataTableFormatterCellParams } from "../../types/cell";
+import { CalcType, DataTableCalcRowParams } from "../../types/calc";
+import {
+    DataTableBaseCalcCellParams,
+    DataTableCalcCellParams,
+    DataTableCalcFormatterCellParams,
+    DataTableCellParams,
+    DataTableFormatterCellParams
+} from "../../types/cell";
 import {
     ImageFormatterColumnDefinition,
     LinkFormatterColumnDefinition,
     MoneyFormatterColumnDefinition,
-    PercentageFormatterColumnDefinition, ProgressFormatterColumnDefinition, StarFormatterColumnDefinition
+    PercentageFormatterColumnDefinition,
+    ProgressFormatterColumnDefinition,
+    StarFormatterColumnDefinition
 } from "../../types/column";
 import {
     DataTableBaseCellContextParams,
     DataTableColorCellFormatterContextParams,
     DataTableContextParams,
     DataTableEditCellContextParams,
-    DataTableEditCellFormatterContextParams, DataTableEditContextParams,
-    DataTableElementCellFormatterContextParams, DataTableNotEditCellFormatterContextParams
+    DataTableEditCellFormatterContextParams,
+    DataTableEditContextParams,
+    DataTableElementCellFormatterContextParams,
+    DataTableNotEditCellFormatterContextParams
 } from "../../types/contexts";
-import { DataTableBodyContext, DataTableCellContext, DataTableContext } from "./contexts";
+import {
+    MoneyFormatter,
+    PercentageFormatter,
+    ProgressCalcFormatter,
+    StarFormatter
+} from "../../types/formatter";
+import {
+    DataTableBodyContext,
+    DataTableCalcCellContext,
+    DataTableCalcContext,
+    DataTableCellContext,
+    DataTableContext
+} from "./contexts";
 
 export function useDataTableContext() {
     return useContext(DataTableContext) as DataTableContextParams;
@@ -85,4 +108,41 @@ export function useDataTableProgressFormatterCellContext() {
 
 export function useDataTableEditContext() {
     return useContext(DataTableCellContext) as DataTableEditContextParams<number | string | undefined>;
+}
+
+export function useDataTableCalcContext() {
+    return useContext(DataTableCalcContext) as DataTableCalcRowParams;
+}
+
+export function useDataTableCalcCellContext() {
+    return useContext(DataTableCalcCellContext) as DataTableCalcCellParams;
+}
+
+export function useDataTableBaseCalcCellContext() {
+    return useContext(DataTableCalcCellContext) as DataTableBaseCalcCellParams;
+}
+
+export function useDataTableCalcFormatterCellContext() {
+    const context = useContext(DataTableCalcCellContext) as DataTableCalcCellParams;
+    if (context.calcType === CalcType.TABLE) {
+        return { cell: context.cell, formatter: context.column.tableCalc?.formatter } as DataTableCalcFormatterCellParams;
+    }
+
+    return { cell: context.cell, formatter: context.column.groupCalc?.formatter } as DataTableCalcFormatterCellParams;
+}
+
+export function useDataTableCalcMoneyFormatterCellContext() {
+    return useDataTableCalcFormatterCellContext() as DataTableCalcFormatterCellParams<number, MoneyFormatter>;
+}
+
+export function useDataTableCalcPercentageFormatterCellContext() {
+    return useDataTableCalcFormatterCellContext() as DataTableCalcFormatterCellParams<number, PercentageFormatter>;
+}
+
+export function useDataTableCalcProgressFormatterCellContext() {
+    return useDataTableCalcFormatterCellContext() as DataTableCalcFormatterCellParams<number, ProgressCalcFormatter>;
+}
+
+export function useDataTableCalcStarFormatterCellContext() {
+    return useDataTableCalcFormatterCellContext() as DataTableCalcFormatterCellParams<number, StarFormatter>;
 }

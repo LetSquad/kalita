@@ -1,11 +1,10 @@
-import React, { FocusEvent, KeyboardEvent, useCallback } from "react";
+import React, { FocusEvent, KeyboardEvent, lazy, useCallback } from "react";
 import { $enum } from "ts-enum-util";
 import { getMoexQuotesForName } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { useAppDispatch } from "../../store/hooks";
 import { addNewPosition, update, updateGroupName, updatePosition } from "../../store/portfolios/portfoliosReducer";
-import DataTable from "../DataTable/DataTable";
 import { DataTableData } from "../DataTable/types/base";
 import { ColumnDefinition } from "../DataTable/types/column";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
@@ -16,6 +15,9 @@ interface TableProps {
     currentPortfolio: Portfolio,
     additionalHeaderPart?: JSX.Element
 }
+
+const DataTable = lazy(/* webpackChunkName: "dataTable" */() =>
+    import("../DataTable/DataTable"));
 
 export default function Table({ columns, currentPortfolio, additionalHeaderPart }: TableProps) {
     const dispatch = useAppDispatch();

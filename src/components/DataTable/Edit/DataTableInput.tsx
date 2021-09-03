@@ -58,6 +58,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
             <Ref innerRef={inputRef}>
                 <Input
                     label={label ? { basic: true, content: label } : undefined}
+                    labelPosition={label ? "right" : undefined}
                     value={onCellChange || onGlobalCellChanged ? cell : value}
                     placeholder={placeholder}
                     error={!isValid}

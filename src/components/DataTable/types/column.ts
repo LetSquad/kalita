@@ -49,7 +49,7 @@ export interface BaseColumnDefinition {
         rowData: DataTableData) => string | undefined) | string;
     tooltip?: Tooltip;
     validator?: Validator;
-    headerCalc?: Calc;
+    tableCalc?: Calc;
     groupCalc?: Calc;
     width?: number;
     vertAlign?: VerticalAlignValues;
