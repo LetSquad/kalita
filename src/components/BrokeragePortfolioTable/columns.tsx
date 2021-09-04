@@ -340,7 +340,7 @@ const _modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => Col
                     rowData
                 ) => {
                     return typeof value === "number" && typeof rowData.targetQuantity === "number" && value < rowData.targetQuantity
-                        ? String(rowData.targetQuantity - value)
+                        ? `Нужно докупить: ${rowData.targetQuantity - value}`
                         : undefined;
                 }
             }

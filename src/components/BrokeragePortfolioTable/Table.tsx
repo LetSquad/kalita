@@ -1,11 +1,11 @@
-import React, { FocusEvent, KeyboardEvent, lazy, useCallback } from "react";
+import React, { FocusEvent, KeyboardEvent, lazy, useCallback, useRef } from "react";
 import { $enum } from "ts-enum-util";
 import { loadMoexQuotesByTickers } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { useAppDispatch } from "../../store/hooks";
 import { addNewPosition, update, updateGroupName, updatePosition } from "../../store/portfolios/portfoliosReducer";
-import { DataTableData } from "../DataTable/types/base";
+import { DataTableData, DataTableRef } from "../DataTable/types/base";
 import { ColumnDefinition } from "../DataTable/types/column";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
@@ -22,7 +22,9 @@ const DataTable = lazy(/* webpackChunkName: "dataTable" */() =>
 export default function Table({ columns, currentPortfolio, additionalHeaderPart }: TableProps) {
     const dispatch = useAppDispatch();
 
-    const importTableToCsvText = useCallback(() => undefined, []);
+    const dataTableRef = useRef<DataTableRef>(null);
+
+    const importTableToCsvText = useCallback(() => dataTableRef.current?.exportToCsv({ includeGroup: true }), []);
 
     const addRowToGroup = useCallback((groupName) => {
         dispatch(addNewPosition(groupName));
@@ -87,6 +89,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                     calcRowCellClassName: styles.specificCell,
                     groupRowCellClassName: styles.specificCell
                 }}
+                ref={dataTableRef}
             />
         </div>
     );

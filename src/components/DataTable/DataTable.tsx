@@ -1,16 +1,17 @@
 import classNames from "classnames";
-import React, { useCallback, useMemo } from "react";
+import React, { ForwardedRef, forwardRef, useCallback, useImperativeHandle, useMemo } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { Table } from "semantic-ui-react";
 import DataTableBody from "./Body/DataTableBody";
 import DataTableFooter from "./Footer/DataTableFooter";
 import DataTableHeader from "./Header/DataTableHeader";
 import styles from "./styles/DataTable.scss";
-import { DataTable as DataTableType } from "./types/base";
+import { DataTable as DataTableType, DataTableRef, ExportToCsvOptions } from "./types/base";
 import { CalcPosition } from "./types/calc";
 import { DataTableBodyContext, DataTableContext } from "./utils/contexts/contexts";
+import { exportDataToCsv } from "./utils/utils";
 
-export default function DataTable({
+const DataTable = forwardRef(({
     data,
     columns,
     groupBy,
@@ -23,7 +24,11 @@ export default function DataTable({
     onCellBlur,
     onCellKeyEnter,
     classes
-}: DataTableType) {
+}: DataTableType, ref: ForwardedRef<DataTableRef>) => {
+    useImperativeHandle(ref, () => ({
+        exportToCsv: ((options?: ExportToCsvOptions) => exportDataToCsv(data, columns, groupBy, options))
+    }), [data, columns, groupBy]);
+
     const onDragEnd = useCallback((result: DropResult) => {
         if (onRowMoved && result.destination) {
             onRowMoved(result.draggableId, result.source.index, result.destination.index, result.destination.droppableId);
@@ -87,4 +92,6 @@ export default function DataTable({
             </div>
         </DataTableContext.Provider>
     );
-}
+});
+
+export default DataTable;

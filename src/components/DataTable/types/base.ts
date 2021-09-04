@@ -22,6 +22,10 @@ export interface UserDataTableClasses {
     footerRowCellClassName?: string;
 }
 
+export interface DataTableRef {
+    exportToCsv: (options?: ExportToCsvOptions) => string | undefined;
+}
+
 export interface DataTable {
     data: DataTableData[];
     columns: ColumnDefinition[];
@@ -53,5 +57,10 @@ export interface DataTable {
         value: string | number | boolean | undefined
     ) => void;
     classes?: UserDataTableClasses;
+}
+
+export interface ExportToCsvOptions {
+    includeGroup?: boolean;
+    includeEmptyTitle?: boolean;
 }
 

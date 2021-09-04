@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { DataTableData } from "../types/base";
+import { DataTableData, ExportToCsvOptions } from "../types/base";
 import { ColumnDefinition, HorizontalAlignValues, VerticalAlignValues } from "../types/column";
 import { GroupData } from "../types/group";
 
@@ -82,4 +82,29 @@ function getAlignFromEnum(alignValue: VerticalAlignValues | HorizontalAlignValue
             return "flex-end";
         }
     }
+}
+
+export function exportDataToCsv(
+    data: DataTableData[],
+    columns: ColumnDefinition[],
+    groupBy?: keyof DataTableData,
+    options?: ExportToCsvOptions
+): string | undefined {
+    const fields = columns.map((column) => {
+        if (options?.includeEmptyTitle) {
+            return column.field;
+        }
+
+        return column.title ? column.field : undefined;
+    }).filter((column) => column) as (keyof DataTableData)[];
+
+    const fieldsName = columns.filter((column) => fields.includes(column.field)).map((column) => column.title);
+
+    if (options?.includeGroup && groupBy) {
+        fields.push(groupBy as string);
+        fieldsName.push("Группа");
+    }
+    const formattedData = data.map((row) => fields.map((field) => row[field]).join(","));
+
+    return `${fieldsName.join(",")}\n${formattedData.join("\n")}`;
 }
