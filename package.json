@@ -1,5 +1,6 @@
 {
     "name": "kalita",
+    "productName": "Kalita",
     "description": "Светлое инвестиционное будущее",
     "version": "1.0.0",
     "main": "app/dist/main.js",
