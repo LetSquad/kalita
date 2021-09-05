@@ -183,7 +183,12 @@ export function recalculateRowsPrice(
                 name: quote.name
             };
         }
-        return row;
+        return {
+            ...row,
+            currentPrice: 0,
+            amount: 0,
+            name: undefined
+        };
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 
