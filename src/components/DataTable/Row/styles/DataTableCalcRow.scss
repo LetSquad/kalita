@@ -1,0 +1,7 @@
+@use '../../styles/base' as *;
+@use 'src/components/DataTable/styles/variables' as dataTableVariables;
+
+.row {
+  @extend %data-table-base-row;
+  background-color: #eaeaea;
+}

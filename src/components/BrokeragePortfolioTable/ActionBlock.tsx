@@ -1,12 +1,22 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Icon } from "semantic-ui-react";
+import { useAppDispatch } from "../../store/hooks";
+import { deleteRowById } from "../../store/portfolios/portfoliosReducer";
 
-export function ActionBlock(props: any) {
-    const { cell, deleteRow } = props;
+interface NewActionBlockProps {
+    rowId: string;
+}
+
+export function ActionBlock({ rowId }: NewActionBlockProps) {
+    const dispatch = useAppDispatch();
+
+    const deleteRow = useCallback(() => {
+        dispatch(deleteRowById(rowId));
+    }, [dispatch, rowId]);
 
     return (
         <div>
-            <Icon name="remove" link onClick={() => deleteRow(cell._cell.row.data.id)} />
+            <Icon name="remove" link onClick={deleteRow} />
         </div>
     );
 }

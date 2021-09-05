@@ -1,0 +1,51 @@
+.input,
+%data-table-input {
+  max-width: 100%;
+
+  [list]::-webkit-calendar-picker-indicator {
+    display: none !important;
+  }
+
+  &-small {
+    > input {
+      background: transparent !important;
+      font-size: 14px !important;
+      height: max-content !important;
+      max-width: 90% !important;
+      padding: 1px !important;
+      width: 100% !important;
+
+      &:focus {
+        border: 2px solid #e69600 !important;
+        margin-left: -2px !important;
+        margin-top: -2px !important;
+      }
+    }
+
+    > div {
+      height: max-content !important;
+      padding: 2.5px 5px !important;
+    }
+  }
+
+  &-transparent {
+    @extend %data-table-input-small;
+
+    > input {
+      border: transparent !important;
+    }
+  }
+
+  &-dashed {
+    @extend %data-table-input-small;
+
+    > input {
+      border: 1px dashed rgba(0, 0, 0, 0.2) !important;
+    }
+  }
+
+  &-remove-icon {
+    margin-right: 5px !important;
+    width: 14px !important;
+  }
+}

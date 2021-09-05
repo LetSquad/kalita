@@ -1,5 +1,11 @@
 import React, {
-    useCallback, useEffect, useMemo, useRef, useState
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    KeyboardEvent,
+    FocusEvent
 } from "react";
 import { DraggableProvided } from "react-beautiful-dnd";
 import { Icon, Input } from "semantic-ui-react";
@@ -10,7 +16,8 @@ import { currentPortfolioSelector } from "../../../store/portfolios/selectors";
 import {
     deleteElementFromGroup,
     renameElementInGroup,
-    setActiveId, setCurrentPortfolioName
+    setActiveId,
+    setCurrentPortfolioName
 } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import styles from "./styles/SidebarMenuElement.scss";
 
@@ -63,14 +70,9 @@ export default function SidebarMenuElement({ itemProvided, menuElement }: Sideba
         <Input
             value={_currentEditValue} fluid className={styles.renameInput} ref={inputRef} placeholder="Введите имя"
             onChange={(event, data) => setCurrentEditValue(data.value)}
-            onKeyPress={(event: KeyboardEvent) =>
-                (event.key === "Enter"
-                    ? renameElement(menuElement.type, menuElement.id, (event.target as HTMLInputElement).value)
-                    : undefined)}
-            onBlur={
-                (event: FocusEvent) =>
-                    renameElement(menuElement.type, menuElement.id, (event.target as HTMLInputElement).value)
-            }
+            onKeyPress={({ key, target }: KeyboardEvent<HTMLInputElement>) =>
+                (key === "Enter" && renameElement(menuElement.type, menuElement.id, (target as HTMLInputElement).value))}
+            onBlur={({ target }: FocusEvent<HTMLInputElement>) => renameElement(menuElement.type, menuElement.id, target.value)}
         />
     ), [menuElement.id, menuElement.type, renameElement]);
 

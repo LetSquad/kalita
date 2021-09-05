@@ -11,7 +11,7 @@ interface Props {
 export default function ModelTable({ currentPortfolio }: Props) {
     return useMemo(() => (
         <Table
-            columns={modelPortfolioColumns(currentPortfolio.positions, currentPortfolio.settings)}
+            columns={modelPortfolioColumns(currentPortfolio.settings)}
             currentPortfolio={currentPortfolio}
             additionalHeaderPart={<TargetAmountInput />}
         />

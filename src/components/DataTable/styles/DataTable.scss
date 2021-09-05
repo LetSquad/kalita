@@ -1,0 +1,47 @@
+@use '../../../styles/parts' as *;
+@use './variables' as dataTableVariables;
+
+.table-container {
+  overflow: auto;
+}
+
+.inner-table,
+%data-table-inner-table {
+  margin: 0 !important;
+
+  &-header {
+    @extend %data-table-inner-table;
+    display: inline-table;
+    grid-row: 1;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  &-body {
+    @extend %data-table-inner-table;
+    display: table;
+    overflow: hidden;
+  }
+
+  &-footer {
+    @extend %data-table-inner-table;
+    bottom: 0;
+    display: inline-table;
+    grid-row: 1;
+    position: sticky;
+    z-index: 1;
+
+    &-empty {
+      @extend %data-table-inner-table-footer;
+      display: none;
+    }
+  }
+
+  &-placeholder {
+    @extend %flex-center-container;
+    font-size: 16px;
+    font-weight: bold;
+    height: calc(100% - #{dataTableVariables.$head-height} - 1px);
+  }
+}

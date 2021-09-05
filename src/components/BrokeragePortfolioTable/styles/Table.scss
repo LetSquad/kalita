@@ -2,68 +2,8 @@
 @use '../AdditionalHeader/styles/AdditionalHeader' as additionalHeader;
 
 $tabulator-header-height: 40px;
-$tabulator-top-calc-height: 30px;
-$tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-top-calc-height});
-
-:global {
-  .tabulator-frozen.tabulator-frozen-left {
-    border-right: 0 !important;
-  }
-
-  .tabulator .tabulator-header {
-    background-color: #fff !important;
-    height: $tabulator-full-header-height;
-
-    .tabulator-calcs-holder {
-      height: $tabulator-top-calc-height;
-
-      .tabulator-row {
-        height: $tabulator-top-calc-height;
-
-        /* stylelint-disable */
-        .tabulator-cell {
-          /* stylelint-enable */
-          height: $tabulator-top-calc-height !important;
-        }
-      }
-    }
-
-    .tabulator-col {
-      background-color: #fff !important;
-    }
-  }
-
-  /* stylelint-disable */
-  .tabulator .tabulator-tableHolder {
-    /* stylelint-enable */
-    height: calc(100% - #{$tabulator-full-header-height}) !important;
-    max-height: calc(100% - #{$tabulator-full-header-height}) !important;
-    min-height: calc(100% - #{$tabulator-full-header-height}) !important;
-
-    .tabulator-table {
-      min-width: 100%;
-    }
-
-    .tabulator-placeholder span {
-      font-size: 14px !important;
-    }
-  }
-
-  .tabulator-row {
-    min-height: 1.5rem !important;
-  }
-
-  .tabulator-row .tabulator-cell {
-    height: auto !important;
-    padding: 0.2rem 0.75rem !important;
-    white-space: normal !important;
-    word-break: break-all;
-  }
-
-  .tabulator-row.tabulator-group {
-    display: flex !important;
-  }
-}
+$tabulator-calc-height: 30px;
+$tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-calc-height});
 
 .container {
   @extend %base-container;
@@ -71,31 +11,27 @@ $tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-t
 
 .table {
   height: calc(100% - #{additionalHeader.$additional-header-height});
-}
 
-.group- {
-  &container {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
+  .base-cell {
+    padding: 3px 11px !important;
   }
 
-  &add-button {
-    font-size: 15px !important;
-    margin: 0 8px 0 5px !important;
-    opacity: 0.8 !important;
-
-    &:hover {
-      opacity: 1 !important;
-    }
+  .specific-cell {
+    padding: 5px 11px !important;
   }
 
-  &input {
-    background: transparent;
-    border: 0;
-    font-size: 14px;
-    font-weight: bold;
-    width: 100%;
+  .base-row {
+    height: 25px;
+    line-height: 21px;
+  }
+
+  .specific-row {
+    height: 28px;
+    line-height: 17px;
+  }
+
+  .header-row {
+    height: 40px;
+    line-height: 13px;
   }
 }
