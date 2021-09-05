@@ -45,7 +45,7 @@ export interface InputEditParams {
     onCellChange?: (
         rowId: string,
         field: keyof DataTableData,
-        event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLElement>,
+        event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLElement> | KeyboardEvent<HTMLInputElement>,
         value: string
     ) => void;
     onCellBlur?: (rowId: string, field: keyof DataTableData, event: FocusEvent<HTMLInputElement>, value: string) => void;

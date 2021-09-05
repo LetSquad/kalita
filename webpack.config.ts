@@ -24,7 +24,7 @@ module.exports = () => {
         new HtmlWebpackPlugin({
             template: `${PATHS.src}/index.html`,
             filename: "./index.html",
-            title: "KALITA!!!!!1!1",
+            title: "Kalita",
             publicPath: isProduction ? "./" : ""
         }),
         new CleanWebpackPlugin({

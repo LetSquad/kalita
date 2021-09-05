@@ -73,6 +73,7 @@ const DataTable = forwardRef(({
         emptyTablePlaceholder
     ]);
 
+
     return (
         <DataTableContext.Provider
             value={{

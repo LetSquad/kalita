@@ -35,25 +35,25 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         datalist
     } = params;
 
+    const [initialValue, setInitialValue] = useState(cell);
     const [value, setValue] = useState(onCellChange || onGlobalCellChanged ? undefined : cell);
-    const [oldValue, setOldValue] = useState(cell);
     const [isFocus, setIsFocus] = useState(false);
     const [isHover, setIsHover] = useState(false);
 
     const getIsValid = useCallback((
-        _oldValue: string | number | boolean | undefined,
+        _initialValue: string | number | boolean | undefined,
         newValue: string | number | boolean | undefined
     ) => {
         let _isValid = true;
         if (validator) {
             _isValid = typeof validator.validate === "boolean"
                 ? !validator.validate
-                : !validator.validate(tableData, id, field, _oldValue, newValue, row);
+                : !validator.validate(tableData, id, field, _initialValue, newValue, row);
         }
         return _isValid;
     }, [field, id, row, tableData, validator]);
 
-    const isValid = useMemo(() => getIsValid(oldValue, value || cell), [cell, getIsValid, oldValue, value]);
+    const isValid = useMemo(() => getIsValid(initialValue, value || cell), [cell, getIsValid, initialValue, value]);
 
     const input = useMemo(() => (
         <div>
@@ -70,39 +70,43 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                     onChange={(event, data) => {
                         if (onCellChange) {
                             onCellChange(id, field, event, data.value);
-                            setOldValue(cell);
                         }
                         if (onGlobalCellChanged) {
                             onGlobalCellChanged(id, field, event, data.value);
-                            setOldValue(cell);
                         }
                         if (!onCellChange && !onGlobalCellChanged) {
                             setValue(data.value);
-                            setOldValue(value);
                         }
                     }}
                     onBlur={(event: FocusEvent<HTMLInputElement>) => {
-                        if (!getIsValid(oldValue, event.target.value)) {
+                        if (!getIsValid(initialValue, event.target.value) && (event.target.value !== initialValue)) {
                             event.target.focus();
                         } else {
                             setIsFocus(false);
                             if (onCellBlur) {
                                 onCellBlur(id, field, event, event.target.value);
-                                setOldValue(event.target.value);
                             }
                             if (onGlobalCellBlur) {
                                 onGlobalCellBlur(id, field, event, event.target.value);
-                                setOldValue(event.target.value);
                             }
+                            setInitialValue(event.target.value);
                         }
                     }}
                     onKeyUp={(event: KeyboardEvent<HTMLInputElement>) => {
                         if (event.key === "Escape") {
+                            setValue(initialValue);
+                            if (onCellChange) {
+                                onCellChange(id, field, event, initialValue as string);
+                            }
+                            if (onGlobalCellChanged) {
+                                onGlobalCellChanged(id, field, event, initialValue);
+                            }
+                            (event.target as HTMLInputElement).value = initialValue as string;
                             (event.target as HTMLInputElement).blur();
                         }
                     }}
                     onKeyPress={(event: KeyboardEvent<HTMLInputElement>) => {
-                        if (!getIsValid(oldValue, (event.target as HTMLInputElement).value)) {
+                        if (!getIsValid(initialValue, (event.target as HTMLInputElement).value)) {
                             (event.target as HTMLInputElement).focus();
                         } else if (event.key === "Enter") {
                             if (onCellKeyEnter) {
@@ -111,7 +115,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                             }
                             if (onGlobalCellKeyEnter) {
                                 onGlobalCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
-                                (event.target as HTMLInputElement).blur();
+                                inputRef.current?.blur();
                             }
                         }
                     }}
@@ -136,7 +140,6 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                                         if (onGlobalCellChanged) {
                                             onGlobalCellChanged(id, field, event, "");
                                         }
-                                        setOldValue(cell);
                                     }}
                                 />
                             )
@@ -174,18 +177,18 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         className,
         clearable,
         getIsValid,
-        oldValue,
         onCellBlur,
         onGlobalCellBlur,
+        initialValue,
         onCellKeyEnter,
         onGlobalCellKeyEnter
     ]);
 
     const validatorTooltipText = useMemo(() => {
         return validator && validator.tooltip && typeof validator.tooltip.text === "function"
-            ? validator.tooltip.text(tableData, id, field, oldValue, value || cell, row)
+            ? validator.tooltip.text(tableData, id, field, initialValue, value || cell, row)
             : validator?.tooltip;
-    }, [cell, field, id, oldValue, row, tableData, validator, value]);
+    }, [cell, field, id, initialValue, row, tableData, validator, value]);
 
     useEffect(() => {
         if (isFocus && document.activeElement != inputRef.current?.children[0]) {

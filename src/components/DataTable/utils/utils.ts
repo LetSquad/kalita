@@ -98,13 +98,13 @@ export function exportDataToCsv(
         return column.title ? column.field : undefined;
     }).filter((column) => column) as (keyof DataTableData)[];
 
-    const fieldsName = columns.filter((column) => fields.includes(column.field)).map((column) => column.title);
+    const fieldsName = columns.filter((column) => fields.includes(column.field)).map((column) => `"${column.title?.replace("\"", "\"\"")}"`);
 
     if (options?.includeGroup && groupBy) {
         fields.push(groupBy as string);
-        fieldsName.push("Группа");
+        fieldsName.push("\"Группа\"");
     }
-    const formattedData = data.map((row) => fields.map((field) => row[field]).join(","));
+    const formattedData = data.map((row) => fields.map((field) => `"${row[field]?.toString().replace("\"", "\"\"")}"`).join(","));
 
     return `${fieldsName.join(",")}\n${formattedData.join("\n")}`;
 }

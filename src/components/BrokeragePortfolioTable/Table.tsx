@@ -7,6 +7,7 @@ import { useAppDispatch } from "../../store/hooks";
 import { addNewPosition, update, updateGroupName, updatePosition } from "../../store/portfolios/portfoliosReducer";
 import { DataTableData, DataTableRef } from "../DataTable/types/base";
 import { ColumnDefinition } from "../DataTable/types/column";
+import { WithSuspense } from "../utils/WithSuspense";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
 
@@ -69,28 +70,30 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 additionalHeaderPart={additionalHeaderPart} importTableToCsvText={importTableToCsvText}
                 currentPortfolio={currentPortfolio}
             />
-            <DataTable
-                columns={columns}
-                data={currentPortfolio.positions}
-                groupBy="groupName"
-                onAddRowToGroup={addRowToGroup}
-                onGroupNameEdit={updateGroup}
-                expandableGroup
-                onRowMoved={rowMoved}
-                onCellBlur={cellUpdated}
-                onCellKeyEnter={cellUpdated}
-                classes={{
-                    tableClassName: styles.table,
-                    headerRowClassName: styles.headerRow,
-                    groupRowClassName: styles.specificRow,
-                    calcRowClassName: styles.specificRow,
-                    rowClassName: styles.baseRow,
-                    rowCellClassName: styles.baseCell,
-                    calcRowCellClassName: styles.specificCell,
-                    groupRowCellClassName: styles.specificCell
-                }}
-                ref={dataTableRef}
-            />
+            <WithSuspense>
+                <DataTable
+                    columns={columns}
+                    data={currentPortfolio.positions}
+                    groupBy="groupName"
+                    onAddRowToGroup={addRowToGroup}
+                    onGroupNameEdit={updateGroup}
+                    expandableGroup
+                    onRowMoved={rowMoved}
+                    onCellBlur={cellUpdated}
+                    onCellKeyEnter={cellUpdated}
+                    classes={{
+                        tableClassName: styles.table,
+                        headerRowClassName: styles.headerRow,
+                        groupRowClassName: styles.specificRow,
+                        calcRowClassName: styles.specificRow,
+                        rowClassName: styles.baseRow,
+                        rowCellClassName: styles.baseCell,
+                        calcRowCellClassName: styles.specificCell,
+                        groupRowCellClassName: styles.specificCell
+                    }}
+                    ref={dataTableRef}
+                />
+            </WithSuspense>
         </div>
     );
 }
