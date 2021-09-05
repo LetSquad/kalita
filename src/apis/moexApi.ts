@@ -79,6 +79,12 @@ function parseQuotes(json: MoexData): Quote[] {
     return [];
 }
 
+export const loadMoexQuoteByTicker = createAsyncThunk<Quote | undefined, string>(
+    "loadMoexQuoteByTicker",
+    async (ticker: string) => getMoexQuotes([ticker])
+        .then((quotes) => quotes[0] ? quotes[0] : undefined)
+);
+
 export const loadMoexQuotesByTickers = createAsyncThunk<Quote[], string[]>(
     "loadMoexQuotesByTickers",
     async (tickers: string[]) => getMoexQuotes(tickers)

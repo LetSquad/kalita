@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { loadMoexQuotesByTickers } from "../../apis/moexApi";
+import { loadMoexQuoteByTicker, loadMoexQuotesByTickers } from "../../apis/moexApi";
 import { Quote } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { MenuElementIdentifier } from "../../models/menu/types";
@@ -31,6 +31,7 @@ import {
     recalculateModelPortfolioPercentage,
     recalculateModelPortfolioQuantity,
     recalculateRow,
+    recalculateRowPrice,
     recalculateRowsPrice
 } from "./portfoliosReducerHelper";
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
@@ -80,12 +81,7 @@ export const portfoliosSlice = createSlice({
                 if (currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
                     currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
                 } else if (action.payload.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-                    currentPortfolio.positions = recalculateModelPortfolioPercentage(
-                        currentPortfolio.positions,
-                        typeof currentPortfolio.totalTargetAmount === "number"
-                            ? currentPortfolio.totalTargetAmount
-                            : 0
-                    );
+                    currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
                     currentPortfolio.positions = recalculateModelPortfolioQuantity(
                         currentPortfolio.positions,
                         getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)
@@ -141,12 +137,7 @@ export const portfoliosSlice = createSlice({
                             getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)
                         );
                     } else if (action.payload.valueKey === EditableTableColumns.WEIGHT) {
-                        currentPortfolio.positions = recalculateModelPortfolioPercentage(
-                            currentPortfolio.positions,
-                            typeof currentPortfolio.totalTargetAmount === "number"
-                                ? currentPortfolio.totalTargetAmount
-                                : 0
-                        );
+                        currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
                     }
                 } else if (
                     currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT &&
@@ -209,12 +200,7 @@ export const portfoliosSlice = createSlice({
                             .filter((row) => row.id !== action.payload) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 
                 if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-                    currentPortfolio.positions = recalculateModelPortfolioPercentage(
-                        currentPortfolio.positions,
-                        typeof currentPortfolio.totalTargetAmount === "number"
-                            ? currentPortfolio.totalTargetAmount
-                            : 0
-                    );
+                    currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
                 } else if (currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
                     currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
                 }
@@ -227,12 +213,7 @@ export const portfoliosSlice = createSlice({
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
                 currentPortfolio.totalTargetAmount = action.payload;
-                currentPortfolio.positions = recalculateModelPortfolioPercentage(
-                    currentPortfolio.positions,
-                    typeof action.payload === "number"
-                        ? action.payload
-                        : 0
-                );
+                currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
             }
         },
         updateModelPortfolioQuantityMode: (state: PortfoliosState, action: PayloadAction<ModelPortfolioQuantityMode>) => {
@@ -273,20 +254,28 @@ export const portfoliosSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(loadMoexQuoteByTicker.fulfilled, (state: PortfoliosState, action: PayloadAction<Quote | undefined>) => {
+                if (state.currentTable) {
+                    const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
+                    if (currentPortfolio) {
+                        currentPortfolio.positions = recalculateRowPrice(currentPortfolio.positions, action.payload);
+                        if (currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
+                            currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
+                        } else if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                            currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
+                        }
+                    }
+                }
+            })
             .addCase(loadMoexQuotesByTickers.fulfilled, (state: PortfoliosState, action: PayloadAction<Quote[]>) => {
                 if (state.currentTable) {
                     const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                     if (currentPortfolio) {
-                        currentPortfolio.positions = recalculateRowsPrice(currentPortfolio, action.payload);
+                        currentPortfolio.positions = recalculateRowsPrice(currentPortfolio.positions, action.payload);
                         if (currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
                             currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
                         } else if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-                            currentPortfolio.positions = recalculateModelPortfolioPercentage(
-                                currentPortfolio.positions,
-                                typeof currentPortfolio.totalTargetAmount === "number"
-                                    ? currentPortfolio.totalTargetAmount
-                                    : 0
-                            );
+                            currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
                         }
                     }
                 }

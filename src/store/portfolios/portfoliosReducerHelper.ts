@@ -90,10 +90,7 @@ export function getBrokerAccountsPositionsByIds(
 export function generateNewPosition(currentPortfolio: Portfolio, groupName: string) {
     if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
         currentPortfolio.positions.push(newModelPortfolioRow(getNewRowName(currentPortfolio.positions), groupName));
-        currentPortfolio.positions = recalculateModelPortfolioPercentage(
-            currentPortfolio.positions,
-            typeof currentPortfolio.totalTargetAmount === "number" ? currentPortfolio.totalTargetAmount : 0
-        );
+        currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
     } else {
         currentPortfolio.positions.push(newBrokerAccountRow(getNewRowName(currentPortfolio.positions), groupName));
         currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
@@ -169,14 +166,14 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
 }
 
 export function recalculateRowsPrice(
-    portfolio: Portfolio,
+    positions: PortfolioPosition[],
     quotes: Quote[]
 ): ModelPortfolioPosition[] | BrokerAccountPosition[] {
     const quotesByTickers = new Map<string, Quote>();
     for (const quote of quotes) {
         quotesByTickers.set(quote.ticker, quote);
     }
-    return portfolio.positions.map((row) => {
+    return positions.map((row) => {
         const quote = quotesByTickers.get(row.ticker);
         if (quote) {
             return {
@@ -195,15 +192,41 @@ export function recalculateRowsPrice(
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 
-export function recalculateModelPortfolioPercentage(
-    modelPortfolioPositions: ModelPortfolioPosition[],
-    totalTargetAmount?: number
-): ModelPortfolioPosition[] {
+export function recalculateRowPrice(
+    positions: PortfolioPosition[],
+    quote?: Quote
+): ModelPortfolioPosition[] | BrokerAccountPosition[] {
+    return positions.map((row) => {
+        if (row.ticker === quote?.ticker) {
+            if (quote) {
+                return {
+                    ...row,
+                    currentPrice: quote.price,
+                    amount: quote.price * row.quantity,
+                    name: quote.name
+                };
+            }
+            return {
+                ...row,
+                currentPrice: 0,
+                amount: 0,
+                name: undefined
+            };
+        }
+        return row;
+    }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+}
+
+export function recalculateModelPortfolioPercentage(modelPortfolio: ModelPortfolio): ModelPortfolioPosition[] {
+    const totalTargetAmount: number | undefined = typeof modelPortfolio.totalTargetAmount === "number"
+        ? modelPortfolio.totalTargetAmount
+        : 0;
+
     let totalWeight = 0;
-    for (const position of modelPortfolioPositions) {
+    for (const position of modelPortfolio.positions) {
         totalWeight += position.weight;
     }
-    return modelPortfolioPositions.map((position) => {
+    return modelPortfolio.positions.map((position) => {
         const proportion = position.weight / totalWeight;
         const targetAmount = totalTargetAmount ? (totalTargetAmount * proportion) : 0;
         return {
