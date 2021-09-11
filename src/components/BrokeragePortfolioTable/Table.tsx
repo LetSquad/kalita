@@ -1,5 +1,11 @@
 import _ from "lodash";
-import React, { useCallback, useMemo, useRef } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 import { ReactTabulator } from "react-tabulator";
 import { $enum } from "ts-enum-util";
 import { ChartData } from "chart.js/auto";
@@ -17,7 +23,7 @@ import { getMoexQuotesForName } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppDispatch } from "../../store/hooks";
 import {
     addNewPosition,
     deleteRowById,
@@ -40,8 +46,11 @@ interface Props {
 export default function Table({ columns, currentPortfolio, additionalHeaderPart }: Props) {
     const dispatch = useAppDispatch();
     const tableRef = useRef<TabulatorRef>(null);
+    const [isChartMode, setIsChartMode] = useState<boolean>(false);
 
-    const isChartMode: boolean = useAppSelector((state) => state.portfolios.isChartMode);
+    useEffect(() => {
+        setIsChartMode(false);
+    }, [currentPortfolio]);
 
     const cellUpdated = useCallback((cell: CellComponent) => {
         dispatch(update({
@@ -150,11 +159,17 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         );
     }, [currentPortfolio.positions]);
 
+    const handleToggleChartMode = useCallback(() => {
+        setIsChartMode((old) => !old);
+    }, [setIsChartMode]);
+
     return (
         <div className={styles.container}>
             <AdditionalHeader
                 additionalHeaderPart={additionalHeaderPart} importTableToCsvText={importTableToCsvText}
                 currentPortfolio={currentPortfolio}
+                isChartMode={isChartMode}
+                onToggleChartMode={handleToggleChartMode}
             />
             {isChartMode ? chart : table}
         </div>
