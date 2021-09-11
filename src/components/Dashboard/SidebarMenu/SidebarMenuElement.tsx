@@ -4,7 +4,7 @@ import React, {
 import { DraggableProvided } from "react-beautiful-dnd";
 import { Icon, Input } from "semantic-ui-react";
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
-import { BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../models/menu/types";
+import { AnalyticsMenuElement, BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../models/menu/types";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { currentPortfolioSelector } from "../../../store/portfolios/selectors";
 import {
@@ -15,11 +15,12 @@ import {
 import styles from "./styles/SidebarMenuElement.scss";
 
 interface SidebarMenuElementProps {
-    itemProvided: DraggableProvided
-    menuElement: ModelPortfolioMenuElement | BrokerAccountMenuElement;
+    itemProvided?: DraggableProvided
+    menuElement: ModelPortfolioMenuElement | BrokerAccountMenuElement | AnalyticsMenuElement;
+    editable?: boolean
 }
 
-export default function SidebarMenuElement({ itemProvided, menuElement }: SidebarMenuElementProps) {
+export default function SidebarMenuElement({ itemProvided, menuElement, editable = false }: SidebarMenuElementProps) {
     const dispatch = useAppDispatch();
 
     const inputRef = useRef<Input>(null);
@@ -51,7 +52,7 @@ export default function SidebarMenuElement({ itemProvided, menuElement }: Sideba
         }));
     }, [currentPortfolio?.id, dispatch]);
 
-    const setPortfolio = useCallback((type: SidebarMenuElementsTypes, id: string) => {
+    const setActiveMenuElementId = useCallback((type: SidebarMenuElementsTypes, id: string) => {
         if (currentPortfolio?.id !== id) {
             dispatch(setActiveId({
                 type,
@@ -80,14 +81,14 @@ export default function SidebarMenuElement({ itemProvided, menuElement }: Sideba
         <div
             aria-hidden className={styles.item}
             onClick={() => {
-                setPortfolio(menuElement.type, menuElement.id);
+                setActiveMenuElementId(menuElement.type, menuElement.id);
             }}
         >
             <div className={styles.name}>
                 {menuElement.name}
             </div>
         </div>
-    ), [menuElement.id, menuElement.name, menuElement.type, setPortfolio]);
+    ), [menuElement.id, menuElement.name, menuElement.type, setActiveMenuElementId]);
 
     const elementTitle = useMemo(() => (
         currentEditValue !== undefined
@@ -104,24 +105,26 @@ export default function SidebarMenuElement({ itemProvided, menuElement }: Sideba
     return (
         <div
             className={active ? styles.activeItemContainer : styles.itemContainer}
-            ref={itemProvided.innerRef}
+            ref={itemProvided?.innerRef}
             /* eslint-disable-next-line react/jsx-props-no-spreading */
-            {...itemProvided.draggableProps}
+            {...itemProvided?.draggableProps}
             /* eslint-disable-next-line react/jsx-props-no-spreading */
-            {...itemProvided.dragHandleProps}
+            {...itemProvided?.dragHandleProps}
         >
             {elementTitle}
-            <div className={styles.iconsContainer}>
-                <Icon
-                    name="edit outline" link={currentEditValue === undefined} className={styles.renameIcon}
-                    disabled={currentEditValue !== undefined}
-                    onClick={() => setCurrentEditValue(menuElement.name)}
-                />
-                <Icon
-                    name="trash alternate outline" link className={styles.removeIcon}
-                    onClick={() => deleteElement(menuElement.type, menuElement.id)}
-                />
-            </div>
+            {editable && (
+                <div className={styles.iconsContainer}>
+                    <Icon
+                        name="edit outline" link={currentEditValue === undefined} className={styles.renameIcon}
+                        disabled={currentEditValue !== undefined}
+                        onClick={() => setCurrentEditValue(menuElement.name)}
+                    />
+                    <Icon
+                        name="trash alternate outline" link className={styles.removeIcon}
+                        onClick={() => deleteElement(menuElement.type, menuElement.id)}
+                    />
+                </div>
+            )}
         </div>
     );
 }

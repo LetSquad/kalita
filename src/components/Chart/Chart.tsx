@@ -7,6 +7,7 @@ import {
     TooltipItem
 } from "chart.js/auto";
 import { getNColors } from "./utils/getNColors";
+import stylesChart from "../Chart/styles/Chart.scss";
 
 const borderWidth = 1;
 
@@ -42,9 +43,9 @@ export default function Chart(props: Props) {
         dataset.data.length === 0 || dataset.data.every((value) => value === 0)
     ))) {
         return (
-            <>
+            <div className={stylesChart.alert}>
                 Портфель пуст
-            </>
+            </div>
         );
     }
 

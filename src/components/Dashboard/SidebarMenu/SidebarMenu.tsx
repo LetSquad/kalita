@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { setDefault } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import SidebarMenuGroup from "./SidebarMenuGroup";
 import styles from "./styles/SidebarMenu.scss";
+import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
+import SidebarMenuElement from "./SidebarMenuElement";
 
 interface SidebarMenuProps {
     projectName: string | undefined;
@@ -33,6 +35,13 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
             <div className={styles.menuGroupContainer}>
                 <SidebarMenuGroup key={modelPortfolios.type} sidebarMenuGroupType={modelPortfolios} />
                 <SidebarMenuGroup key={brokerAccounts.type} sidebarMenuGroupType={brokerAccounts} />
+                <SidebarMenuElement
+                    menuElement={{
+                        id: SidebarMenuElementsTypes.ANALYTICS,
+                        name: "Аналитика",
+                        type: SidebarMenuElementsTypes.ANALYTICS
+                    }}
+                />
             </div>
             <div className={styles.iconContainer}>
                 <Icon className={styles.icon} name="angle double left" onClick={onSidebarClose} link />
