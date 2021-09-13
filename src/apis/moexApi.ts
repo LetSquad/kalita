@@ -1,7 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { parseStringPromise } from "xml2js";
 import axios from "axios";
-import { Quote } from "../models/apis/types";
+import { Quote, QuotesMap } from "../models/apis/types";
+import { Currency } from "../models/apis/enums";
 
 interface MoexData {
     document: {
@@ -19,6 +20,7 @@ interface MoexQuote {
     PREVADMITTEDQUOTE: string;
     SHORTNAME: string;
     ISIN: string;
+    CURRENCYID: Currency;
 }
 
 const BOARD_STOCKS = "TQBR";
@@ -33,7 +35,7 @@ const moexHttpClient = axios.create({
 });
 
 function getUrl(board: string) {
-    const filters = "iss.meta=off&iss.only=securities&securities.columns=SECID,PREVADMITTEDQUOTE,SHORTNAME,ISIN";
+    const filters = "iss.meta=off&iss.only=securities&securities.columns=SECID,PREVADMITTEDQUOTE,SHORTNAME,ISIN,CURRENCYID";
     return `/iss/engines/stock/markets/shares/boards/${board}/securities.xml?${filters}`;
 }
 
@@ -65,14 +67,16 @@ function parseQuotes(json: MoexData): Quote[] {
                 ticker: el.SECID,
                 price: Number.parseFloat(Number.parseFloat(el.PREVADMITTEDQUOTE).toFixed(5)),
                 isin: el.ISIN,
-                name: el.SHORTNAME
+                name: el.SHORTNAME,
+                currency: el.CURRENCYID
             }));
         }
         return [{
             ticker: row.SECID,
             price: Number.parseFloat(Number.parseFloat(row.PREVADMITTEDQUOTE).toFixed(5)),
             isin: row.ISIN,
-            name: row.SHORTNAME
+            name: row.SHORTNAME,
+            currency: row.CURRENCYID
         }];
     }
 
@@ -85,26 +89,26 @@ export const loadMoexQuoteByTicker = createAsyncThunk<Quote | undefined, string>
         .then((quotes) => quotes[0] ? quotes[0] : undefined)
 );
 
-export const loadMoexQuotesByTickers = createAsyncThunk<Quote[], string[]>(
+export const loadMoexQuotesByTickers = createAsyncThunk<QuotesMap, string[]>(
     "loadMoexQuotesByTickers",
-    async (tickers: string[]) => getMoexQuotes(tickers)
+    async (tickers: string[]) => getMoexQuotesByTickers(tickers)
 );
 
-export function getMoexQuotesByTickers(tickers: string[]): Promise<Map<string, Quote>> {
+export function getMoexQuotesByTickers(tickers: string[]): Promise<QuotesMap> {
     return getMoexQuotes(tickers).then((quotes) => {
-        const quotesByTickers = new Map<string, Quote>();
+        const quotesByTickers: QuotesMap = {};
         for (const quote of quotes) {
-            quotesByTickers.set(quote.ticker, quote);
+            quotesByTickers[quote.ticker] = quote;
         }
         return quotesByTickers;
     });
 }
 
-export function getMoexQuotesByIsinCodes(): Promise<Map<string, Quote>> {
+export function getMoexQuotesByIsinCodes(): Promise<QuotesMap> {
     return getMoexQuotes().then((quotes) => {
-        const quotesByIsinCodes = new Map<string, Quote>();
+        const quotesByIsinCodes: QuotesMap = {};
         for (const quote of quotes) {
-            quotesByIsinCodes.set(quote.isin, quote);
+            quotesByIsinCodes[quote.isin] = quote;
         }
         return quotesByIsinCodes;
     });

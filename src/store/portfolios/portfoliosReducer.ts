@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { loadMoexQuoteByTicker, loadMoexQuotesByTickers } from "../../apis/moexApi";
-import { Quote } from "../../models/apis/types";
+import { Quote, QuotesMap } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { MenuElementIdentifier } from "../../models/menu/types";
 import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
@@ -10,7 +10,8 @@ import {
     BrokerReportData,
     ModelPortfolioIdentifier,
     ModelPortfolioPosition,
-    PortfolioIdentifier, PortfolioReorderPayload,
+    PortfolioIdentifier,
+    PortfolioReorderPayload,
     Portfolios,
     PortfolioUpdatePayload
 } from "../../models/portfolios/types";
@@ -267,7 +268,7 @@ export const portfoliosSlice = createSlice({
                     }
                 }
             })
-            .addCase(loadMoexQuotesByTickers.fulfilled, (state: PortfoliosState, action: PayloadAction<Quote[]>) => {
+            .addCase(loadMoexQuotesByTickers.fulfilled, (state: PortfoliosState, action: PayloadAction<QuotesMap>) => {
                 if (state.currentTable) {
                     const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                     if (currentPortfolio) {

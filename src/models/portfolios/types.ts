@@ -3,7 +3,8 @@ import {
     BrokeragePortfolioTypes,
     BrokerReportPositionCodeFormat,
     BrokerReportEncoding,
-    BrokerReportFormat, BrokerCode
+    BrokerReportFormat,
+    BrokerCode
 } from "./enums";
 import { ModelPortfolioSettings } from "../settings/types";
 

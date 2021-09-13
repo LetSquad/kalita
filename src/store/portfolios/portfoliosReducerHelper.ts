@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Quote } from "../../models/apis/types";
+import { Quote, QuotesMap } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 import {
@@ -18,6 +18,7 @@ import {
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
+import { Currency } from "../../models/apis/enums";
 
 export const defaultTotalTargetAmount = 1_000_000;
 
@@ -167,28 +168,10 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
 
 export function recalculateRowsPrice(
     positions: PortfolioPosition[],
-    quotes: Quote[]
+    quotes: QuotesMap
 ): ModelPortfolioPosition[] | BrokerAccountPosition[] {
-    const quotesByTickers = new Map<string, Quote>();
-    for (const quote of quotes) {
-        quotesByTickers.set(quote.ticker, quote);
-    }
     return positions.map((row) => {
-        const quote = quotesByTickers.get(row.ticker);
-        if (quote) {
-            return {
-                ...row,
-                currentPrice: quote.price,
-                amount: quote.price * row.quantity,
-                name: quote.name
-            };
-        }
-        return {
-            ...row,
-            currentPrice: 0,
-            amount: 0,
-            name: undefined
-        };
+        return applyQuoteForPosition(row, quotes[row.ticker]);
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 
@@ -198,20 +181,7 @@ export function recalculateRowPrice(
 ): ModelPortfolioPosition[] | BrokerAccountPosition[] {
     return positions.map((row) => {
         if (row.ticker === quote?.ticker) {
-            if (quote) {
-                return {
-                    ...row,
-                    currentPrice: quote.price,
-                    amount: quote.price * row.quantity,
-                    name: quote.name
-                };
-            }
-            return {
-                ...row,
-                currentPrice: 0,
-                amount: 0,
-                name: undefined
-            };
+            return applyQuoteForPosition(row, quote);
         }
         return row;
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
@@ -292,4 +262,30 @@ function getNewName(tableData: TableData, nameConst: string, fieldName: "ticker"
         return Number.parseInt(ticker.slice(ticker.lastIndexOf(" ")), 10);
     }).sort((a, b) => a - b);
     return `${nameConst} ${newStringsNums[newStringsNums.length - 1] + 1}`;
+}
+
+function applyQuoteForPosition(position: PortfolioPosition, quote?: Quote): PortfolioPosition {
+    if (quote) {
+        if (quote.currency !== Currency.RUB) {
+            console.warn(`Received ${quote.ticker} quote with unsupported currency ${quote.currency}`);
+            return {
+                ...position,
+                currentPrice: 0,
+                amount: 0,
+                name: quote.name
+            };
+        }
+        return {
+            ...position,
+            currentPrice: quote.price,
+            amount: quote.price * position.quantity,
+            name: quote.name
+        };
+    }
+    return {
+        ...position,
+        currentPrice: 0,
+        amount: 0,
+        name: undefined
+    };
 }
