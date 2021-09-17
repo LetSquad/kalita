@@ -45,7 +45,7 @@ ctx.addEventListener("message", (event: MessageEvent<BrokerReportPath>) => {
                     return getMoexQuotesByIsinCodes().then((quotes) => ({
                         accountName: brokerReport.accountName,
                         positions: brokerReport.positions.map((position) => {
-                            const quote = quotes.get(position.code);
+                            const quote = quotes[position.code];
                             if (quote) {
                                 return {
                                     ...position,
@@ -63,7 +63,7 @@ ctx.addEventListener("message", (event: MessageEvent<BrokerReportPath>) => {
                     return getMoexQuotesByTickers(tickers).then((quotes) => ({
                         accountName: brokerReport.accountName,
                         positions: brokerReport.positions.map((position) => {
-                            const quote = quotes.get(position.code);
+                            const quote = quotes[position.code];
                             if (quote) {
                                 return {
                                     ...position,
