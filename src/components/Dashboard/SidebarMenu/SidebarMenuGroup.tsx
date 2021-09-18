@@ -93,6 +93,7 @@ export default function SidebarMenuGroup({ sidebarMenuGroupType }: SidebarMenuGr
                                                 key={portfolio.id}
                                                 menuElement={portfolio}
                                                 editable
+                                                deletable
                                             />
                                         )}
                                     </Draggable>

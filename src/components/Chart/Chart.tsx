@@ -7,7 +7,7 @@ import {
     TooltipItem
 } from "chart.js/auto";
 import { getNColors } from "./utils/getNColors";
-import stylesChart from "../Chart/styles/Chart.scss";
+import stylesChart from "./styles/Chart.scss";
 
 const borderWidth = 1;
 

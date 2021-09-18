@@ -48,10 +48,6 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     const tableRef = useRef<TabulatorRef>(null);
     const [isChartMode, setIsChartMode] = useState<boolean>(false);
 
-    useEffect(() => {
-        setIsChartMode(false);
-    }, [currentPortfolio]);
-
     const cellUpdated = useCallback((cell: CellComponent) => {
         dispatch(update({
             id: cell.getRow().getData().id,
@@ -162,6 +158,10 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     const handleToggleChartMode = useCallback(() => {
         setIsChartMode((old) => !old);
     }, [setIsChartMode]);
+
+    useEffect(() => {
+        setIsChartMode(false);
+    }, [currentPortfolio]);
 
     return (
         <div className={styles.container}>

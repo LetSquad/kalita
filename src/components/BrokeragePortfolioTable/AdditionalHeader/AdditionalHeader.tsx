@@ -36,7 +36,6 @@ export function AdditionalHeader({
             <div>
                 <AdditionalHeaderMenu currentPortfolio={currentPortfolio} importTableToCsvText={importTableToCsvText} />
                 <Icon
-                    title={`Показать ${isChartMode ? "таблицу" : "диаграмму"}`}
                     name={isChartMode ? "table" : "chart pie"}
                     link
                     className={styles.additionalHeaderIcon}

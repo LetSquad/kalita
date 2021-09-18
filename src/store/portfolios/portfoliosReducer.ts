@@ -41,7 +41,7 @@ export interface PortfoliosState extends Portfolios {
 const initialState: PortfoliosState = {
     modelPortfolios: [],
     brokerAccounts: [],
-    currentTable: undefined,
+    currentTable: undefined
 };
 
 export const portfoliosSlice = createSlice({
