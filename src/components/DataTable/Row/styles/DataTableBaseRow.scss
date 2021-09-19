@@ -1,0 +1,9 @@
+@use '../../styles/base' as *;
+
+.row {
+  @extend %data-table-base-row;
+
+  &:focus-visible {
+    outline: transparent;
+  }
+}

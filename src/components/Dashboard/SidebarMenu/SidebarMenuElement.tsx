@@ -1,5 +1,11 @@
 import React, {
-    useCallback, useEffect, useMemo, useRef, useState
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    KeyboardEvent,
+    FocusEvent
 } from "react";
 import { DraggableProvided } from "react-beautiful-dnd";
 import { Icon, Input } from "semantic-ui-react";
@@ -71,22 +77,22 @@ export default function SidebarMenuElement({
 
     const elementRenameInput = useCallback((_currentEditValue) => (
         <Input
-            value={_currentEditValue} fluid className={styles.renameInput} ref={inputRef} placeholder="Введите имя"
+            value={_currentEditValue}
+            fluid
+            className={styles.renameInput}
+            ref={inputRef}
+            placeholder="Введите имя"
             onChange={(event, data) => setCurrentEditValue(data.value)}
-            onKeyPress={(event: KeyboardEvent) =>
-                (event.key === "Enter"
-                    ? renameElement(menuElement.type, menuElement.id, (event.target as HTMLInputElement).value)
-                    : undefined)}
-            onBlur={
-                (event: FocusEvent) =>
-                    renameElement(menuElement.type, menuElement.id, (event.target as HTMLInputElement).value)
-            }
+            onKeyPress={({ key, target }: KeyboardEvent<HTMLInputElement>) =>
+                (key === "Enter" && renameElement(menuElement.type, menuElement.id, (target as HTMLInputElement).value))}
+            onBlur={({ target }: FocusEvent<HTMLInputElement>) => renameElement(menuElement.type, menuElement.id, target.value)}
         />
     ), [menuElement.id, menuElement.type, renameElement]);
 
     const elementNameBlock = useMemo(() => (
         <div
-            aria-hidden className={styles.item}
+            aria-hidden
+            className={styles.item}
             onClick={() => {
                 setActiveMenuElementId(menuElement.type, menuElement.id);
             }}

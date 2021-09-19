@@ -40,7 +40,7 @@ export default function Chart(props: Props) {
     };
 
     if (props.data.datasets.every((dataset) => (
-        dataset.data.length === 0 || dataset.data.every((value) => value === 0)
+        dataset.data.every((value) => value === 0) // returns true for an empty array
     ))) {
         return (
             <div className={stylesChart.alert}>

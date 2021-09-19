@@ -91,13 +91,6 @@
             4
         ],
         "@typescript-eslint/no-use-before-define": "off",
-        "react/jsx-max-props-per-line": [
-            "error",
-            {
-                "maximum": 10,
-                "when": "multiline"
-            }
-        ],
         "react/destructuring-assignment": "off",
         "react/display-name": "off",
         "implicit-arrow-linebreak": "off",
@@ -143,7 +136,6 @@
         "no-restricted-syntax": "off",
         "no-await-in-loop": "off",
         "unicorn/consistent-function-scoping": "off",
-        "unicorn/no-reduce": "off",
         "default-case": ["off"],
         "consistent-return": "off",
         "jsx-a11y/anchor-is-valid": "off",

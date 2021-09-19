@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Quote } from "../../models/apis/types";
+import { Quote, QuotesMap } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 import {
@@ -18,6 +18,7 @@ import {
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
+import { Currency } from "../../models/apis/enums";
 
 export const defaultTotalTargetAmount = 1_000_000;
 
@@ -89,53 +90,54 @@ export function getBrokerAccountsPositionsByIds(
 
 export function generateNewPosition(currentPortfolio: Portfolio, groupName: string) {
     if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-        currentPortfolio.positions.push(newModelPortfolioRow(groupName));
-        currentPortfolio.positions = recalculateModelPortfolioPercentage(
-            currentPortfolio.positions,
-            typeof currentPortfolio.totalTargetAmount === "number" ? currentPortfolio.totalTargetAmount : 0
-        );
+        currentPortfolio.positions.push(newModelPortfolioRow(getNewRowName(currentPortfolio.positions), groupName));
+        currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
     } else {
-        currentPortfolio.positions.push(newBrokerAccountRow(groupName));
+        currentPortfolio.positions.push(newBrokerAccountRow(getNewRowName(currentPortfolio.positions), groupName));
         currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
     }
 }
 
 export function mapPositionFromBrokerReport(groupName: string, position: BrokerReportPosition): BrokerAccountPosition {
+    const currentPrice = position.currentPrice ? position.currentPrice : position.averagePrice;
     return {
         id: uuidv4(),
+        name: position.name,
         ticker: position.code,
         percentage: 0,
-        currentPrice: position.averagePrice,
+        currentPrice,
         quantity: position.quantity,
-        amount: position.quantity * position.averagePrice,
+        amount: position.quantity * currentPrice,
         groupName,
         averagePrice: position.averagePrice
     };
 }
 
-export const newModelPortfolioRow: (groupName: string) => ModelPortfolioPosition = (groupName: string) => ({
-    id: uuidv4(),
-    ticker: NEW_ENTRY,
-    groupName,
-    weight: 1,
-    percentage: 0,
-    targetAmount: 0,
-    currentPrice: 0,
-    targetQuantity: 0,
-    quantity: 0,
-    amount: 0
-});
+export const newModelPortfolioRow: (tickerName: string, groupName: string) => ModelPortfolioPosition =
+    (tickerName: string, groupName: string) => ({
+        id: uuidv4(),
+        ticker: tickerName,
+        groupName,
+        weight: 1,
+        percentage: 0,
+        targetAmount: 0,
+        currentPrice: 0,
+        targetQuantity: 0,
+        quantity: 0,
+        amount: 0
+    });
 
-export const newBrokerAccountRow: (groupName: string) => BrokerAccountPosition = (groupName: string) => ({
-    id: uuidv4(),
-    ticker: NEW_ENTRY,
-    groupName,
-    percentage: 0,
-    averagePrice: 0,
-    currentPrice: 0,
-    quantity: 0,
-    amount: 0
-});
+export const newBrokerAccountRow: (tickerName: string, groupName: string) => BrokerAccountPosition =
+    (tickerName: string, groupName: string) => ({
+        id: uuidv4(),
+        ticker: tickerName,
+        groupName,
+        percentage: 0,
+        averagePrice: 0,
+        currentPrice: 0,
+        quantity: 0,
+        amount: 0
+    });
 
 export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdatePayload) {
     portfolio.positions = portfolio.positions.map((row) => {
@@ -149,6 +151,12 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
                     [tableUpdate.valueKey]: Number.parseInt(tableUpdate.newValue, 10)
                 };
             }
+            if (tableUpdate.valueKey === EditableTableColumns.AVERAGE_PRICE) {
+                return {
+                    ...row,
+                    [tableUpdate.valueKey]: Number.parseFloat(Number.parseFloat(tableUpdate.newValue.replace(",", ".")).toFixed(5))
+                };
+            }
             return {
                 ...row,
                 [tableUpdate.valueKey]: tableUpdate.newValue
@@ -158,57 +166,37 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 
-export function recalculateRowsPrice(portfolio: Portfolio, quotes: Quote[]) {
-    const priceMap = new Map<string, number>();
-    for (const quote of quotes) {
-        priceMap.set(quote.ticker, quote.price);
-    }
-    portfolio.positions = portfolio.positions.map((row) => {
-        const newPrice = priceMap.get(row.ticker);
-        if (newPrice) {
-            return {
-                ...row,
-                currentPrice: newPrice,
-                amount: newPrice * row.quantity
-            };
-        }
-        return {
-            ...row,
-            currentPrice: 0,
-            amount: 0
-        };
+export function recalculateRowsPrice(
+    positions: PortfolioPosition[],
+    quotes: QuotesMap
+): ModelPortfolioPosition[] | BrokerAccountPosition[] {
+    return positions.map((row) => {
+        return applyQuoteForPosition(row, quotes[row.ticker]);
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 
-export function recalculateRowPrice(portfolio: Portfolio, tickerName: string, quote?: Quote) {
-    portfolio.positions = portfolio.positions.map((row) => {
-        if (row.ticker === tickerName) {
-            if (quote) {
-                return {
-                    ...row,
-                    currentPrice: quote.price,
-                    amount: quote.price * row.quantity
-                };
-            }
-            return {
-                ...row,
-                currentPrice: 0,
-                amount: 0
-            };
+export function recalculateRowPrice(
+    positions: PortfolioPosition[],
+    quote?: Quote
+): ModelPortfolioPosition[] | BrokerAccountPosition[] {
+    return positions.map((row) => {
+        if (row.ticker === quote?.ticker) {
+            return applyQuoteForPosition(row, quote);
         }
         return row;
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 
-export function recalculateModelPortfolioPercentage(
-    modelPortfolioPositions: ModelPortfolioPosition[],
-    totalTargetAmount?: number
-): ModelPortfolioPosition[] {
+export function recalculateModelPortfolioPercentage(modelPortfolio: ModelPortfolio): ModelPortfolioPosition[] {
+    const totalTargetAmount: number | undefined = typeof modelPortfolio.totalTargetAmount === "number"
+        ? modelPortfolio.totalTargetAmount
+        : 0;
+
     let totalWeight = 0;
-    for (const position of modelPortfolioPositions) {
+    for (const position of modelPortfolio.positions) {
         totalWeight += position.weight;
     }
-    return modelPortfolioPositions.map((position) => {
+    return modelPortfolio.positions.map((position) => {
         const proportion = position.weight / totalWeight;
         const targetAmount = totalTargetAmount ? (totalTargetAmount * proportion) : 0;
         return {
@@ -254,16 +242,50 @@ export function recalculatePositionAmountByQuantity<T extends PortfolioPosition>
 }
 
 export function getNewGroupName(tableData: TableData): string {
-    const noNameRegExp = new RegExp(`^${NEW_GROUP} ?\\d*$`);
-    const groups = [...new Set(tableData
-        .map((data) => data.groupName)
-        .filter((groupName) => noNameRegExp.test(groupName)))];
-    if (groups.length === 0) {
-        return NEW_GROUP;
+    return getNewName(tableData, NEW_GROUP, "groupName");
+}
+
+export function getNewRowName(tableData: TableData): string {
+    return getNewName(tableData, NEW_ENTRY, "ticker");
+}
+
+function getNewName(tableData: TableData, nameConst: string, fieldName: "ticker" | "groupName"): string {
+    const noNameRegExp = new RegExp(`^${nameConst} ?\\d*$`);
+    const strings = [...new Set(tableData
+        .map((data) => data[fieldName])
+        .filter((ticker) => noNameRegExp.test(ticker)))];
+    if (strings.length === 0) {
+        return nameConst;
     }
-    const newGroupsNums = groups.map((groupName) => {
-        if (groupName.length === NEW_GROUP.length) return 0;
-        return Number.parseInt(groupName.slice(groupName.lastIndexOf(" ")), 10);
+    const newStringsNums = strings.map((ticker) => {
+        if (ticker.length === nameConst.length) return 0;
+        return Number.parseInt(ticker.slice(ticker.lastIndexOf(" ")), 10);
     }).sort((a, b) => a - b);
-    return `${NEW_GROUP} ${newGroupsNums[newGroupsNums.length - 1] + 1}`;
+    return `${nameConst} ${newStringsNums[newStringsNums.length - 1] + 1}`;
+}
+
+function applyQuoteForPosition(position: PortfolioPosition, quote?: Quote): PortfolioPosition {
+    if (quote) {
+        if (quote.currency !== Currency.RUB) {
+            console.warn(`Received ${quote.ticker} quote with unsupported currency ${quote.currency}`);
+            return {
+                ...position,
+                currentPrice: 0,
+                amount: 0,
+                name: quote.name
+            };
+        }
+        return {
+            ...position,
+            currentPrice: quote.price,
+            amount: quote.price * position.quantity,
+            name: quote.name
+        };
+    }
+    return {
+        ...position,
+        currentPrice: 0,
+        amount: 0,
+        name: undefined
+    };
 }

@@ -80,21 +80,17 @@ export const sidebarMenuSlice = createSlice({
             newOrder: MenuElementOrder
         }>) => {
             if (action.payload.oldOrder.type === SidebarMenuElementsTypes.MODEL_PORTFOLIO) {
-                [
-                    state.modelPortfolios.elements[action.payload.oldOrder.index],
-                    state.modelPortfolios.elements[action.payload.newOrder.index]
-                ] = [
-                    state.modelPortfolios.elements[action.payload.newOrder.index],
-                    state.modelPortfolios.elements[action.payload.oldOrder.index]
-                ];
+                state.modelPortfolios.elements.splice(
+                    action.payload.newOrder.index,
+                    0,
+                    state.modelPortfolios.elements.splice(action.payload.oldOrder.index, 1)[0]
+                );
             } else if (action.payload.oldOrder.type === SidebarMenuElementsTypes.BROKER_ACCOUNT) {
-                [
-                    state.brokerAccounts.elements[action.payload.oldOrder.index],
-                    state.brokerAccounts.elements[action.payload.newOrder.index]
-                ] = [
-                    state.brokerAccounts.elements[action.payload.newOrder.index],
-                    state.brokerAccounts.elements[action.payload.oldOrder.index]
-                ];
+                state.brokerAccounts.elements.splice(
+                    action.payload.newOrder.index,
+                    0,
+                    state.brokerAccounts.elements.splice(action.payload.oldOrder.index, 1)[0]
+                );
             }
         },
         setDefault: () => initialState

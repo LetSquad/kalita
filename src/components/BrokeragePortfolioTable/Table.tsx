@@ -1,74 +1,44 @@
-import _ from "lodash";
 import React, {
+    FocusEvent,
+    KeyboardEvent,
+    lazy,
     useCallback,
     useEffect,
     useMemo,
     useRef,
     useState
 } from "react";
-import { ReactTabulator } from "react-tabulator";
 import { $enum } from "ts-enum-util";
 import { ChartData } from "chart.js/auto";
-import { ColumnCalcs, RowRange, TableLayout } from "../../../custom_typings/react-tabulator/enums";
-import {
-    CellComponent,
-    ColumnDefinition,
-    DataTypes,
-    GroupComponent,
-    RowComponent,
-    TabulatorOptions, TabulatorRef,
-    TabulatorTableDownloadConfig
-} from "../../../custom_typings/react-tabulator/types";
-import { getMoexQuotesForName } from "../../apis/moexApi";
+import { loadMoexQuoteByTicker } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
-import { TableData } from "../../models/table/types";
 import { useAppDispatch } from "../../store/hooks";
-import {
-    addNewPosition,
-    deleteRowById,
-    update,
-    updateGroupName
-} from "../../store/portfolios/portfoliosReducer";
-import { ActionBlock } from "./ActionBlock";
+import { addNewPosition, update, updateGroupName, updatePosition } from "../../store/portfolios/portfoliosReducer";
+import { DataTableData, DataTableRef } from "../DataTable/types/base";
+import { ColumnDefinition } from "../DataTable/types/column";
+import { WithSuspense } from "../utils/WithSuspense";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
 import stylesChart from "../Chart/styles/Chart.scss";
-import { generateCsv, generateExportList } from "./utils/utils";
 import Chart from "../Chart/Chart";
 
-interface Props {
-    columns: (actionBlock: JSX.Element) => ColumnDefinition[],
+interface TableProps {
+    columns: ColumnDefinition[],
     currentPortfolio: Portfolio,
     additionalHeaderPart?: JSX.Element
 }
 
-export default function Table({ columns, currentPortfolio, additionalHeaderPart }: Props) {
+const DataTable = lazy(/* webpackChunkName: "dataTable" */() =>
+    import("../DataTable/DataTable"));
+
+export default function Table({ columns, currentPortfolio, additionalHeaderPart }: TableProps) {
     const dispatch = useAppDispatch();
-    const tableRef = useRef<TabulatorRef>(null);
     const [isChartMode, setIsChartMode] = useState<boolean>(false);
 
-    const cellUpdated = useCallback((cell: CellComponent) => {
-        dispatch(update({
-            id: cell.getRow().getData().id,
-            valueKey: $enum(EditableTableColumns)
-                .asValueOrThrow(cell.getField()),
-            newValue: cell.getValue() as string
-        }));
-        if (cell.getField() === BaseColumnNames.TICKER) {
-            dispatch(getMoexQuotesForName(cell.getValue() as string));
-        }
-    }, [dispatch]);
+    const dataTableRef = useRef<DataTableRef>(null);
 
-    const rowMoved = useCallback((row: RowComponent) => {
-        const newOrder = row.getTable().getRows().map((_row: RowComponent) => _row.getData().id);
-        dispatch(update({
-            id: row.getData().id,
-            valueKey: EditableTableColumns.GROUP_NAME,
-            newValue: row.getData().groupName,
-            newOrder
-        }));
-    }, [dispatch]);
+    const importTableToCsvText = useCallback(() => dataTableRef.current?.exportToCsv({ includeGroup: true }), []);
 
     const addRowToGroup = useCallback((groupName) => {
         dispatch(addNewPosition(groupName));
@@ -81,63 +51,31 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         }));
     }, [dispatch]);
 
-    const deleteRow = useCallback((id: string) => {
-        dispatch(deleteRowById(id));
+    const rowMoved = useCallback((rowId: string, oldOrder: number, newOrder: number, newGroupName?: string) => {
+        dispatch(updatePosition({
+            id: rowId,
+            oldOrder,
+            newOrder,
+            newGroupName
+        }));
     }, [dispatch]);
 
-    const options: TabulatorOptions = useMemo(() => ({
-        movableRows: true,
-        headerSortTristate: true,
-        layoutColumnsOnNewData: true,
-        groupBy: "groupName",
-        columnCalcs: ColumnCalcs.BOTH,
-        reactiveData: true,
-        layout: TableLayout.FIT_COLUMNS,
-        resizableColumns: false,
-        groupHeader: (value: DataTypes, count: number, data: TableData, group: GroupComponent) => {
-            const elem = document.createElement("div");
-            elem.className = styles.groupContainer;
-            const input = document.createElement("input");
-            input.value = group.getKey();
-            input.className = styles.groupInput;
-            input.addEventListener("blur", (ev) => {
-                updateGroup(group.getKey(), (ev.target as HTMLInputElement).value);
-            });
-            elem.append(input);
-            const plus = document.createElement("i");
-            plus.className = `plus icon ${styles.groupAddButton}`;
-            plus.addEventListener("click", () => addRowToGroup(group.getKey()));
-            elem.append(plus);
-            return elem;
+    const cellUpdated = useCallback((
+        rowId: string,
+        field: keyof DataTableData,
+        event: FocusEvent<HTMLInputElement> | KeyboardEvent<HTMLInputElement>,
+        value: string | number | boolean | undefined
+    ) => {
+        dispatch(update({
+            id: rowId,
+            valueKey: $enum(EditableTableColumns)
+                .asValueOrThrow(field as string),
+            newValue: value as string
+        }));
+        if (field === BaseColumnNames.TICKER) {
+            dispatch(loadMoexQuoteByTicker(value as string));
         }
-    }), [addRowToGroup, updateGroup]);
-
-    const actionBlock = useCallback(() => (
-        <ActionBlock deleteRow={deleteRow} />
-    ), [deleteRow]);
-
-    const importTableToCsvText = useCallback(() => {
-        if (tableRef.current) {
-            const downloadConfig: TabulatorTableDownloadConfig = {
-                columnHeaders: true,
-                columnGroups: true,
-                rowGroups: true,
-                columnCalcs: false,
-                dataTree: true
-            };
-            let list = tableRef.current.table.modules.export.generateExportList(downloadConfig, false, RowRange.VISIBLE, "download");
-            list = generateExportList(list);
-            return generateCsv(list);
-        }
-        return undefined;
-    }, [tableRef]);
-
-    const table = useMemo(() => (
-        <ReactTabulator
-            ref={tableRef} columns={columns(actionBlock())} data={_.cloneDeep(currentPortfolio.positions)}
-            options={options} className={styles.table} cellEdited={cellUpdated} rowMoved={rowMoved}
-        />
-    ), [actionBlock, cellUpdated, options, columns, currentPortfolio, rowMoved, tableRef]);
+    }, [dispatch]);
 
     const chart = useMemo(() => {
         const chartData: ChartData | null = {
@@ -166,12 +104,40 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     return (
         <div className={styles.container}>
             <AdditionalHeader
-                additionalHeaderPart={additionalHeaderPart} importTableToCsvText={importTableToCsvText}
+                additionalHeaderPart={additionalHeaderPart}
+                importTableToCsvText={importTableToCsvText}
                 currentPortfolio={currentPortfolio}
                 isChartMode={isChartMode}
                 onToggleChartMode={handleToggleChartMode}
             />
-            {isChartMode ? chart : table}
+            {isChartMode
+                ? chart
+                : (
+                    <WithSuspense>
+                        <DataTable
+                            columns={columns}
+                            data={currentPortfolio.positions}
+                            groupBy="groupName"
+                            onAddRowToGroup={addRowToGroup}
+                            onGroupNameEdit={updateGroup}
+                            expandableGroup
+                            onRowMoved={rowMoved}
+                            onCellBlur={cellUpdated}
+                            onCellKeyEnter={cellUpdated}
+                            classes={{
+                                tableClassName: styles.table,
+                                headerRowClassName: styles.headerRow,
+                                groupRowClassName: styles.specificRow,
+                                calcRowClassName: styles.specificRow,
+                                rowClassName: styles.baseRow,
+                                rowCellClassName: styles.baseCell,
+                                calcRowCellClassName: styles.specificCell,
+                                groupRowCellClassName: styles.specificCell
+                            }}
+                            ref={dataTableRef}
+                        />
+                    </WithSuspense>
+                )}
         </div>
     );
 }

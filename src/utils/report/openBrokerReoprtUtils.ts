@@ -1,15 +1,17 @@
 import { BrokerReportData, BrokerReportDeal, BrokerReportPosition } from "../../models/portfolios/types";
 
 const SECURITY_TYPE_STOCK = "Акции";
+const SECURITY_TYPE_FUND = "ПАИ";
 
-export function parseOpenBrokerStocks(data: any): Map<string, string> {
-    const stocksMap = new Map<string, string>();
+export function parseOpenBrokerPositions(data: any): Map<string, string> {
+    const positionsMap = new Map<string, string>();
     for (const security of data.broker_report.spot_portfolio_security_params[0].item) {
-        if (security.$.security_type === SECURITY_TYPE_STOCK) {
-            stocksMap.set(security.$.security_grn_code, security.$.ticker);
+        const securityType: string = security.$.security_type;
+        if (securityType === SECURITY_TYPE_STOCK || securityType === SECURITY_TYPE_FUND) {
+            positionsMap.set(security.$.security_grn_code, security.$.ticker);
         }
     }
-    return stocksMap;
+    return positionsMap;
 }
 
 export function parseOpenBrokerDeals(data: any): Map<string, BrokerReportDeal[]> {
@@ -40,15 +42,15 @@ export function parseOpenBrokerDeals(data: any): Map<string, BrokerReportDeal[]>
 }
 
 export function parseOpenBrokerReport(brokerName: string, data: any): BrokerReportData {
-    const accountName = `${brokerName}: ${data.broker_report.$.acc_client_code[0]}`;
+    const accountName = `${brokerName}: ${data.broker_report.$.acc_client_code}`;
 
-    const stocksMap: Map<string, string> = parseOpenBrokerStocks(data);
+    const positionsMap: Map<string, string> = parseOpenBrokerPositions(data);
     const dealsMap: Map<string, BrokerReportDeal[]> = parseOpenBrokerDeals(data);
 
     const positions: BrokerReportPosition[] = [];
     for (const asset of data.broker_report.spot_assets[0].item) {
         const isinCode: string = asset.$.asset_code;
-        const ticker = stocksMap.get(isinCode);
+        const ticker = positionsMap.get(isinCode);
 
         if (ticker) {
             let dealsSum = 0;

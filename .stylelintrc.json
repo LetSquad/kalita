@@ -8,6 +8,7 @@
         }],
         "property-no-vendor-prefix": [true, {
             "ignoreProperties": "box-flex"
-        }]
+        }],
+        "selector-no-qualifying-type": null
     }
 }
