@@ -93,6 +93,33 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         );
     }, [currentPortfolio.positions]);
 
+    const table = useMemo(() => (
+        <WithSuspense>
+            <DataTable
+                columns={columns}
+                data={currentPortfolio.positions}
+                groupBy="groupName"
+                onAddRowToGroup={addRowToGroup}
+                onGroupNameEdit={updateGroup}
+                expandableGroup
+                onRowMoved={rowMoved}
+                onCellBlur={cellUpdated}
+                onCellKeyEnter={cellUpdated}
+                classes={{
+                    tableClassName: styles.table,
+                    headerRowClassName: styles.headerRow,
+                    groupRowClassName: styles.specificRow,
+                    calcRowClassName: styles.specificRow,
+                    rowClassName: styles.baseRow,
+                    rowCellClassName: styles.baseCell,
+                    calcRowCellClassName: styles.specificCell,
+                    groupRowCellClassName: styles.specificCell
+                }}
+                ref={dataTableRef}
+            />
+        </WithSuspense>
+    ), [columns, currentPortfolio.positions, addRowToGroup, updateGroup, rowMoved, cellUpdated, dataTableRef]);
+
     const handleToggleChartMode = useCallback(() => {
         setIsChartMode((old) => !old);
     }, [setIsChartMode]);
@@ -112,32 +139,8 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
             />
             {isChartMode
                 ? chart
-                : (
-                    <WithSuspense>
-                        <DataTable
-                            columns={columns}
-                            data={currentPortfolio.positions}
-                            groupBy="groupName"
-                            onAddRowToGroup={addRowToGroup}
-                            onGroupNameEdit={updateGroup}
-                            expandableGroup
-                            onRowMoved={rowMoved}
-                            onCellBlur={cellUpdated}
-                            onCellKeyEnter={cellUpdated}
-                            classes={{
-                                tableClassName: styles.table,
-                                headerRowClassName: styles.headerRow,
-                                groupRowClassName: styles.specificRow,
-                                calcRowClassName: styles.specificRow,
-                                rowClassName: styles.baseRow,
-                                rowCellClassName: styles.baseCell,
-                                calcRowCellClassName: styles.specificCell,
-                                groupRowCellClassName: styles.specificCell
-                            }}
-                            ref={dataTableRef}
-                        />
-                    </WithSuspense>
-                )}
+                : table
+            }
         </div>
     );
 }
