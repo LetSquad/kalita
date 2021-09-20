@@ -12,7 +12,6 @@ import { Icon, Input } from "semantic-ui-react";
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { AnalyticsMenuElement, BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../models/menu/types";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
-import { currentPortfolioSelector } from "../../../store/portfolios/selectors";
 import {
     deleteElementFromGroup,
     renameElementInGroup,
@@ -39,7 +38,6 @@ export default function SidebarMenuElement({
     const inputRef = useRef<Input>(null);
 
     const activeFile = useAppSelector((state) => state.sidebarMenu.activeMenuElementId);
-    const currentPortfolio = useAppSelector(currentPortfolioSelector);
 
     const active = activeFile?.id === menuElement.id;
 
@@ -66,14 +64,14 @@ export default function SidebarMenuElement({
     }, [active, dispatch]);
 
     const setActiveMenuElementId = useCallback((type: SidebarMenuElementsTypes, id: string) => {
-        if (currentPortfolio?.id !== id) {
+        if (!active) {
             dispatch(setActiveId({
                 type,
                 id
             }));
             dispatch(setCurrentMenuElementName(menuElement.name));
         }
-    }, [dispatch, menuElement.name, currentPortfolio?.id]);
+    }, [dispatch, menuElement.name, active]);
 
     const elementRenameInput = useCallback((_currentEditValue) => (
         <Input
@@ -137,10 +135,12 @@ export default function SidebarMenuElement({
     const elementContent = useMemo(() => (
         <>
             {elementTitle}
-            <div className={styles.iconsContainer}>
-                {editButton}
-                {deleteButton}
-            </div>
+            {(editButton || deleteButton) && (
+                <div className={styles.iconsContainer}>
+                    {editButton}
+                    {deleteButton}
+                </div>
+            )}
         </>
     ), [elementTitle, editButton, deleteButton]);
 
