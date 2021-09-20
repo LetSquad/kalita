@@ -1,5 +1,15 @@
-import React, { FocusEvent, KeyboardEvent, lazy, useCallback, useRef } from "react";
+import React, {
+    FocusEvent,
+    KeyboardEvent,
+    lazy,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 import { $enum } from "ts-enum-util";
+import { ChartData } from "chart.js/auto";
 import { loadMoexQuoteByTicker } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
@@ -10,6 +20,8 @@ import { ColumnDefinition } from "../DataTable/types/column";
 import { WithSuspense } from "../utils/WithSuspense";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
+import stylesChart from "../Chart/styles/Chart.scss";
+import Chart from "../Chart/Chart";
 
 interface TableProps {
     columns: ColumnDefinition[],
@@ -22,6 +34,7 @@ const DataTable = lazy(/* webpackChunkName: "dataTable" */() =>
 
 export default function Table({ columns, currentPortfolio, additionalHeaderPart }: TableProps) {
     const dispatch = useAppDispatch();
+    const [isChartMode, setIsChartMode] = useState<boolean>(false);
 
     const dataTableRef = useRef<DataTableRef>(null);
 
@@ -64,36 +77,70 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         }
     }, [dispatch]);
 
+    const chart = useMemo(() => {
+        const chartData: ChartData | null = {
+            labels: currentPortfolio.positions.map((row) => row.ticker),
+            datasets: [{
+                data: currentPortfolio.positions.map((row) => row.percentage)
+            }]
+        };
+        return (
+            <div className={stylesChart.chartWrapper}>
+                <div className={stylesChart.chart}>
+                    <Chart data={chartData} />
+                </div>
+            </div>
+        );
+    }, [currentPortfolio.positions]);
+
+    const table = useMemo(() => (
+        <WithSuspense>
+            <DataTable
+                columns={columns}
+                data={currentPortfolio.positions}
+                groupBy="groupName"
+                onAddRowToGroup={addRowToGroup}
+                onGroupNameEdit={updateGroup}
+                expandableGroup
+                onRowMoved={rowMoved}
+                onCellBlur={cellUpdated}
+                onCellKeyEnter={cellUpdated}
+                classes={{
+                    tableClassName: styles.table,
+                    headerRowClassName: styles.headerRow,
+                    groupRowClassName: styles.specificRow,
+                    calcRowClassName: styles.specificRow,
+                    rowClassName: styles.baseRow,
+                    rowCellClassName: styles.baseCell,
+                    calcRowCellClassName: styles.specificCell,
+                    groupRowCellClassName: styles.specificCell
+                }}
+                ref={dataTableRef}
+            />
+        </WithSuspense>
+    ), [columns, currentPortfolio.positions, addRowToGroup, updateGroup, rowMoved, cellUpdated, dataTableRef]);
+
+    const handleToggleChartMode = useCallback(() => {
+        setIsChartMode((old) => !old);
+    }, [setIsChartMode]);
+
+    useEffect(() => {
+        setIsChartMode(false);
+    }, [currentPortfolio]);
+
     return (
         <div className={styles.container}>
             <AdditionalHeader
-                additionalHeaderPart={additionalHeaderPart} importTableToCsvText={importTableToCsvText}
+                additionalHeaderPart={additionalHeaderPart}
+                importTableToCsvText={importTableToCsvText}
                 currentPortfolio={currentPortfolio}
+                isChartMode={isChartMode}
+                onToggleChartMode={handleToggleChartMode}
             />
-            <WithSuspense>
-                <DataTable
-                    columns={columns}
-                    data={currentPortfolio.positions}
-                    groupBy="groupName"
-                    onAddRowToGroup={addRowToGroup}
-                    onGroupNameEdit={updateGroup}
-                    expandableGroup
-                    onRowMoved={rowMoved}
-                    onCellBlur={cellUpdated}
-                    onCellKeyEnter={cellUpdated}
-                    classes={{
-                        tableClassName: styles.table,
-                        headerRowClassName: styles.headerRow,
-                        groupRowClassName: styles.specificRow,
-                        calcRowClassName: styles.specificRow,
-                        rowClassName: styles.baseRow,
-                        rowCellClassName: styles.baseCell,
-                        calcRowCellClassName: styles.specificCell,
-                        groupRowCellClassName: styles.specificCell
-                    }}
-                    ref={dataTableRef}
-                />
-            </WithSuspense>
+            {isChartMode
+                ? chart
+                : table
+            }
         </div>
     );
 }

@@ -25,7 +25,7 @@ export const sidebarMenuSlice = createSlice({
         setCurrentProjectName: (state: SidebarMenuState, action: PayloadAction<string | undefined>) => {
             state.currentProjectName = action.payload;
         },
-        setCurrentPortfolioName: (state: SidebarMenuState, action: PayloadAction<string | undefined>) => {
+        setCurrentMenuElementName: (state: SidebarMenuState, action: PayloadAction<string | undefined>) => {
             state.currentPortfolioName = action.payload;
         },
         setMenuGroups: (state: SidebarMenuState, action: PayloadAction<SidebarMenuGroupData>) => {
@@ -99,7 +99,7 @@ export const sidebarMenuSlice = createSlice({
 
 export const {
     setCurrentProjectName,
-    setCurrentPortfolioName,
+    setCurrentMenuElementName,
     setMenuGroups,
     addNewElementToGroup,
     deleteElementFromGroup,

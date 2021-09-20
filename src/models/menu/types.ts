@@ -13,6 +13,10 @@ export interface ModelPortfolioMenuElement extends SidebarMenuElement {
     type: SidebarMenuElementsTypes.MODEL_PORTFOLIO;
 }
 
+export interface AnalyticsMenuElement extends SidebarMenuElement {
+    type: SidebarMenuElementsTypes.ANALYTICS;
+}
+
 export interface MenuElementIdentifier {
     id: string;
     type: SidebarMenuElementsTypes;

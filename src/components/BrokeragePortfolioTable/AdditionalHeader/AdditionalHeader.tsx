@@ -10,11 +10,13 @@ import { useAppDispatch } from "../../../store/hooks";
 interface Props {
     currentPortfolio: Portfolio,
     additionalHeaderPart?: JSX.Element,
-    importTableToCsvText: () => string | undefined;
+    importTableToCsvText: () => string | undefined,
+    isChartMode: boolean
+    onToggleChartMode: () => unknown
 }
 
 export function AdditionalHeader({
-    currentPortfolio, additionalHeaderPart, importTableToCsvText
+    currentPortfolio, additionalHeaderPart, importTableToCsvText, isChartMode, onToggleChartMode
 }: Props) {
     const dispatch = useAppDispatch();
 
@@ -34,6 +36,12 @@ export function AdditionalHeader({
             </div>
             <div>
                 <AdditionalHeaderMenu currentPortfolio={currentPortfolio} importTableToCsvText={importTableToCsvText} />
+                <Icon
+                    name={isChartMode ? "table" : "chart pie"}
+                    link
+                    className={styles.additionalHeaderIcon}
+                    onClick={onToggleChartMode}
+                />
                 <Icon name="sync alternate" link className={styles.additionalHeaderIcon} onClick={() => updateQuotesCurrentPrice()} />
                 <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
             </div>
