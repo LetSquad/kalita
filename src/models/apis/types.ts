@@ -1,19 +1,31 @@
-import { Currency } from "./enums";
+import { DividendCurrency, MoexCurrency } from "./enums";
+
+export type QuotesData = [CurrencyQuotesMap, QuotesMap];
+
+export type QuoteData = [CurrencyQuotesMap, Quote | undefined];
+
+export type QuotesMap = Record<string, Quote>;
+
+export interface CurrencyQuotesMap {
+    [key: string]: CurrencyQuotes;
+}
+
+export interface CurrencyQuotes {
+    [key: string]: number;
+}
 
 export interface Quote {
     readonly isin: string;
     readonly name: string;
     readonly ticker: string;
     readonly price: number;
-    readonly currency: Currency;
+    readonly currency: MoexCurrency;
 }
 
-export type QuotesMap = Record<string, Quote>;
-
-export interface QuoteDividendsDate {
+export interface QuoteDividends {
     readonly date: string
     readonly value: number
-    readonly currency: string
+    readonly currency: DividendCurrency
 }
 
 export interface MoexQuote {
@@ -21,15 +33,20 @@ export interface MoexQuote {
     PREVADMITTEDQUOTE: string;
     SHORTNAME: string;
     ISIN: string;
-    CURRENCYID: Currency;
+    CURRENCYID: MoexCurrency;
+}
+
+export interface MoexCurrencyQuote {
+    SECID: string;
+    CURRENTVALUE: string;
 }
 
 export interface MoexQuoteDividends {
-    SECID: string;
-    ISIN: string;
+    secid: string;
+    isin: string;
     registryclosedate: string;
     value: string;
-    currencyid: string;
+    currencyid: DividendCurrency;
 }
 
 export interface MoexData {
@@ -43,7 +60,18 @@ export interface MoexData {
     }
 }
 
-export interface MoexDataDividends {
+export interface MoexCurrencyData {
+    document: {
+        data: {
+            id: string,
+            rows: {
+                row: MoexCurrencyQuote[];
+            }
+        }
+    }
+}
+
+export interface MoexDividendsData {
     document: {
         data: {
             id: string,

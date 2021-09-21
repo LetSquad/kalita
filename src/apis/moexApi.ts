@@ -2,18 +2,27 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { parseStringPromise } from "xml2js";
 import axios from "axios";
 import {
+    CurrencyQuotes,
+    CurrencyQuotesMap, MoexCurrencyData,
     MoexData,
-    MoexDataDividends,
+    MoexDividendsData,
     MoexQuote,
     MoexQuoteDividends,
     Quote,
-    QuoteDividendsDate,
+    QuoteData,
+    QuoteDividends,
+    QuotesData,
     QuotesMap
 } from "../models/apis/types";
+import { Currency } from "../models/portfolios/enums";
 
 const BOARD_STOCKS = "TQBR";
 const BOARD_ETFS = "TQTF";
 const BOARD_FUNDS = "TQIF";
+
+const QUOTE_USD = "USDFIXME";
+const QUOTES_EUR = "EURFIXME";
+const QUOTES_EUR_USD = "EURUSDFIXME";
 
 const QUOTES_FILTER_LIMIT = 10;
 
@@ -22,9 +31,16 @@ const moexHttpClient = axios.create({
     responseType: "text"
 });
 
-function getUrl(board: string) {
+function getUrl(board: string): string {
     const filters = "iss.meta=off&iss.only=securities&securities.columns=SECID,PREVADMITTEDQUOTE,SHORTNAME,ISIN,CURRENCYID";
     return `/iss/engines/stock/markets/shares/boards/${board}/securities.xml?${filters}`;
+}
+
+function getCurrencyQuotes(): Promise<CurrencyQuotes> {
+    return moexHttpClient.get(
+        "/iss/engines/currency/markets/index/boards/FIXI/securities.xml" +
+        "?iss.meta=off&iss.only=marketdata&marketdata.columns=SECID,CURRENTVALUE"
+    ).then((response) => convertCurrencyResponseToQuotes(response.data));
 }
 
 function getQuotesByBoard(board: string, tickers?: string[]): Promise<Quote[]> {
@@ -40,6 +56,11 @@ function getMoexQuotes(tickers?: string[]): Promise<Quote[]> {
         getQuotesByBoard(BOARD_ETFS, tickers),
         getQuotesByBoard(BOARD_FUNDS, tickers)
     ]).then((quotes) => quotes.flat());
+}
+
+function convertCurrencyResponseToQuotes(xmlStr: string): Promise<CurrencyQuotes> {
+    return parseStringPromise(xmlStr, { ignoreAttrs: false, mergeAttrs: true, explicitArray: false })
+        .then((moexData) => parseCurrencyQuotes(moexData));
 }
 
 function convertResponseToQuotes(xmlStr: string): Promise<Quote[]> {
@@ -71,16 +92,51 @@ function parseQuotes(json: MoexData): Quote[] {
     return [];
 }
 
-export const loadMoexQuoteByTicker = createAsyncThunk<Quote | undefined, string>(
+function parseCurrencyQuotes(json: MoexCurrencyData): CurrencyQuotes {
+    const quotes: CurrencyQuotes = {};
+    for (const row of json.document.data.rows.row) {
+        quotes[row.SECID] = Number.parseFloat(row.CURRENTVALUE);
+    }
+    return quotes;
+}
+
+function createCurrencyQuotesMap(moexQuotes: CurrencyQuotes): CurrencyQuotesMap {
+    const map: CurrencyQuotesMap = {};
+    const rubMap: CurrencyQuotes = {};
+    rubMap[Currency.USD] = 1 / moexQuotes[QUOTE_USD];
+    rubMap[Currency.EUR] = 1 / moexQuotes[QUOTES_EUR];
+    map[Currency.RUB] = rubMap;
+    const usdMap: CurrencyQuotes = {};
+    usdMap[Currency.RUB] = moexQuotes[QUOTE_USD];
+    usdMap[Currency.EUR] = 1 / moexQuotes[QUOTES_EUR_USD];
+    map[Currency.USD] = usdMap;
+    const eurMap: CurrencyQuotes = {};
+    eurMap[Currency.RUB] = moexQuotes[QUOTES_EUR];
+    eurMap[Currency.USD] = moexQuotes[QUOTES_EUR_USD];
+    map[Currency.EUR] = eurMap;
+    return map;
+}
+
+export const loadMoexQuoteByTicker = createAsyncThunk<QuoteData, string>(
     "loadMoexQuoteByTicker",
-    async (ticker: string) => getMoexQuotes([ticker])
-        .then((quotes) => (quotes[0] ? quotes[0] : undefined))
+    async (ticker: string) => Promise.all([
+        getMoexCurrencyQuotes(),
+        getMoexQuotes([ticker]).then((quotes) => (quotes[0] ? quotes[0] : undefined))
+    ])
 );
 
-export const loadMoexQuotesByTickers = createAsyncThunk<QuotesMap, string[]>(
+export const loadMoexQuotesByTickers = createAsyncThunk<QuotesData, string[]>(
     "loadMoexQuotesByTickers",
-    async (tickers: string[]) => getMoexQuotesByTickers(tickers)
+    async (tickers: string[]) => Promise.all([
+        getMoexCurrencyQuotes(),
+        getMoexQuotesByTickers(tickers)
+    ])
 );
+
+export function getMoexCurrencyQuotes(): Promise<CurrencyQuotesMap> {
+    return getCurrencyQuotes()
+        .then((currencyQuotes) => createCurrencyQuotesMap(currencyQuotes));
+}
 
 export function getMoexQuotesByTickers(tickers: string[]): Promise<QuotesMap> {
     return getMoexQuotes(tickers).then((quotes) => {
@@ -102,7 +158,25 @@ export function getMoexQuotesByIsinCodes(): Promise<QuotesMap> {
     });
 }
 
-function getDividends(json: MoexDataDividends): QuoteDividendsDate[] {
+function getDividendsUrl(ticket: string): string {
+    return `/iss/securities/${ticket}/dividends.xml?iss.meta=off`;
+}
+
+export function getStockDividends(ticket: string): Promise<QuoteDividends[]> {
+    return moexHttpClient.get(getDividendsUrl(ticket))
+        .then((moexData) => convertResponseToQuotesDividends(moexData.data));
+}
+
+function getMoexDataDividends(xmlStr: string): Promise<MoexDividendsData> {
+    return parseStringPromise(xmlStr, { ignoreAttrs: false, mergeAttrs: true, explicitArray: false });
+}
+
+function convertResponseToQuotesDividends(xmlStr: string): Promise<QuoteDividends[]> {
+    return getMoexDataDividends(xmlStr)
+        .then((moexDataDividends) => getDividends(moexDataDividends));
+}
+
+function getDividends(json: MoexDividendsData): QuoteDividends[] {
     if (json.document.data.rows.row) {
         const { row } = json.document.data.rows;
         if (Array.isArray(row)) {
@@ -120,21 +194,4 @@ function getDividends(json: MoexDataDividends): QuoteDividendsDate[] {
     }
 
     return [];
-}
-
-function getDividendsUrl(ticket: string) {
-    return `/iss/securities/${ticket}/dividends.xml?iss.meta=off`;
-}
-
-export function getStockDividends(ticket: string) {
-    return moexHttpClient.get(getDividendsUrl(ticket));
-}
-
-function getMoexDataDividends(xmlStr: string): Promise<MoexDataDividends> {
-    return parseStringPromise(xmlStr, { ignoreAttrs: false, mergeAttrs: true, explicitArray: false });
-}
-
-export async function convertResponseToQuotesDividends(xmlStr: string): Promise<QuoteDividendsDate[]> {
-    const moexDataDividends = await getMoexDataDividends(xmlStr);
-    return getDividends(moexDataDividends);
 }

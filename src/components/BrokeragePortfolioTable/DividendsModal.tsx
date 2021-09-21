@@ -5,30 +5,28 @@ import React, {
     useMemo,
     useState
 } from "react";
-import { convertResponseToQuotesDividends, getStockDividends } from "../../apis/moexApi";
-import { QuoteDividendsDate } from "../../models/apis/types";
+import { getStockDividends } from "../../apis/moexApi";
+import { QuoteDividends } from "../../models/apis/types";
 import styles from "./styles/DividendsModal.scss";
 import partsStyle from "../../styles/parts.scss";
+import { getSymbol } from "../../utils/currencyUtils";
 
 interface DividendsModalProps {
-    ticket: string;
+    ticker: string;
     onClose: () => void;
 }
 
-export default function DividendsModal({ ticket, onClose }: DividendsModalProps) {
-    const [dividends, setDividends] = useState<QuoteDividendsDate[]>();
+export default function DividendsModal({ ticker, onClose }: DividendsModalProps) {
+    const [dividends, setDividends] = useState<QuoteDividends[]>();
     const [isDividendsLoading, setIsDividendsLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        getStockDividends(ticket)
-            .then((payload) => {
-                convertResponseToQuotesDividends(payload.data)
-                    .then((result) => setDividends(result))
-                    .finally(() => setIsDividendsLoading(false));
-            });
-    }, [ticket]);
+        getStockDividends(ticker)
+            .then((result) => setDividends(result))
+            .finally(() => setIsDividendsLoading(false));
+    }, [ticker]);
 
-    const contentTable = useCallback((_dividends: QuoteDividendsDate[]) => (
+    const contentTable = useCallback((_dividends: QuoteDividends[]) => (
         <Table basic="very" celled collapsing className={styles.table}>
             <Table.Header>
                 <Table.Row>
@@ -41,7 +39,7 @@ export default function DividendsModal({ ticket, onClose }: DividendsModalProps)
                 {_dividends.filter((dividend) => dividend.value !== 0).map((dividend) => (
                     <Table.Row key={dividend.date}>
                         <Table.Cell>{dividend.date}</Table.Cell>
-                        <Table.Cell>{`${dividend.value} ${dividend.currency}`}</Table.Cell>
+                        <Table.Cell>{`${dividend.value} ${getSymbol(dividend.currency)}`}</Table.Cell>
                     </Table.Row>
                 ))}
             </Table.Body>
