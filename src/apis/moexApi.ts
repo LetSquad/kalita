@@ -1,27 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { parseStringPromise } from "xml2js";
 import axios from "axios";
-import { Quote, QuotesMap } from "../models/apis/types";
-import { Currency } from "../models/apis/enums";
-
-interface MoexData {
-    document: {
-        data: {
-            id: string,
-            rows: {
-                row: MoexQuote[] | MoexQuote;
-            }
-        }
-    }
-}
-
-interface MoexQuote {
-    SECID: string;
-    PREVADMITTEDQUOTE: string;
-    SHORTNAME: string;
-    ISIN: string;
-    CURRENCYID: Currency;
-}
+import {
+    MoexData,
+    MoexDataDividends,
+    MoexQuote,
+    MoexQuoteDividends,
+    Quote,
+    QuoteDividendsDate,
+    QuotesMap
+} from "../models/apis/types";
 
 const BOARD_STOCKS = "TQBR";
 const BOARD_ETFS = "TQTF";
@@ -86,7 +74,7 @@ function parseQuotes(json: MoexData): Quote[] {
 export const loadMoexQuoteByTicker = createAsyncThunk<Quote | undefined, string>(
     "loadMoexQuoteByTicker",
     async (ticker: string) => getMoexQuotes([ticker])
-        .then((quotes) => quotes[0] ? quotes[0] : undefined)
+        .then((quotes) => (quotes[0] ? quotes[0] : undefined))
 );
 
 export const loadMoexQuotesByTickers = createAsyncThunk<QuotesMap, string[]>(
@@ -112,4 +100,41 @@ export function getMoexQuotesByIsinCodes(): Promise<QuotesMap> {
         }
         return quotesByIsinCodes;
     });
+}
+
+function getDividends(json: MoexDataDividends): QuoteDividendsDate[] {
+    if (json.document.data.rows.row) {
+        const { row } = json.document.data.rows;
+        if (Array.isArray(row)) {
+            return row.map((el: MoexQuoteDividends) => ({
+                date: el.registryclosedate,
+                value: Number.parseFloat(el.value),
+                currency: el.currencyid
+            }));
+        }
+        return [{
+            date: row.registryclosedate,
+            value: Number.parseInt(row.value, 10),
+            currency: row.currencyid
+        }];
+    }
+
+    return [];
+}
+
+function getDividendsUrl(ticket: string) {
+    return `/iss/securities/${ticket}/dividends.xml?iss.meta=off`;
+}
+
+export function getStockDividends(ticket: string) {
+    return moexHttpClient.get(getDividendsUrl(ticket));
+}
+
+function getMoexDataDividends(xmlStr: string): Promise<MoexDataDividends> {
+    return parseStringPromise(xmlStr, { ignoreAttrs: false, mergeAttrs: true, explicitArray: false });
+}
+
+export async function convertResponseToQuotesDividends(xmlStr: string): Promise<QuoteDividendsDate[]> {
+    const moexDataDividends = await getMoexDataDividends(xmlStr);
+    return getDividends(moexDataDividends);
 }

@@ -22,3 +22,17 @@
 %loader-container {
   @extend %base-container, %flex-center-container;
 }
+
+.modal,
+%modal {
+  user-select: none;
+
+  &-header {
+    @extend %modal;
+    background-color: #ececec !important;
+  }
+
+  &-content {
+    @extend %modal;
+  }
+}

@@ -69,7 +69,7 @@ function averagePriceValidator(
     return AVERAGE_PRICE_INVALID;
 }
 
-export const commonColumns: ColumnDefinition[] = [
+export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[] = (dividendsButton) => [
     {
         title: "Инструмент",
         field: BaseColumnNames.TICKER,
@@ -114,9 +114,7 @@ export const commonColumns: ColumnDefinition[] = [
                 field,
                 value,
                 rowData
-            ) => {
-                return rowData.name as string || undefined;
-            }
+            ) => rowData.name as string || undefined
         }
     }, {
         title: "Доля",
@@ -183,11 +181,20 @@ export const commonColumns: ColumnDefinition[] = [
             }
         }
     }, {
+        field: BaseColumnNames.DIVIDENDS,
+        formatter: {
+            type: FormatterTypes.ELEMENT,
+            params: {
+                renderElement: (rowId, field, cellData, rowData) => dividendsButton(rowData.ticker as string)
+            }
+        },
+        vertAlign: VerticalAlignValues.MIDDLE
+    }, {
         field: BaseColumnNames.ACTION,
         formatter: {
             type: FormatterTypes.ELEMENT,
             params: {
-                renderElement: (rowId) => <ActionBlock rowId = { rowId } />
+                renderElement: (rowId) => <ActionBlock rowId={rowId} />
             }
         },
         vertAlign: VerticalAlignValues.MIDDLE
@@ -203,6 +210,7 @@ export const modelPortfolioColumnsOrder = [
     ModelPortfolioColumnNames.TARGET_QUANTITY,
     ModelPortfolioColumnNames.QUANTITY,
     BaseColumnNames.AMOUNT,
+    BaseColumnNames.DIVIDENDS,
     BaseColumnNames.ACTION
 ];
 
@@ -215,12 +223,16 @@ export const modelPortfolioColumnsWidth = [
     190,
     130,
     130,
+    45,
     40
 ];
 
-const _modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => ColumnDefinition[] =
-    (portfolioSettings) => [
-        ...commonColumns,
+const _modelPortfolioColumns: (
+    dividendsButton: (ticket: string) => JSX.Element,
+    portfolioSettings: ModelPortfolioSettings
+) => ColumnDefinition[] =
+    (dividendsButton, portfolioSettings) => [
+        ...commonColumns(dividendsButton),
         {
             title: "Вес",
             field: ModelPortfolioColumnNames.WEIGHT,
@@ -307,11 +319,10 @@ const _modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => Col
                     }
                 }
                 : undefined,
-            className: (rowId, field, cellData, rowData) => {
-                return (cellData as number) < (rowData?.targetQuantity as number)
+            className: (rowId, field, cellData, rowData) =>
+                ((cellData as number) < (rowData?.targetQuantity as number)
                     ? styles.errorQuantity
-                    : undefined;
-            },
+                    : undefined),
             validator: {
                 validate: (
                     tableData,
@@ -338,17 +349,20 @@ const _modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => Col
                     field,
                     value,
                     rowData
-                ) => {
-                    return typeof value === "number" && typeof rowData.targetQuantity === "number" && value < rowData.targetQuantity
+                ) => (
+                    typeof value === "number" && typeof rowData.targetQuantity === "number" && value < rowData.targetQuantity
                         ? `Нужно докупить: ${rowData.targetQuantity - value}`
-                        : undefined;
-                }
+                        : undefined
+                )
             }
         }
     ];
 
-export const modelPortfolioColumns: (portfolioSettings: ModelPortfolioSettings) => ColumnDefinition[] =
-    (portfolioSettings) => _modelPortfolioColumns(portfolioSettings).sort((columnA, columnB) =>
+export const modelPortfolioColumns: (
+    dividendsButton: (ticket: string) => JSX.Element,
+    portfolioSettings: ModelPortfolioSettings
+) => ColumnDefinition[] =
+    (dividendsButton, portfolioSettings) => _modelPortfolioColumns(dividendsButton, portfolioSettings).sort((columnA, columnB) =>
         modelPortfolioColumnsOrder.indexOf(columnA.field as BaseColumnNames | ModelPortfolioColumnNames) -
     modelPortfolioColumnsOrder.indexOf(columnB.field as BaseColumnNames | ModelPortfolioColumnNames))
         .map((column, index) => ({
@@ -363,6 +377,7 @@ export const brokerAccountColumnsOrder = [
     BaseColumnNames.CURRENT_PRICE,
     BrokerAccountColumnNames.QUANTITY,
     BaseColumnNames.AMOUNT,
+    BaseColumnNames.DIVIDENDS,
     BaseColumnNames.ACTION
 ];
 
@@ -373,76 +388,79 @@ export const brokerAccountColumnsWidth = [
     85,
     130,
     130,
+    45,
     40
 ];
 
-export const _brokerAccountColumns: ColumnDefinition[] = [
-    ...commonColumns,
-    {
-        title: "Цена покупки",
-        field: BrokerAccountColumnNames.AVERAGE_PRICE,
-        formatter: {
-            type: FormatterTypes.MONEY,
-            params: {
-                currency: "₽",
-                additionalSpace: true
-            }
-        },
-        edit: {
-            type: EditTypes.INPUT,
-            params: {
-                dashed: true
-            }
-        },
-        validator: {
-            validate: (
-                tableData,
-                rowId,
-                field,
-                oldValue,
-                newValue
-            ) => !!averagePriceValidator(newValue as string),
-            tooltip: {
-                position: TooltipPosition.TOP_CENTER,
-                text: (
+export const _brokerAccountColumns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[] =
+    (dividendsButton) => [
+        ...commonColumns(dividendsButton),
+        {
+            title: "Цена покупки",
+            field: BrokerAccountColumnNames.AVERAGE_PRICE,
+            formatter: {
+                type: FormatterTypes.MONEY,
+                params: {
+                    currency: "₽",
+                    additionalSpace: true
+                }
+            },
+            edit: {
+                type: EditTypes.INPUT,
+                params: {
+                    dashed: true
+                }
+            },
+            validator: {
+                validate: (
                     tableData,
                     rowId,
                     field,
                     oldValue,
                     newValue
-                ) => averagePriceValidator(newValue as string)
+                ) => !!averagePriceValidator(newValue as string),
+                tooltip: {
+                    position: TooltipPosition.TOP_CENTER,
+                    text: (
+                        tableData,
+                        rowId,
+                        field,
+                        oldValue,
+                        newValue
+                    ) => averagePriceValidator(newValue as string)
+                }
             }
-        }
-    }, {
-        title: "В портфеле",
-        field: BrokerAccountColumnNames.QUANTITY,
-        vertAlign: VerticalAlignValues.MIDDLE,
-        validator: {
-            validate: (
-                tableData,
-                rowId,
-                field,
-                oldValue,
-                newValue
-            ) => !!quantityValidator(newValue as string),
-            tooltip: {
-                position: TooltipPosition.TOP_CENTER,
-                text: (
+        }, {
+            title: "В портфеле",
+            field: BrokerAccountColumnNames.QUANTITY,
+            vertAlign: VerticalAlignValues.MIDDLE,
+            validator: {
+                validate: (
                     tableData,
                     rowId,
                     field,
                     oldValue,
                     newValue
-                ) => quantityValidator(newValue as string)
+                ) => !!quantityValidator(newValue as string),
+                tooltip: {
+                    position: TooltipPosition.TOP_CENTER,
+                    text: (
+                        tableData,
+                        rowId,
+                        field,
+                        oldValue,
+                        newValue
+                    ) => quantityValidator(newValue as string)
+                }
             }
         }
-    }
-];
+    ];
 
-export const brokerAccountColumns = _brokerAccountColumns.sort((columnA, columnB) =>
-    brokerAccountColumnsOrder.indexOf(columnA.field as BaseColumnNames | BrokerAccountColumnNames) -
+export const brokerAccountColumns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[] =
+    (dividendsButton) => _brokerAccountColumns(dividendsButton).sort((columnA, columnB) =>
+        brokerAccountColumnsOrder.indexOf(columnA.field as BaseColumnNames | BrokerAccountColumnNames) -
     brokerAccountColumnsOrder.indexOf(columnB.field as BaseColumnNames | BrokerAccountColumnNames))
-    .map((column, index) => ({
-        ...column,
-        width: brokerAccountColumnsWidth[index]
-    }));
+        .map((column, index) => ({
+            ...column,
+            width: brokerAccountColumnsWidth[index]
+        }));

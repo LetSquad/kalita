@@ -8,5 +8,9 @@ interface Props {
 }
 
 export default function BrokerTable({ currentPortfolio }: Props) {
-    return useMemo(() => <Table columns={brokerAccountColumns} currentPortfolio={currentPortfolio} />, [currentPortfolio]);
+    return useMemo(() => (
+        <Table
+            columns={(dividendsButton) => brokerAccountColumns(dividendsButton)}
+            currentPortfolio={currentPortfolio}
+        />), [currentPortfolio]);
 }
