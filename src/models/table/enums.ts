@@ -11,6 +11,7 @@ export enum BaseColumnNames {
     PERCENTAGE = "percentage",
     CURRENT_PRICE = "currentPrice",
     AMOUNT = "amount",
+    DIVIDENDS = "dividends",
     ACTION = "action"
 }
 

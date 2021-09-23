@@ -1,0 +1,29 @@
+:global {
+  .ui.dimmer .ui.loader {
+    color: #000 !important;
+    font-weight: bold;
+  }
+
+  .ui.dimmer .ui.loader::before {
+    border: 0.2em solid rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .ui.dimmer .ui.loader::after {
+    border-color: #767676 transparent transparent !important;
+    border-style: solid !important;
+    border-width: 0.2em !important;
+  }
+}
+
+.table {
+  width: 100% !important;
+}
+
+.no-dividend-content {
+  display: flex;
+  font-size: 16px;
+  font-weight: bold;
+  justify-content: center;
+  padding: 15px;
+  width: 100%;
+}

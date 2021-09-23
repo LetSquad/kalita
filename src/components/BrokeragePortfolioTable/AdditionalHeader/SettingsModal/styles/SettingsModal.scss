@@ -8,20 +8,6 @@
   }
 }
 
-.modal,
-%settings-modal {
-  user-select: none;
-
-  &-header {
-    @extend %settings-modal;
-    background-color: #ececec !important;
-  }
-
-  &-content {
-    @extend %settings-modal;
-  }
-}
-
 .settings-tab-pane {
   display: flex;
   flex-direction: column;

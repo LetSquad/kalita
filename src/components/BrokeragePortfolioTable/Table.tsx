@@ -22,9 +22,11 @@ import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
 import styles from "./styles/Table.scss";
 import stylesChart from "../Chart/styles/Chart.scss";
 import Chart from "../Chart/Chart";
+import DividendsModal from "./DividendsModal";
+import { Icon, Popup } from "semantic-ui-react";
 
 interface TableProps {
-    columns: ColumnDefinition[],
+    columns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[],
     currentPortfolio: Portfolio,
     additionalHeaderPart?: JSX.Element
 }
@@ -35,7 +37,7 @@ const DataTable = lazy(/* webpackChunkName: "dataTable" */() =>
 export default function Table({ columns, currentPortfolio, additionalHeaderPart }: TableProps) {
     const dispatch = useAppDispatch();
     const [isChartMode, setIsChartMode] = useState<boolean>(false);
-
+    const [dividendsTicket, setDividendsTicket] = useState<string>();
     const dataTableRef = useRef<DataTableRef>(null);
 
     const importTableToCsvText = useCallback(() => dataTableRef.current?.exportToCsv({ includeGroup: true }), []);
@@ -93,10 +95,18 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
         );
     }, [currentPortfolio.positions]);
 
+    const dividendsButton = useCallback((ticket: string) => (
+        <Popup
+            content="Дивиденды"
+            trigger={<Icon name="suitcase" link onClick={() => setDividendsTicket(ticket)}/>}
+            position='top center'
+            size='tiny'
+        />), []);
+
     const table = useMemo(() => (
         <WithSuspense>
             <DataTable
-                columns={columns}
+                columns={columns(dividendsButton)}
                 data={currentPortfolio.positions}
                 groupBy="groupName"
                 onAddRowToGroup={addRowToGroup}
@@ -118,7 +128,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 ref={dataTableRef}
             />
         </WithSuspense>
-    ), [columns, currentPortfolio.positions, addRowToGroup, updateGroup, rowMoved, cellUpdated, dataTableRef]);
+    ), [columns, dividendsButton, currentPortfolio.positions, addRowToGroup, updateGroup, rowMoved, cellUpdated]);
 
     const handleToggleChartMode = useCallback(() => {
         setIsChartMode((old) => !old);
@@ -137,10 +147,12 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 isChartMode={isChartMode}
                 onToggleChartMode={handleToggleChartMode}
             />
-            {isChartMode
-                ? chart
-                : table
+            {
+                isChartMode
+                    ? chart
+                    : table
             }
+            {dividendsTicket && <DividendsModal ticket={dividendsTicket} onClose={() => setDividendsTicket(undefined)} />}
         </div>
     );
 }

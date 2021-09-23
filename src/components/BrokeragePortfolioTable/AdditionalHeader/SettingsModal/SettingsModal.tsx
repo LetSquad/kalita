@@ -5,6 +5,7 @@ import React, {
 import { ModelPortfolio, Portfolio } from "../../../../models/portfolios/types";
 import { WithSuspense } from "../../../utils/WithSuspense";
 import styles from "./styles/SettingsModal.scss";
+import partsStyles from "../../../../styles/parts.scss";
 import { BrokeragePortfolioTypes } from "../../../../models/portfolios/enums";
 
 interface SettingsModalProps {
@@ -57,8 +58,8 @@ export default function SettingsModal({ currentPortfolio, onClose, activeTab }: 
             onClose={onClose}
             open
         >
-            <Modal.Header className={styles.modalHeader}>Параметры брокерского счёта</Modal.Header>
-            <Modal.Content className={styles.modalContent}>
+            <Modal.Header className={partsStyles.modalHeader}>Параметры брокерского счёта</Modal.Header>
+            <Modal.Content className={partsStyles.modalContent}>
                 <WithSuspense>
                     <Tab
                         menu={{ fluid: true, vertical: true, tabular: true }} panes={settingsPanes} activeIndex={activeIndex}

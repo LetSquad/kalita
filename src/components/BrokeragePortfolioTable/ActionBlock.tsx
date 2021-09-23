@@ -3,11 +3,11 @@ import { Icon } from "semantic-ui-react";
 import { useAppDispatch } from "../../store/hooks";
 import { deleteRowById } from "../../store/portfolios/portfoliosReducer";
 
-interface NewActionBlockProps {
+interface ActionBlockProps {
     rowId: string;
 }
 
-export function ActionBlock({ rowId }: NewActionBlockProps) {
+export function ActionBlock({ rowId }: ActionBlockProps) {
     const dispatch = useAppDispatch();
 
     const deleteRow = useCallback(() => {
