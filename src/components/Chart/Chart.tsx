@@ -23,11 +23,11 @@ const options: ChartOptions = {
     }
 };
 
-interface Props {
+interface ChartProps {
     data: ChartData
 }
 
-export default function Chart(props: Props) {
+export default function Chart(props: ChartProps) {
     const chartData: ChartData = {
         ...props.data,
         datasets: props.data.datasets.map((dataset) => ({
