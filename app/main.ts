@@ -2,7 +2,7 @@ import electron from "electron";
 import isElectronDev from "electron-is-dev";
 import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from "electron-devtools-installer";
 import { client } from "electron-connect";
-import { initialize as remoteInitialize } from "@electron/remote/main";
+import { initialize as remoteInitialize, enable } from "@electron/remote/main";
 
 const {
     app,
@@ -52,10 +52,10 @@ function loadMain() {
             devTools: isElectronDev,
             nodeIntegration: true,
             nodeIntegrationInWorker: true,
-            contextIsolation: false,
-            enableRemoteModule: true
+            contextIsolation: false
         }
     });
+    enable(mainWindow.webContents);
     mainWindow.loadURL(isElectronDev ? "http://localhost:8085" : `file://${__dirname}/index.html`);
     mainWindow.once("ready-to-show", () => {
         if (isElectronDev) {
