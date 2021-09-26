@@ -434,6 +434,12 @@ export const _brokerAccountColumns: (dividendsButton: (ticket: string) => JSX.El
             title: "В портфеле",
             field: BrokerAccountColumnNames.QUANTITY,
             vertAlign: VerticalAlignValues.MIDDLE,
+            edit: {
+                type: EditTypes.INPUT,
+                params: {
+                    dashed: true
+                }
+            },
             validator: {
                 validate: (
                     tableData,

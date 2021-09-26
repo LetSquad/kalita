@@ -5,7 +5,8 @@ import React, {
     useRef,
     useState,
     KeyboardEvent,
-    FocusEvent
+    FocusEvent,
+    MouseEvent
 } from "react";
 import { DraggableProvided } from "react-beautiful-dnd";
 import { Icon, Input } from "semantic-ui-react";
@@ -80,6 +81,7 @@ export default function SidebarMenuElement({
             className={styles.renameInput}
             ref={inputRef}
             placeholder="Введите имя"
+            onFocus={(event: MouseEvent<HTMLInputElement>) => (event.target as HTMLInputElement).select()}
             onChange={(event, data) => setCurrentEditValue(data.value)}
             onKeyPress={({ key, target }: KeyboardEvent<HTMLInputElement>) =>
                 (key === "Enter" && renameElement(menuElement.type, menuElement.id, (target as HTMLInputElement).value))}
