@@ -2,7 +2,7 @@
     "name": "kalita",
     "productName": "Kalita",
     "description": "Светлое инвестиционное будущее",
-    "version": "1.0.0",
+    "version": "1.0.0-MVP",
     "main": "app/dist/main.js",
     "scripts": {
         "dev": "npm run webpack:main:dev && npm run webpack:dev",
