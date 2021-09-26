@@ -1,0 +1,14 @@
+@import url('./semantic.min.css');
+
+body {
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  user-select: none;
+}
+
+/* stylelint-disable */
+.react-toast-notifications__container {
+  /* stylelint-enable */
+  z-index: 9999 !important;
+}

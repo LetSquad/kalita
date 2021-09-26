@@ -1,0 +1,22 @@
+$additional-header-height: 50px;
+
+.additional-header {
+  align-items: center;
+  background-color: #ececec;
+  display: flex;
+  height: $additional-header-height;
+  justify-content: space-between;
+  width: 100%;
+
+  &-icon {
+    font-size: 16px !important;
+    margin-right: 10px !important;
+  }
+
+  &-part {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    width: 50%;
+  }
+}

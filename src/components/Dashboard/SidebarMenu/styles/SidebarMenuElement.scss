@@ -1,0 +1,79 @@
+:global {
+  .ui.icon.input > input {
+    padding-right: 20px !important;
+  }
+}
+
+.item {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  margin-bottom: 2px;
+  padding: 2px 0 2px 20px !important;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.item-container,
+%item-container {
+  align-items: baseline;
+  display: flex;
+}
+
+.active,
+%active {
+  &::before {
+    background: rgba(0, 0, 0, 0.1) !important;
+    content: '';
+    height: 100%;
+    pointer-events: none;
+    position: absolute;
+    transform: scaleX(10);
+    width: 100% !important;
+    z-index: 1;
+  }
+
+  &-item-container {
+    @extend %active, %item-container;
+    position: relative;
+  }
+}
+
+.name {
+  overflow: hidden;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.icons-container {
+  display: flex;
+  margin: 0 10px 0 auto;
+}
+
+.remove-icon {
+  margin: 0 !important;
+}
+
+.rename- {
+  &icon {
+    margin: 0 3px 0 0 !important;
+  }
+
+  &input {
+    margin-right: 15px !important;
+    padding: 2px 0 2px 20px !important;
+    width: 100%;
+
+    > input {
+      padding: 0 !important;
+    }
+
+    > i {
+      width: 20px !important;
+    }
+  }
+}
+

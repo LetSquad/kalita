@@ -1,0 +1,155 @@
+{
+    "extends": [
+        "airbnb-typescript",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:eslint-plugin-react/recommended",
+        "plugin:unicorn/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        },
+        "sourceType": "module",
+        "project": "./tsconfig.json"
+    },
+    "env": {
+        "es6": true,
+        "browser": true
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "react",
+        "react-hooks",
+        "unicorn",
+        "import"
+    ],
+    "rules": {
+        "max-len": [
+            "warn",
+            {
+                "code": 135,
+                "ignoreStrings": true,
+                "ignoreTemplateLiterals": true,
+                "ignoreComments": true
+            }
+        ],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "react/jsx-filename-extension": [
+            1,
+            {
+                "extensions": [
+                    ".tsx"
+                ]
+            }
+        ],
+        "import/prefer-default-export": "off",
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+                "ts": "never",
+                "tsx": "never"
+            }
+        ],
+        "import/no-extraneous-dependencies": "off",
+        "unicorn/filename-case": "off",
+        "no-use-before-define": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "unicorn/prevent-abbreviations": "off",
+        "@typescript-eslint/ban-types": "off",
+        "no-console": "off",
+        "class-methods-use-this": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-plusplus": "off",
+        "unicorn/no-null": "off",
+        "no-shadow": "off",
+        "no-underscore-dangle": "off",
+        "unicorn/no-useless-undefined": "off",
+        "unicorn/require-post-message-target-origin": "off",
+        "@typescript-eslint/indent": [
+            "error",
+            4
+        ],
+        "@typescript-eslint/quotes": [
+            "error",
+            "double"
+        ],
+        "@typescript-eslint/comma-dangle": [
+            "error",
+            "never"
+        ],
+        "react/jsx-indent": [
+            "error",
+            4
+        ],
+        "react/jsx-indent-props": [
+            "error",
+            4
+        ],
+        "@typescript-eslint/no-use-before-define": "off",
+        "react/destructuring-assignment": "off",
+        "react/display-name": "off",
+        "implicit-arrow-linebreak": "off",
+        "react/require-default-props": "off",
+        "naming-convention": "off",
+        "@typescript-eslint/naming-convention": [
+            "error",
+            {
+                "selector": "variable",
+                "format": ["camelCase", "UPPER_CASE", "PascalCase"],
+                "leadingUnderscore": "allow",
+                "trailingUnderscore": "allow"
+            },
+            {
+                "selector": "function",
+                "format": ["PascalCase", "camelCase"],
+                "leadingUnderscore": "allow",
+                "trailingUnderscore": "allow"
+            },
+            {
+                "selector": "enumMember",
+                "format": ["UPPER_CASE"]
+            },
+            {
+                "selector": "property",
+                "format": null
+            },
+            {
+                "selector": "typeLike",
+                "format": ["PascalCase"]
+            },
+            {
+                "selector": "accessor",
+                "format": ["PascalCase"]
+            },
+            {
+                "selector": "default",
+                "format": ["camelCase"],
+                "leadingUnderscore": "allow",
+                "trailingUnderscore": "allow"
+            }
+        ],
+        "no-restricted-syntax": "off",
+        "no-await-in-loop": "off",
+        "unicorn/consistent-function-scoping": "off",
+        "default-case": ["off"],
+        "consistent-return": "off",
+        "jsx-a11y/anchor-is-valid": "off",
+        "unicorn/prefer-node-protocol": "off",
+        "unicorn/prefer-module": "off",
+        "no-param-reassign": ["error", { "props": false }],
+        "operator-linebreak": ["error", "after", { "overrides": { "?": "before", ":": "before" } }]
+    },
+    "settings": {
+        "import/resolver": {
+            "typescript": {}
+        },
+        "react": {
+            "version": "detect"
+        }
+    }
+}

@@ -1,0 +1,61 @@
+@use '../../styles/Dashboard' as *;
+
+$big-menu-margin-size: 20px;
+$medium-menu-margin-size: 15px;
+$small-menu-margin-size: 10px;
+$title-height: 248px;
+$separator-height: 2px;
+$icon-container-height: 24px;
+
+.sidebar {
+  @extend %sidebar;
+  align-items: flex-start;
+  height: 100%;
+  overflow: hidden;
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &-container {
+    align-items: center;
+    display: flex;
+    font-size: 18px;
+    justify-content: space-between;
+    padding: $big-menu-margin-size $big-menu-margin-size $medium-menu-margin-size;
+    width: 100%;
+  }
+
+}
+
+.separator {
+  border: 2px solid;
+  height: $separator-height;
+  margin: 0 $big-menu-margin-size $medium-menu-margin-size;
+  width: calc(#{$menu-width-open} - 2 * #{$big-menu-margin-size});
+}
+
+.icon {
+  font-size: 18px !important;
+  margin-right: 10px;
+
+  &-container {
+    align-items: center;
+    display: flex;
+    height: $icon-container-height;
+    justify-content: flex-end;
+    justify-self: flex-end;
+    margin-bottom: $small-menu-margin-size;
+    margin-top: $small-menu-margin-size;
+    width: 100%;
+  }
+}
+
+.menu-group-container {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+}

@@ -1,0 +1,19 @@
+:global {
+  .ui.grid {
+    margin: -1.5rem !important;
+
+    .four.wide.column {
+      box-shadow: 0 0 20px rgb(34 36 38 / 15%) !important;
+    }
+  }
+}
+
+.settings-tab-pane {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.settings-radio {
+  margin-right: 1.5rem;
+}

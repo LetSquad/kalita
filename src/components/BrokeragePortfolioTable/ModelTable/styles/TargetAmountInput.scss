@@ -1,0 +1,15 @@
+.input {
+  height: 40px;
+  margin-left: 5px;
+  width: 250px;
+
+  &-container {
+    align-items: center;
+    display: flex;
+    margin-left: 10px;
+  }
+
+  &-question {
+    margin-left: 10px !important;
+  }
+}

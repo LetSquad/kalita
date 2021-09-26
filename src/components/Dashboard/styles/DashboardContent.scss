@@ -1,0 +1,6 @@
+@use 'src/styles/parts' as *;
+
+.content {
+  @extend %flex-base-center-container;
+  flex-direction: column;
+}
