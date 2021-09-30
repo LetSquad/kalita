@@ -17,11 +17,9 @@ export default function DataTableMoneyFormatterCell() {
         }
     } = useDataTableMoneyFormatterCellContext();
 
-    const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => {
-        return _edit.type === EditTypes.INPUT
-            ? <DataTableInput params={_edit.params} label={params.currency} />
-            : <DataTableDropdown params={_edit.params} />;
-    }, [params.currency]);
+    const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => (_edit.type === EditTypes.INPUT
+        ? <DataTableInput params={_edit.params} label={params.currency} />
+        : <DataTableDropdown params={_edit.params} />), [params.currency]);
 
     return edit
         ? <DataTableBaseCell>{editContent(edit)}</DataTableBaseCell>

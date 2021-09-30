@@ -15,7 +15,8 @@ render((
                 <div className={partsStyles.loaderContainer}>
                     <Loader active inline="centered" />
                 </div>
-            )} persistor={persistor}
+            )}
+            persistor={persistor}
         >
             <App />
         </PersistGate>

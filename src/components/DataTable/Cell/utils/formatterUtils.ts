@@ -34,8 +34,8 @@ export function formatMoneyFormatterValue({
 
     const rgx = /(\d+)(\d{3})/;
 
-    while (rgx.test(integer)){
-        integer = integer.replace(rgx, "$1" + thousandSym + "$2");
+    while (rgx.test(integer)) {
+        integer = integer.replace(rgx, `$1${thousandSym}$2`);
     }
     return currencyPosition === CurrencyPosition.BEFORE
         ? `${currency}${additionalSpace ? " " : ""}${integer}${decimal}`

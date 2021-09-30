@@ -31,19 +31,17 @@ export default function DataTableImageFormatterCell() {
         urlSuffix
     } = params;
 
-    const formattedImage = useMemo(() => {
-        return (
-            <Image
-                className={className}
-                bordered={bordered}
-                circular={circular}
-                href={link}
-                content={`${urlPrefix ?? ""}${cell}${urlSuffix ?? ""}`}
-                label={label}
-                style={{ width, height }}
-            />
-        );
-    }, [bordered, cell, circular, className, height, label, link, urlPrefix, urlSuffix, width]);
+    const formattedImage = useMemo(() => (
+        <Image
+            className={className}
+            bordered={bordered}
+            circular={circular}
+            href={link}
+            content={`${urlPrefix ?? ""}${cell}${urlSuffix ?? ""}`}
+            label={label}
+            style={{ width, height }}
+        />
+    ), [bordered, cell, circular, className, height, label, link, urlPrefix, urlSuffix, width]);
 
     return <DataTableBaseCell>{formattedImage}</DataTableBaseCell>;
 }

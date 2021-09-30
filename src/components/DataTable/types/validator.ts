@@ -1,4 +1,6 @@
+// eslint-disable-next-line import/no-cycle
 import { DataTableData } from "./base";
+// eslint-disable-next-line import/no-cycle
 import { ValidationTooltip } from "./tooltip";
 
 export interface Validator<T = string | number | boolean | undefined> {

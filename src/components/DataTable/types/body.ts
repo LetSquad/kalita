@@ -1,4 +1,6 @@
-import { ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent, SyntheticEvent } from "react";
+import {
+    ChangeEvent, FocusEvent, KeyboardEvent, MouseEvent, SyntheticEvent
+} from "react";
 import { DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { DataTableData } from "./base";
 

@@ -68,5 +68,3 @@ export interface DataTableEditContextParams<T> {
     row: DataTableData;
     column: Required<Pick<BaseFormatterColumnDefinition, "field">> & Pick<BaseFormatterColumnDefinition, "validator">
 }
-
-

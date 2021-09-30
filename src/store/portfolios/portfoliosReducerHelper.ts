@@ -170,9 +170,8 @@ export function recalculateRowsPrice(
     positions: PortfolioPosition[],
     quotes: QuotesMap
 ): ModelPortfolioPosition[] | BrokerAccountPosition[] {
-    return positions.map((row) => {
-        return applyQuoteForPosition(row, quotes[row.ticker]);
-    }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+    return positions.map((row) =>
+        applyQuoteForPosition(row, quotes[row.ticker])) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 
 export function recalculateRowPrice(

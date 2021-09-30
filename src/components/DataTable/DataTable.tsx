@@ -1,5 +1,11 @@
 import classNames from "classnames";
-import React, { ForwardedRef, forwardRef, useCallback, useImperativeHandle, useMemo } from "react";
+import React, {
+    ForwardedRef,
+    forwardRef,
+    useCallback,
+    useImperativeHandle,
+    useMemo
+} from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { Table } from "semantic-ui-react";
 import DataTableBody from "./Body/DataTableBody";
@@ -38,7 +44,7 @@ const DataTable = forwardRef(({
     const hasFooterCalc = useMemo(() => columns.map((column) =>
         column.tableCalc && column.tableCalc.position === CalcPosition.BOTTOM).includes(true), [columns]);
 
-    const content = useMemo(() => data.length > 0
+    const content = useMemo(() => (data.length > 0
         ? (
             <Table className={styles.innerTableBody}>
                 <DataTableBodyContext.Provider
@@ -58,7 +64,7 @@ const DataTable = forwardRef(({
                 </DataTableBodyContext.Provider>
             </Table>
         )
-        : <div className={styles.innerTablePlaceholder}>{emptyTablePlaceholder ?? "Данные недоступны"}</div>,
+        : <div className={styles.innerTablePlaceholder}>{emptyTablePlaceholder ?? "Данные недоступны"}</div>),
     [
         data.length,
         groupBy,
@@ -72,7 +78,6 @@ const DataTable = forwardRef(({
         onCellKeyEnter,
         emptyTablePlaceholder
     ]);
-
 
     return (
         <DataTableContext.Provider

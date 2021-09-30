@@ -137,14 +137,17 @@ export default function StartScreen() {
                                     <div className={styles.recentProject} key={recent[0]}>
                                         <div className={styles.recentProjectTitle}>
                                             <span
-                                                aria-hidden onClick={() => openRecentProject(recent)}
+                                                aria-hidden
+                                                onClick={() => openRecentProject(recent)}
                                                 className={styles.reverseEllipsisContent}
                                             >
                                                 {recent[1]}
                                             </span>
                                         </div>
                                         <Icon
-                                            name="close" link className={styles.recentProjectCloseLink}
+                                            name="close"
+                                            link
+                                            className={styles.recentProjectCloseLink}
                                             onClick={() => removeRecent(recent[0])}
                                         />
                                     </div>

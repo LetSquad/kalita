@@ -52,8 +52,11 @@ export default function TargetAmountInput() {
                 label={{
                     basic: true,
                     content: "₽"
-                }} labelPosition="right" error={targetAmountError}
-                value={totalTargetAmount} className={styles.input}
+                }}
+                labelPosition="right"
+                error={targetAmountError}
+                value={totalTargetAmount}
+                className={styles.input}
                 onChange={(event, data) => updateTargetAmount(data.value)}
             />
             <Popup

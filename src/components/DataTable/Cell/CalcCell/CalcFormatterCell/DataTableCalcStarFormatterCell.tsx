@@ -17,17 +17,15 @@ export default function DataTableCalcStarFormatterCell() {
         className
     } = params;
 
-    const formattedStars = useMemo(() => {
-        return (
-            <Rating
-                disabled
-                maxRating={maxStars}
-                defaultRating={cell}
-                rating={cell}
-                className={className}
-            />
-        );
-    }, [cell, className, maxStars]);
+    const formattedStars = useMemo(() => (
+        <Rating
+            disabled
+            maxRating={maxStars}
+            defaultRating={cell}
+            rating={cell}
+            className={className}
+        />
+    ), [cell, className, maxStars]);
 
     return <DataTableBaseCalcCell>{formattedStars}</DataTableBaseCalcCell>;
 }
