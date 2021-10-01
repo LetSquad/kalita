@@ -21,7 +21,7 @@ export default function DataTableCalcRow() {
         }>();
         for (const column of columns) {
             const calc = type === CalcType.GROUP ? column.groupCalc : column.tableCalc;
-            const isRightPosition = !!calc ? calc.position === position : false;
+            const isRightPosition = calc ? calc.position === position : false;
             calcColumnsMap.set(column.field, { calcFunction: isRightPosition && calc ? calc.calcFunction : undefined, column });
         }
 
@@ -38,7 +38,7 @@ export default function DataTableCalcRow() {
         return _calcColumnsCount;
     }, [calcColumns]);
 
-    const cells = useMemo(() => calcColumnsCount
+    const cells = useMemo(() => (calcColumnsCount
         ? [...calcColumns.entries()].map((calcColumn) => {
             const columnData = data.map((row) => row[calcColumn[0]]);
             const calcResult = calcColumn[1].calcFunction ? calcColumn[1].calcFunction(columnData, calcColumn[0]) : undefined;
@@ -58,7 +58,7 @@ export default function DataTableCalcRow() {
                 </DataTableCalcCellContext.Provider>
             );
         })
-        : undefined, [calcColumns, calcColumnsCount, data, position, type]);
+        : undefined), [calcColumns, calcColumnsCount, data, position, type]);
 
     return cells
         ? (

@@ -60,7 +60,9 @@ export default function ModelPortfolioQuantityModeSelector({ currentPortfolio }:
                 <Form.Field>
                     <Dropdown
                         placeholder="Выберите брокерские счета"
-                        fluid multiple selection
+                        fluid
+                        multiple
+                        selection
                         options={brokerReportsOptions}
                         value={currentPortfolio.settings.quantitySources}
                         onChange={onQuantitySourcesSelect}

@@ -62,7 +62,9 @@ export default function SettingsModal({ currentPortfolio, onClose, activeTab }: 
             <Modal.Content className={partsStyles.modalContent}>
                 <WithSuspense>
                     <Tab
-                        menu={{ fluid: true, vertical: true, tabular: true }} panes={settingsPanes} activeIndex={activeIndex}
+                        menu={{ fluid: true, vertical: true, tabular: true }}
+                        panes={settingsPanes}
+                        activeIndex={activeIndex}
                         onTabChange={(event, data) => setActiveIndex(data.activeIndex as number)}
                     />
                 </WithSuspense>

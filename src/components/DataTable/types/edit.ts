@@ -1,4 +1,7 @@
-import { FocusEvent, SyntheticEvent, ChangeEvent, MouseEvent, KeyboardEvent } from "react";
+import {
+    FocusEvent, SyntheticEvent, ChangeEvent, MouseEvent, KeyboardEvent
+} from "react";
+// eslint-disable-next-line import/no-cycle
 import { DataTableData } from "./base";
 
 export enum EditTypes {

@@ -1,5 +1,10 @@
 import { Loader, Modal, Table } from "semantic-ui-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useState
+} from "react";
 import { convertResponseToQuotesDividends, getStockDividends } from "../../apis/moexApi";
 import { QuoteDividendsDate } from "../../models/apis/types";
 import styles from "./styles/DividendsModal.scss";
@@ -24,7 +29,7 @@ export default function DividendsModal({ ticket, onClose }: DividendsModalProps)
     }, [ticket]);
 
     const contentTable = useCallback((_dividends: QuoteDividendsDate[]) => (
-        <Table basic='very' celled collapsing className={styles.table}>
+        <Table basic="very" celled collapsing className={styles.table}>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Дата</Table.HeaderCell>
@@ -33,7 +38,7 @@ export default function DividendsModal({ ticket, onClose }: DividendsModalProps)
             </Table.Header>
 
             <Table.Body>
-                {_dividends.filter((dividend) => dividend.value != 0).map((dividend) => (
+                {_dividends.filter((dividend) => dividend.value !== 0).map((dividend) => (
                     <Table.Row key={dividend.date}>
                         <Table.Cell>{dividend.date}</Table.Cell>
                         <Table.Cell>{`${dividend.value} ${dividend.currency}`}</Table.Cell>

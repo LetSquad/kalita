@@ -17,11 +17,9 @@ export default function DataTablePercentageFormatterCell() {
         }
     } = useDataTablePercentageFormatterCellContext();
 
-    const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => {
-        return _edit.type === EditTypes.INPUT
-            ? <DataTableInput params={_edit.params} label="%" />
-            : <DataTableDropdown params={_edit.params} />;
-    }, []);
+    const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => (_edit.type === EditTypes.INPUT
+        ? <DataTableInput params={_edit.params} label="%" />
+        : <DataTableDropdown params={_edit.params} />), []);
 
     return edit
         ? <DataTableBaseCell>{editContent(edit)}</DataTableBaseCell>

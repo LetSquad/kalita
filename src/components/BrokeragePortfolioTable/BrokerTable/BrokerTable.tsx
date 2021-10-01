@@ -12,5 +12,6 @@ export default function BrokerTable({ currentPortfolio }: Props) {
         <Table
             columns={(dividendsButton) => brokerAccountColumns(dividendsButton)}
             currentPortfolio={currentPortfolio}
-        />), [currentPortfolio]);
+        />
+    ), [currentPortfolio]);
 }

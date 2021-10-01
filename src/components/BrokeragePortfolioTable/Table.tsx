@@ -10,11 +10,17 @@ import React, {
 } from "react";
 import { $enum } from "ts-enum-util";
 import { ChartData } from "chart.js/auto";
+import { Icon, Popup } from "semantic-ui-react";
 import { loadMoexQuoteByTicker } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { useAppDispatch } from "../../store/hooks";
-import { addNewPosition, update, updateGroupName, updatePosition } from "../../store/portfolios/portfoliosReducer";
+import {
+    addNewPosition,
+    update,
+    updateGroupName,
+    updatePosition
+} from "../../store/portfolios/portfoliosReducer";
 import { DataTableData, DataTableRef } from "../DataTable/types/base";
 import { ColumnDefinition } from "../DataTable/types/column";
 import { WithSuspense } from "../utils/WithSuspense";
@@ -23,7 +29,6 @@ import styles from "./styles/Table.scss";
 import stylesChart from "../Chart/styles/Chart.scss";
 import Chart from "../Chart/Chart";
 import DividendsModal from "./DividendsModal";
-import { Icon, Popup } from "semantic-ui-react";
 
 interface TableProps {
     columns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[],
@@ -98,10 +103,11 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     const dividendsButton = useCallback((ticket: string) => (
         <Popup
             content="Дивиденды"
-            trigger={<Icon name="suitcase" link onClick={() => setDividendsTicket(ticket)}/>}
-            position='top center'
-            size='tiny'
-        />), []);
+            trigger={<Icon name="suitcase" link onClick={() => setDividendsTicket(ticket)} />}
+            position="top center"
+            size="tiny"
+        />
+    ), []);
 
     const table = useMemo(() => (
         <WithSuspense>

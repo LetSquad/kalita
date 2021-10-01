@@ -18,7 +18,6 @@ export interface QuoteDividendsDate {
     readonly currency: string
 }
 
-
 export interface MoexQuote {
     SECID: string;
     PREVADMITTEDQUOTE: string;
@@ -34,7 +33,6 @@ export interface MoexQuoteDividends {
     value: string;
     currencyid: string;
 }
-
 
 export interface MoexData {
     document: {

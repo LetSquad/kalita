@@ -10,12 +10,9 @@ export default function DataTableBaseFormatterCell() {
 
     const baseContent = useMemo(() => <DataTableBaseCell>{cell}</DataTableBaseCell>, [cell]);
 
-    const editContent = useCallback((_edit: DropdownEdit | InputEdit) => {
-        return _edit.type === EditTypes.INPUT
-            ? <DataTableInput params={_edit.params} />
-            : <DataTableDropdown params={_edit.params} />;
-    }, []);
-
+    const editContent = useCallback((_edit: DropdownEdit | InputEdit) => (_edit.type === EditTypes.INPUT
+        ? <DataTableInput params={_edit.params} />
+        : <DataTableDropdown params={_edit.params} />), []);
 
     return edit
         ? <DataTableBaseCell>{editContent(edit)}</DataTableBaseCell>
