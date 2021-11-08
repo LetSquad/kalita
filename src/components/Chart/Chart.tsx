@@ -11,7 +11,7 @@ import stylesChart from "./styles/Chart.scss";
 
 const borderWidth = 1;
 
-const options: ChartOptions = {
+const options: ChartOptions<"doughnut"> = {
     plugins: {
         tooltip: {
             callbacks: {
@@ -24,11 +24,11 @@ const options: ChartOptions = {
 };
 
 interface ChartProps {
-    data: ChartData
+    data: ChartData<"doughnut", number[]>
 }
 
 export default function Chart(props: ChartProps) {
-    const chartData: ChartData = {
+    const chartData: ChartData<"doughnut", number[]> = {
         ...props.data,
         datasets: props.data.datasets.map((dataset) => ({
             data: dataset.data,

@@ -1,7 +1,7 @@
 import { ChartData } from "chart.js/auto";
 import { BrokerAccount, ModelPortfolio } from "../../../models/portfolios/types";
 
-export function getPortfoliosChartData(portfolios: ModelPortfolio[] | BrokerAccount[]): ChartData {
+export function getPortfoliosChartData(portfolios: ModelPortfolio[] | BrokerAccount[]): ChartData<"doughnut"> {
     const percentageMap = new Map<string, number>();
     let percentageSum = 0;
     for (const portfolio of portfolios) {
