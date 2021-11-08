@@ -16,28 +16,18 @@ export const currentPortfolioSelector = createSelector(
 );
 
 export const currentTargetAmountSelector = createSelector(
-    selectPortfolios,
-    (portfolios) => {
-        if (portfolios.currentTable && portfolios.currentTable.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-            return getCurrentPortfolio(
-                portfolios.currentTable,
-                portfolios.modelPortfolios,
-                portfolios.brokerAccounts
-            )?.totalTargetAmount;
+    currentPortfolioSelector, (currentPortfolio) => {
+        if (currentPortfolio?.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+            return currentPortfolio?.totalTargetAmount;
         }
         return undefined;
     }
 );
 
 export const baseCurrencySelector = createSelector(
-    selectPortfolios,
-    (portfolios) => {
-        if (portfolios.currentTable && portfolios.currentTable.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-            return getCurrentPortfolio(
-                portfolios.currentTable,
-                portfolios.modelPortfolios,
-                portfolios.brokerAccounts
-            )?.settings?.baseCurrency;
+    currentPortfolioSelector, (currentPortfolio) => {
+        if (currentPortfolio?.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+            return currentPortfolio?.settings?.baseCurrency;
         }
         return undefined;
     }
