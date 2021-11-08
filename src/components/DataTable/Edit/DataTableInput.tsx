@@ -37,7 +37,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     const { data: tableData } = useDataTableContext();
 
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLDivElement>(null);
 
     const {
         transparent = false,
@@ -131,7 +131,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                             }
                             if (onGlobalCellKeyEnter) {
                                 onGlobalCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
-                                inputRef.current?.blur();
+                                (event.target as HTMLInputElement).blur();
                             }
                         }
                     }}
@@ -207,7 +207,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
     useEffect(() => {
         // eslint-disable-next-line eqeqeq
         if (isFocus && document.activeElement != inputRef.current?.children[0]) {
-            inputRef.current?.focus();
+            (inputRef.current?.children[0] as HTMLInputElement)?.focus();
         }
     }, [isFocus]);
 

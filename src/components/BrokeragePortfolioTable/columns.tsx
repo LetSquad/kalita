@@ -1,4 +1,4 @@
-import _ from "lodash";
+import sum from "lodash.sum";
 import React from "react";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
@@ -128,7 +128,7 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
         vertAlign: VerticalAlignValues.MIDDLE,
         groupCalc: {
             position: CalcPosition.TOP,
-            calcFunction: (column) => _.sum(column),
+            calcFunction: (column) => sum(column),
             formatter: {
                 type: FormatterTypes.PERCENTAGE,
                 params: {
@@ -160,7 +160,7 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
         vertAlign: VerticalAlignValues.MIDDLE,
         groupCalc: {
             position: CalcPosition.TOP,
-            calcFunction: (column) => _.sum(column),
+            calcFunction: (column) => sum(column),
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
@@ -171,7 +171,7 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
         },
         tableCalc: {
             position: CalcPosition.TOP,
-            calcFunction: (column) => _.sum(column),
+            calcFunction: (column) => sum(column),
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
@@ -264,11 +264,11 @@ const _modelPortfolioColumns: (
             },
             groupCalc: {
                 position: CalcPosition.TOP,
-                calcFunction: (column) => _.sum(column)
+                calcFunction: (column) => sum(column)
             },
             tableCalc: {
                 position: CalcPosition.TOP,
-                calcFunction: (column) => _.sum(column)
+                calcFunction: (column) => sum(column)
             }
         }, {
             title: "Целевая сумма",
@@ -283,7 +283,7 @@ const _modelPortfolioColumns: (
             vertAlign: VerticalAlignValues.MIDDLE,
             groupCalc: {
                 position: CalcPosition.TOP,
-                calcFunction: (column) => _.sum(column),
+                calcFunction: (column) => sum(column),
                 formatter: {
                     type: FormatterTypes.MONEY,
                     params: {
@@ -294,7 +294,7 @@ const _modelPortfolioColumns: (
             },
             tableCalc: {
                 position: CalcPosition.TOP,
-                calcFunction: (column) => _.sum(column),
+                calcFunction: (column) => sum(column),
                 formatter: {
                     type: FormatterTypes.MONEY,
                     params: {

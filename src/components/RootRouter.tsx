@@ -2,9 +2,8 @@ import React, { lazy, useMemo } from "react";
 import {
     HashRouter,
     BrowserRouter,
-    Redirect,
     Route,
-    Switch
+    Routes
 } from "react-router-dom";
 import { NotFoundErrorScreen } from "./utils/NotFoundErrorScreen";
 import { WithSuspense } from "./utils/WithSuspense";
@@ -17,12 +16,11 @@ const Dashboard = lazy(/* webpackChunkName: "dashboard" */() =>
 export function RootRouter() {
     const routes = useMemo(() => (
         <WithSuspense>
-            <Switch>
-                <Route exact path="/" component={StartScreen} />
-                <Route exact path="/dashboard" component={Dashboard} />
-                <Route exact path="/not-found" component={NotFoundErrorScreen} />
-                <Redirect to="/not-found" />
-            </Switch>
+            <Routes>
+                <Route path="/" element={<StartScreen />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="*" element={<NotFoundErrorScreen />} />
+            </Routes>
         </WithSuspense>
     ), []);
 

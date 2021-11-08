@@ -85,7 +85,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     }, [dispatch]);
 
     const chart = useMemo(() => {
-        const chartData: ChartData | null = {
+        const chartData: ChartData<"doughnut"> | null = {
             labels: currentPortfolio.positions.map((row) => row.ticker),
             datasets: [{
                 data: currentPortfolio.positions.map((row) => row.percentage)

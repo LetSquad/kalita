@@ -6,8 +6,7 @@ import { ColumnDefinition } from "./column";
 
 export type DataTableData = {
     id: string;
-    [key: string]: string | number | boolean | undefined;
-};
+} & Record<string, string | number | boolean | undefined>;
 
 export interface UserDataTableClasses {
     tableClassName?: string;

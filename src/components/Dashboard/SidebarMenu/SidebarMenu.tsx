@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { setDefault } from "../../../store/sidebarMenu/sidebarMenuReducer";
@@ -15,15 +15,15 @@ interface SidebarMenuProps {
 
 export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenuProps) {
     const dispatch = useAppDispatch();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const modelPortfolios = useAppSelector((state) => state.sidebarMenu.modelPortfolios);
     const brokerAccounts = useAppSelector((state) => state.sidebarMenu.brokerAccounts);
 
     const closeProject = useCallback(() => {
         dispatch(setDefault());
-        history.push("/");
-    }, [dispatch, history]);
+        navigate("/");
+    }, [dispatch, navigate]);
 
     return (
         <div className={styles.sidebar}>

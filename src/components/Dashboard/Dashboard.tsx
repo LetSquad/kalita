@@ -1,6 +1,6 @@
 import nodePath from "path";
 import React, { useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
     Icon, Menu, Segment, Sidebar
 } from "semantic-ui-react";
@@ -14,7 +14,7 @@ import styles from "./styles/Dashboard.scss";
 
 export default function Dashboard() {
     const dispatch = useAppDispatch();
-    const history = useHistory();
+    const [searchParams] = useSearchParams();
 
     const projectName = useAppSelector((state) => state.sidebarMenu.currentProjectName);
     const portfolioName = useAppSelector((state) => state.sidebarMenu.currentPortfolioName);
@@ -27,10 +27,10 @@ export default function Dashboard() {
     );
 
     useEffect(() => {
-        const path = decodeURI(history.location.search);
-        dispatch(setCurrentProjectName(path.slice(path.lastIndexOf(nodePath.sep) + 1)));
+        const currentProjectPath = searchParams.get("currentProject");
+        dispatch(setCurrentProjectName(currentProjectPath?.slice(currentProjectPath?.lastIndexOf(nodePath.sep) + 1)));
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [history.location.search]);
+    }, [searchParams]);
 
     return (
         <WithSaving>

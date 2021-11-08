@@ -8,9 +8,7 @@ export interface Quote {
     readonly currency: Currency;
 }
 
-export interface QuotesMap {
-    [key: string]: Quote;
-}
+export type QuotesMap = Record<string, Quote>;
 
 export interface QuoteDividendsDate {
     readonly date: string
