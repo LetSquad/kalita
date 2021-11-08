@@ -193,6 +193,7 @@ export function recalculatePortfolioCurrency(
             ? currencyQuotes[previousCurrency][portfolio.settings.baseCurrency]
             : undefined;
         if (!currencyQuote) {
+            // TODO: replace with toast
             console.warn(`There is no quote for currency pair ${previousCurrency}:${portfolio.settings.baseCurrency}`);
         }
         const currentPrice = currencyQuote ? position.currentPrice * currencyQuote : 0;
@@ -332,6 +333,7 @@ function applyQuoteForPosition(
             };
         }
 
+        // TODO: replace with toast
         console.warn(`Received ${quote.ticker} quote with unsupported currency ${quote.currency}`);
         return {
             ...position,

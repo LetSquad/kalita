@@ -3,7 +3,8 @@ import { parseStringPromise } from "xml2js";
 import axios from "axios";
 import {
     CurrencyQuotes,
-    CurrencyQuotesMap, MoexCurrencyData,
+    CurrencyQuotesMap,
+    MoexCurrencyData,
     MoexData,
     MoexDividendsData,
     MoexQuote,

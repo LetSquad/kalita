@@ -4,7 +4,8 @@ import {
     BrokerReportPositionCodeFormat,
     BrokerReportEncoding,
     BrokerReportFormat,
-    BrokerCode, Currency
+    BrokerCode,
+    Currency
 } from "./enums";
 import { ModelPortfolioSettings, PortfolioSettings } from "../settings/types";
 import { CurrencyQuotesMap } from "../apis/types";

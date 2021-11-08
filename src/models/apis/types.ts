@@ -6,13 +6,9 @@ export type QuoteData = [CurrencyQuotesMap, Quote | undefined];
 
 export type QuotesMap = Record<string, Quote>;
 
-export interface CurrencyQuotesMap {
-    [key: string]: CurrencyQuotes;
-}
+export type CurrencyQuotesMap = Record<string, CurrencyQuotes>;
 
-export interface CurrencyQuotes {
-    [key: string]: number;
-}
+export type CurrencyQuotes = Record<string, number>;
 
 export interface Quote {
     readonly isin: string;

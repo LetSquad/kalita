@@ -12,23 +12,17 @@ import {
 } from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { updateBaseCurrency, updateTotalTargetAmount } from "../../../store/portfolios/portfoliosReducer";
-import { currentPortfolioSelector } from "../../../store/portfolios/selectors";
+import { baseCurrencySelector, currentTargetAmountSelector } from "../../../store/portfolios/selectors";
 import styles from "./styles/TargetAmountInput.scss";
-import { Portfolio } from "../../../models/portfolios/types";
-import { BrokeragePortfolioTypes, Currency } from "../../../models/portfolios/enums";
+import { Currency } from "../../../models/portfolios/enums";
 import { getSymbol } from "../../../utils/currencyUtils";
 import { getMoexCurrencyQuotes } from "../../../apis/moexApi";
 
 export default function TargetAmountInput() {
     const dispatch = useAppDispatch();
 
-    const currentPortfolio: Portfolio | undefined = useAppSelector(currentPortfolioSelector);
-    const totalTargetAmount = currentPortfolio && currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO
-        ? currentPortfolio.totalTargetAmount
-        : undefined;
-    const baseCurrency = currentPortfolio && currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO
-        ? currentPortfolio.settings.baseCurrency
-        : undefined;
+    const totalTargetAmount: string | number | undefined = useAppSelector(currentTargetAmountSelector);
+    const baseCurrency: Currency | undefined = useAppSelector(baseCurrencySelector);
 
     const [targetAmountError, setTargetAmountError] = useState(false);
     const [questionOpen, setQuestionOpen] = useState(false);
@@ -68,36 +62,45 @@ export default function TargetAmountInput() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return useMemo(() => {
-        const targetAmountCurrencies = Object.values(Currency)
-            .map((c) => ({ key: c, text: getSymbol(c), value: c }));
-        return (
-            <div className={styles.inputContainer}>
-                <span>Целевая сумма:</span>
-                <Input
-                    label={(
-                        <Dropdown
-                            options={targetAmountCurrencies}
-                            value={baseCurrency}
-                            onChange={(_, data) => updatePortfolioCurrency(data.value as Currency)}
-                        />
-                    )}
-                    labelPosition="right"
-                    error={targetAmountError}
-                    value={totalTargetAmount}
-                    className={styles.input}
-                    onChange={(_, data) => updateTargetAmount(data.value)}
-                />
-                <Popup
-                    open={questionOpen}
-                    on="hover"
-                    onClose={() => setQuestionOpen(false)}
-                    onOpen={() => setQuestionOpen(true)}
-                    position="bottom center"
-                    trigger={<Icon className={styles.inputQuestion} name="question circle outline" />}
-                    content="Целевая сумма должна быть числом и не должна превышать 999999999999"
-                />
-            </div>
-        );
-    }, [questionOpen, targetAmountError, baseCurrency, totalTargetAmount, updateTargetAmount, updatePortfolioCurrency]);
+    const targetAmountCurrencies = useMemo(() => (
+        Object.values(Currency)
+            .map((c) => ({ key: c, text: getSymbol(c), value: c }))
+    ), []);
+
+    return useMemo(() => (
+        <div className={styles.inputContainer}>
+            <span>Целевая сумма:</span>
+            <Input
+                label={(
+                    <Dropdown
+                        options={targetAmountCurrencies}
+                        value={baseCurrency}
+                        onChange={(_, data) => updatePortfolioCurrency(data.value as Currency)}
+                    />
+                )}
+                labelPosition="right"
+                error={targetAmountError}
+                value={totalTargetAmount}
+                className={styles.input}
+                onChange={(_, data) => updateTargetAmount(data.value)}
+            />
+            <Popup
+                open={questionOpen}
+                on="hover"
+                onClose={() => setQuestionOpen(false)}
+                onOpen={() => setQuestionOpen(true)}
+                position="bottom center"
+                trigger={<Icon className={styles.inputQuestion} name="question circle outline" />}
+                content="Целевая сумма должна быть числом и не должна превышать 999999999999"
+            />
+        </div>
+    ), [
+        questionOpen,
+        targetAmountError,
+        targetAmountCurrencies,
+        baseCurrency,
+        totalTargetAmount,
+        updateTargetAmount,
+        updatePortfolioCurrency
+    ]);
 }
