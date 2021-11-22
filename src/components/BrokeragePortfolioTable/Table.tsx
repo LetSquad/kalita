@@ -158,7 +158,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                     ? chart
                     : table
             }
-            {dividendsTicket && <DividendsModal ticket={dividendsTicket} onClose={() => setDividendsTicket(undefined)} />}
+            {dividendsTicket && <DividendsModal ticker={dividendsTicket} onClose={() => setDividendsTicket(undefined)} />}
         </div>
     );
 }

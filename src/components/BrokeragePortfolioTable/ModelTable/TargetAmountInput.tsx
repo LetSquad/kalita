@@ -1,16 +1,28 @@
 import React, {
-    useCallback, useEffect, useMemo, useState
+    useCallback,
+    useEffect,
+    useMemo,
+    useState
 } from "react";
-import { Icon, Input, Popup } from "semantic-ui-react";
+import {
+    Dropdown,
+    Icon,
+    Input,
+    Popup
+} from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
-import { updateTotalTargetAmount } from "../../../store/portfolios/portfoliosReducer";
-import { currentTargetAmountSelector } from "../../../store/portfolios/selectors";
+import { updateBaseCurrency, updateTotalTargetAmount } from "../../../store/portfolios/portfoliosReducer";
+import { baseCurrencySelector, currentTargetAmountSelector } from "../../../store/portfolios/selectors";
 import styles from "./styles/TargetAmountInput.scss";
+import { Currency } from "../../../models/portfolios/enums";
+import { getSymbol } from "../../../utils/currencyUtils";
+import { getMoexCurrencyQuotes } from "../../../apis/moexApi";
 
 export default function TargetAmountInput() {
     const dispatch = useAppDispatch();
 
-    const totalTargetAmount = useAppSelector(currentTargetAmountSelector);
+    const totalTargetAmount: string | number | undefined = useAppSelector(currentTargetAmountSelector);
+    const baseCurrency: Currency | undefined = useAppSelector(baseCurrencySelector);
 
     const [targetAmountError, setTargetAmountError] = useState(false);
     const [questionOpen, setQuestionOpen] = useState(false);
@@ -40,24 +52,37 @@ export default function TargetAmountInput() {
         }
     }, [dispatch, validateTargetAmount]);
 
+    const updatePortfolioCurrency = useCallback((value: Currency) => {
+        getMoexCurrencyQuotes()
+            .then((quotes) => dispatch(updateBaseCurrency({ currency: value, quotes })));
+    }, [dispatch]);
+
     useEffect(() => {
         validateTargetAmount(totalTargetAmount);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const targetAmountCurrencies = useMemo(() => (
+        Object.values(Currency)
+            .map((c) => ({ key: c, text: getSymbol(c), value: c }))
+    ), []);
+
     return useMemo(() => (
         <div className={styles.inputContainer}>
             <span>Целевая сумма:</span>
             <Input
-                label={{
-                    basic: true,
-                    content: "₽"
-                }}
+                label={(
+                    <Dropdown
+                        options={targetAmountCurrencies}
+                        value={baseCurrency}
+                        onChange={(_, data) => updatePortfolioCurrency(data.value as Currency)}
+                    />
+                )}
                 labelPosition="right"
                 error={targetAmountError}
                 value={totalTargetAmount}
                 className={styles.input}
-                onChange={(event, data) => updateTargetAmount(data.value)}
+                onChange={(_, data) => updateTargetAmount(data.value)}
             />
             <Popup
                 open={questionOpen}
@@ -69,5 +94,13 @@ export default function TargetAmountInput() {
                 content="Целевая сумма должна быть числом и не должна превышать 999999999999"
             />
         </div>
-    ), [questionOpen, targetAmountError, totalTargetAmount, updateTargetAmount]);
+    ), [
+        questionOpen,
+        targetAmountError,
+        targetAmountCurrencies,
+        baseCurrency,
+        totalTargetAmount,
+        updateTargetAmount,
+        updatePortfolioCurrency
+    ]);
 }

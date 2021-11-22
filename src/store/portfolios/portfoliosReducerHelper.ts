@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-import { Quote, QuotesMap } from "../../models/apis/types";
+import { CurrencyQuotesMap, Quote, QuotesMap } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
-import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
+import { BrokeragePortfolioTypes, Currency } from "../../models/portfolios/enums";
 import {
     BrokerAccount,
     BrokerAccountIdentifier,
@@ -18,7 +18,7 @@ import {
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
-import { Currency } from "../../models/apis/enums";
+import { moexCurrencyToInternalCurrency } from "../../utils/currencyUtils";
 
 export const defaultTotalTargetAmount = 1_000_000;
 
@@ -34,7 +34,10 @@ export function getPortfolioTypeFromSidebarType(sidebarType: SidebarMenuElements
 export const newBrokerAccount: (id: string) => BrokerAccount = (id: string) => ({
     id,
     type: BrokeragePortfolioTypes.BROKER_ACCOUNT,
-    positions: []
+    positions: [],
+    settings: {
+        baseCurrency: Currency.RUB
+    }
 });
 
 export const newModelPortfolio: (id: string) => ModelPortfolio = (id: string) => ({
@@ -42,7 +45,11 @@ export const newModelPortfolio: (id: string) => ModelPortfolio = (id: string) =>
     type: BrokeragePortfolioTypes.MODEL_PORTFOLIO,
     positions: [],
     totalTargetAmount: defaultTotalTargetAmount,
-    settings: { quantityMode: ModelPortfolioQuantityMode.MANUAL_INPUT, quantitySources: [] }
+    settings: {
+        baseCurrency: Currency.RUB,
+        quantityMode: ModelPortfolioQuantityMode.MANUAL_INPUT,
+        quantitySources: []
+    }
 });
 
 export function getCurrentPortfolio(currentTable: ModelPortfolioIdentifier,
@@ -166,21 +173,55 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
 }
 
-export function recalculateRowsPrice(
-    positions: PortfolioPosition[],
+export function recalculatePortfolioPrice(
+    portfolio: Portfolio,
+    currencyQuotes: CurrencyQuotesMap,
     quotes: QuotesMap
 ): ModelPortfolioPosition[] | BrokerAccountPosition[] {
-    return positions.map((row) =>
-        applyQuoteForPosition(row, quotes[row.ticker])) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+    return portfolio.positions.map(
+        (row) => applyQuoteForPosition(portfolio.settings.baseCurrency, row, currencyQuotes, quotes[row.ticker])
+    ) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+}
+
+export function recalculatePortfolioCurrency(
+    portfolio: Portfolio,
+    previousCurrency: Currency,
+    currencyQuotes: CurrencyQuotesMap
+): ModelPortfolioPosition[] | BrokerAccountPosition[] {
+    return portfolio.positions.map((position) => {
+        const currencyQuote = currencyQuotes[previousCurrency]
+            ? currencyQuotes[previousCurrency][portfolio.settings.baseCurrency]
+            : undefined;
+        if (!currencyQuote) {
+            // TODO: replace with toast
+            console.warn(`There is no quote for currency pair ${previousCurrency}:${portfolio.settings.baseCurrency}`);
+        }
+        const currentPrice = currencyQuote ? position.currentPrice * currencyQuote : 0;
+        return {
+            ...position,
+            currentPrice,
+            amount: currentPrice * position.quantity
+        };
+    }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
+}
+
+export function recalculatePortfolioPercentage(portfolio: Portfolio): ModelPortfolioPosition[] | BrokerAccountPosition[] {
+    if (portfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+        portfolio.positions = recalculateModelPortfolioPercentage(portfolio);
+    } else if (portfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT) {
+        portfolio.positions = recalculateBrokerAccountPercentage(portfolio.positions);
+    }
+    return portfolio.positions;
 }
 
 export function recalculateRowPrice(
-    positions: PortfolioPosition[],
+    portfolio: Portfolio,
+    currencyQuotes: CurrencyQuotesMap,
     quote?: Quote
 ): ModelPortfolioPosition[] | BrokerAccountPosition[] {
-    return positions.map((row) => {
+    return portfolio.positions.map((row) => {
         if (row.ticker === quote?.ticker) {
-            return applyQuoteForPosition(row, quote);
+            return applyQuoteForPosition(portfolio.settings.baseCurrency, row, currencyQuotes, quote);
         }
         return row;
     }) as ModelPortfolioPosition[] | BrokerAccountPosition[];
@@ -207,7 +248,10 @@ export function recalculateModelPortfolioPercentage(modelPortfolio: ModelPortfol
     });
 }
 
-export function recalculateModelPortfolioQuantity(modelPortfolioPositions: ModelPortfolioPosition[], sources: PortfolioPosition[]) {
+export function recalculateModelPortfolioQuantity(
+    modelPortfolioPositions: ModelPortfolioPosition[],
+    sources: PortfolioPosition[]
+): ModelPortfolioPosition[] {
     const quantityMap = new Map<string, number>();
     for (const source of sources) {
         const currentQuantity = quantityMap.get(source.ticker);
@@ -263,24 +307,42 @@ function getNewName(tableData: TableData, nameConst: string, fieldName: "ticker"
     return `${nameConst} ${newStringsNums[newStringsNums.length - 1] + 1}`;
 }
 
-function applyQuoteForPosition(position: PortfolioPosition, quote?: Quote): PortfolioPosition {
+function applyQuoteForPosition(
+    baseCurrency: Currency,
+    position: PortfolioPosition,
+    currencyQuotes: CurrencyQuotesMap,
+    quote?: Quote
+): PortfolioPosition {
     if (quote) {
-        if (quote.currency !== Currency.RUB) {
-            console.warn(`Received ${quote.ticker} quote with unsupported currency ${quote.currency}`);
+        const currency: Currency = moexCurrencyToInternalCurrency(quote.currency);
+        if (currency === baseCurrency) {
             return {
                 ...position,
-                currentPrice: 0,
-                amount: 0,
+                currentPrice: quote.price,
+                amount: quote.price * position.quantity,
                 name: quote.name
             };
         }
+        if (currencyQuotes[currency][baseCurrency]) {
+            const currentPrice = quote.price * currencyQuotes[currency][baseCurrency];
+            return {
+                ...position,
+                currentPrice,
+                amount: currentPrice * position.quantity,
+                name: quote.name
+            };
+        }
+
+        // TODO: replace with toast
+        console.warn(`Received ${quote.ticker} quote with unsupported currency ${quote.currency}`);
         return {
             ...position,
-            currentPrice: quote.price,
-            amount: quote.price * position.quantity,
+            currentPrice: 0,
+            amount: 0,
             name: quote.name
         };
     }
+
     return {
         ...position,
         currentPrice: 0,

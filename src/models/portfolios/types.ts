@@ -4,9 +4,11 @@ import {
     BrokerReportPositionCodeFormat,
     BrokerReportEncoding,
     BrokerReportFormat,
-    BrokerCode
+    BrokerCode,
+    Currency
 } from "./enums";
-import { ModelPortfolioSettings } from "../settings/types";
+import { ModelPortfolioSettings, PortfolioSettings } from "../settings/types";
+import { CurrencyQuotesMap } from "../apis/types";
 
 export interface ModelPortfolioIdentifier {
     id: string;
@@ -39,6 +41,7 @@ export interface BrokerAccount {
     id: string;
     type: BrokeragePortfolioTypes.BROKER_ACCOUNT;
     positions: BrokerAccountPosition[];
+    settings: PortfolioSettings;
 }
 
 export type PortfolioPosition = {
@@ -74,6 +77,11 @@ export interface PortfolioReorderPayload {
     readonly oldOrder: number;
     readonly newOrder: number;
     readonly newGroupName?: string;
+}
+
+export interface CurrencyUpdatePayload {
+    readonly currency: Currency;
+    readonly quotes: CurrencyQuotesMap;
 }
 
 export interface BrokerReportMetadata {

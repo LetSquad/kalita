@@ -11,6 +11,8 @@ import { FormatterTypes } from "../DataTable/types/formatter";
 import { TooltipPosition } from "../DataTable/types/tooltip";
 import { ActionBlock } from "./ActionBlock";
 import styles from "./styles/columns.scss";
+import { getSymbol } from "../../utils/currencyUtils";
+import { Currency } from "../../models/portfolios/enums";
 
 const TICKER_INVALID_FORMAT = "Тикер должен состоять только из больших латинских букв и цифр и быть от 1 до 12 символов";
 const TICKER_DUPLICATE = "Тикер должен быть уникальным в рамках портфеля";
@@ -69,7 +71,10 @@ function averagePriceValidator(
     return AVERAGE_PRICE_INVALID;
 }
 
-export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[] = (dividendsButton) => [
+export const commonColumns: (
+    baseCurrency: Currency,
+    dividendsButton: (ticker: string) => JSX.Element
+) => ColumnDefinition[] = (baseCurrency, dividendsButton) => [
     {
         title: "Инструмент",
         field: BaseColumnNames.TICKER,
@@ -142,7 +147,7 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
         formatter: {
             type: FormatterTypes.MONEY,
             params: {
-                currency: "₽",
+                currency: getSymbol(baseCurrency),
                 additionalSpace: true
             }
         },
@@ -153,7 +158,7 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
         formatter: {
             type: FormatterTypes.MONEY,
             params: {
-                currency: "₽",
+                currency: getSymbol(baseCurrency),
                 additionalSpace: true
             }
         },
@@ -164,7 +169,7 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: "₽",
+                    currency: getSymbol(baseCurrency),
                     additionalSpace: true
                 }
             }
@@ -175,7 +180,7 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: "₽",
+                    currency: getSymbol(baseCurrency),
                     additionalSpace: true
                 }
             }
@@ -228,11 +233,11 @@ export const modelPortfolioColumnsWidth = [
 ];
 
 const _modelPortfolioColumns: (
-    dividendsButton: (ticket: string) => JSX.Element,
+    dividendsButton: (ticker: string) => JSX.Element,
     portfolioSettings: ModelPortfolioSettings
 ) => ColumnDefinition[] =
     (dividendsButton, portfolioSettings) => [
-        ...commonColumns(dividendsButton),
+        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton),
         {
             title: "Вес",
             field: ModelPortfolioColumnNames.WEIGHT,
@@ -276,7 +281,7 @@ const _modelPortfolioColumns: (
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: "₽",
+                    currency: getSymbol(portfolioSettings.baseCurrency),
                     additionalSpace: true
                 }
             },
@@ -287,7 +292,7 @@ const _modelPortfolioColumns: (
                 formatter: {
                     type: FormatterTypes.MONEY,
                     params: {
-                        currency: "₽",
+                        currency: getSymbol(portfolioSettings.baseCurrency),
                         additionalSpace: true
                     }
                 }
@@ -298,7 +303,7 @@ const _modelPortfolioColumns: (
                 formatter: {
                     type: FormatterTypes.MONEY,
                     params: {
-                        currency: "₽",
+                        currency: getSymbol(portfolioSettings.baseCurrency),
                         additionalSpace: true
                     }
                 }
@@ -359,7 +364,7 @@ const _modelPortfolioColumns: (
     ];
 
 export const modelPortfolioColumns: (
-    dividendsButton: (ticket: string) => JSX.Element,
+    dividendsButton: (ticker: string) => JSX.Element,
     portfolioSettings: ModelPortfolioSettings
 ) => ColumnDefinition[] =
     (dividendsButton, portfolioSettings) => _modelPortfolioColumns(dividendsButton, portfolioSettings).sort((columnA, columnB) =>
@@ -392,16 +397,16 @@ export const brokerAccountColumnsWidth = [
     40
 ];
 
-export const _brokerAccountColumns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[] =
+export const _brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.Element) => ColumnDefinition[] =
     (dividendsButton) => [
-        ...commonColumns(dividendsButton),
+        ...commonColumns(Currency.RUB, dividendsButton),
         {
             title: "Цена покупки",
             field: BrokerAccountColumnNames.AVERAGE_PRICE,
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: "₽",
+                    currency: getSymbol(Currency.RUB),
                     additionalSpace: true
                 }
             },
@@ -462,7 +467,7 @@ export const _brokerAccountColumns: (dividendsButton: (ticket: string) => JSX.El
         }
     ];
 
-export const brokerAccountColumns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[] =
+export const brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.Element) => ColumnDefinition[] =
     (dividendsButton) => _brokerAccountColumns(dividendsButton).sort((columnA, columnB) =>
         brokerAccountColumnsOrder.indexOf(columnA.field as BaseColumnNames | BrokerAccountColumnNames) -
     brokerAccountColumnsOrder.indexOf(columnB.field as BaseColumnNames | BrokerAccountColumnNames))
