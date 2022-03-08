@@ -1,4 +1,3 @@
-import React from "react";
 import { useDataTableCalcPercentageFormatterCellContext } from "../../../utils/contexts/hooks";
 import { defaultPercentageFormatterParams, formatPercentageFormatterValue } from "../../utils/formatterUtils";
 import DataTableBaseCalcCell from "../DataTableBaseCalcCell";

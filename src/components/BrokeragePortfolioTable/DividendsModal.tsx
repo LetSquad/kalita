@@ -1,15 +1,17 @@
-import { Loader, Modal, Table } from "semantic-ui-react";
-import React, {
+import {
     useCallback,
     useEffect,
     useMemo,
     useState
 } from "react";
+
+import { Loader, Modal, Table } from "semantic-ui-react";
+
 import { getStockDividends } from "../../apis/moexApi";
 import { QuoteDividends } from "../../models/apis/types";
-import styles from "./styles/DividendsModal.scss";
 import partsStyle from "../../styles/parts.scss";
 import { getSymbol } from "../../utils/currencyUtils";
+import styles from "./styles/DividendsModal.scss";
 
 interface DividendsModalProps {
     ticker: string;
@@ -27,7 +29,12 @@ export default function DividendsModal({ ticker, onClose }: DividendsModalProps)
     }, [ticker]);
 
     const contentTable = useCallback((_dividends: QuoteDividends[]) => (
-        <Table basic="very" celled collapsing className={styles.table}>
+        <Table
+            basic="very"
+            celled
+            collapsing
+            className={styles.table}
+        >
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Дата</Table.HeaderCell>
@@ -50,7 +57,10 @@ export default function DividendsModal({ ticker, onClose }: DividendsModalProps)
         if (isDividendsLoading) {
             return (
                 <div className={partsStyle.loaderContainer}>
-                    <Loader active inline="centered" />
+                    <Loader
+                        active
+                        inline="centered"
+                    />
                 </div>
             );
         }
@@ -69,7 +79,10 @@ export default function DividendsModal({ ticker, onClose }: DividendsModalProps)
             open
         >
             <Modal.Header className={partsStyle.modalHeader}>Дивиденды</Modal.Header>
-            <Modal.Content scrolling className={partsStyle.modalContent}>
+            <Modal.Content
+                scrolling
+                className={partsStyle.modalContent}
+            >
                 {content}
             </Modal.Content>
         </Modal>

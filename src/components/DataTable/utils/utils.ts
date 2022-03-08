@@ -1,4 +1,5 @@
 import { CSSProperties } from "react";
+
 import { DataTableData, ExportToCsvOptions } from "../types/base";
 import { ColumnDefinition, HorizontalAlignValues, VerticalAlignValues } from "../types/column";
 import { GroupData } from "../types/group";

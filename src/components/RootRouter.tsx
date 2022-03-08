@@ -1,10 +1,12 @@
-import React, { lazy, useMemo } from "react";
+import { lazy, useMemo } from "react";
+
 import {
-    HashRouter,
     BrowserRouter,
+    HashRouter,
     Route,
     Routes
 } from "react-router-dom";
+
 import { NotFoundErrorScreen } from "./utils/NotFoundErrorScreen";
 import { WithSuspense } from "./utils/WithSuspense";
 
@@ -17,9 +19,18 @@ export function RootRouter() {
     const routes = useMemo(() => (
         <WithSuspense>
             <Routes>
-                <Route path="/" element={<StartScreen />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="*" element={<NotFoundErrorScreen />} />
+                <Route
+                    path="/"
+                    element={<StartScreen />}
+                />
+                <Route
+                    path="/dashboard"
+                    element={<Dashboard />}
+                />
+                <Route
+                    path="*"
+                    element={<NotFoundErrorScreen />}
+                />
             </Routes>
         </WithSuspense>
     ), []);

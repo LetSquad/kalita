@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import React from "react";
 import { Table } from "semantic-ui-react";
-import { DataTableHeaderCellParams } from "../types/cell";
+
 import baseStyles from "../styles/base.scss";
+import { DataTableHeaderCellParams } from "../types/cell";
 import { useDataTableContext } from "../utils/contexts/hooks";
 import { getCellCssStyleFromColumn, getHeaderCellContentCssStyleFromColumn } from "../utils/utils";
 
@@ -17,7 +17,10 @@ export default function DataTableHeaderCell({ column }: DataTableHeaderCellParam
         >
             {
                 column.title && (
-                    <div className={baseStyles.baseCellContentWrapper} style={getHeaderCellContentCssStyleFromColumn(column)}>
+                    <div
+                        className={baseStyles.baseCellContentWrapper}
+                        style={getHeaderCellContentCssStyleFromColumn(column)}
+                    >
                         {column.title}
                     </div>
                 )

@@ -1,11 +1,13 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
+
 import { Icon } from "semantic-ui-react";
+
+import { loadMoexQuotesByTickers } from "../../../apis/moexApi";
 import { Portfolio } from "../../../models/portfolios/types";
+import { useAppDispatch } from "../../../store/hooks";
 import { addNewGroup } from "../../../store/portfolios/portfoliosReducer";
 import { AdditionalHeaderMenu } from "./AdditionalHeaderMenu";
 import styles from "./styles/AdditionalHeader.scss";
-import { loadMoexQuotesByTickers } from "../../../apis/moexApi";
-import { useAppDispatch } from "../../../store/hooks";
 
 interface Props {
     currentPortfolio: Portfolio,
@@ -35,15 +37,28 @@ export function AdditionalHeader({
                 {additionalHeaderPart}
             </div>
             <div>
-                <AdditionalHeaderMenu currentPortfolio={currentPortfolio} importTableToCsvText={importTableToCsvText} />
+                <AdditionalHeaderMenu
+                    currentPortfolio={currentPortfolio}
+                    importTableToCsvText={importTableToCsvText}
+                />
                 <Icon
                     name={isChartMode ? "table" : "chart pie"}
                     link
                     className={styles.additionalHeaderIcon}
                     onClick={onToggleChartMode}
                 />
-                <Icon name="sync alternate" link className={styles.additionalHeaderIcon} onClick={() => updateQuotesCurrentPrice()} />
-                <Icon name="plus" link className={styles.additionalHeaderIcon} onClick={() => addGroup()} />
+                <Icon
+                    name="sync alternate"
+                    link
+                    className={styles.additionalHeaderIcon}
+                    onClick={() => updateQuotesCurrentPrice()}
+                />
+                <Icon
+                    name="plus"
+                    link
+                    className={styles.additionalHeaderIcon}
+                    onClick={() => addGroup()}
+                />
             </div>
         </div>
     );

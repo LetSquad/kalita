@@ -1,13 +1,16 @@
-import { app, dialog } from "@electron/remote";
+import { lazy, useCallback, useState } from "react";
+
 import fs from "fs-extra";
-import React, { lazy, useCallback, useState } from "react";
 import { useToasts } from "react-toast-notifications";
 import { Dropdown } from "semantic-ui-react";
+
+import { app, dialog } from "@electron/remote";
+
 import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
 import { Portfolio } from "../../../models/portfolios/types";
 import { WithSuspense } from "../../utils/WithSuspense";
-import styles from "./styles/AdditionalHeaderMenu.scss";
 import headerStyles from "./styles/AdditionalHeader.scss";
+import styles from "./styles/AdditionalHeaderMenu.scss";
 
 interface Props {
     currentPortfolio: Portfolio,
@@ -48,23 +51,26 @@ export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }:
 
     return (
         <>
-            <Dropdown item icon="cog" simple closeOnChange className={headerStyles.additionalHeaderIcon} direction="left">
+            <Dropdown
+                item
+                icon="cog"
+                simple
+                closeOnChange
+                className={headerStyles.additionalHeaderIcon}
+                direction="left"
+            >
                 <Dropdown.Menu>
                     <Dropdown.Item onClick={importToCsv}>Экспорт в CSV...</Dropdown.Item>
                     <Dropdown.Divider className={styles.divider} />
                     {
                         currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO ? (
-                            <>
-                                <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
-                                    Источники данных
-                                </Dropdown.Item>
-                            </>
+                            <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
+                                Источники данных
+                            </Dropdown.Item>
                         ) : (
-                            <>
-                                <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
-                                    Загрузка отчёта брокера
-                                </Dropdown.Item>
-                            </>
+                            <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
+                                Загрузка отчёта брокера
+                            </Dropdown.Item>
                         )
                     }
                 </Dropdown.Menu>

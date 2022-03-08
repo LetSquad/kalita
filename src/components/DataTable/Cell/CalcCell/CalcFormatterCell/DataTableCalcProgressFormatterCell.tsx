@@ -1,5 +1,7 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import { Progress } from "semantic-ui-react";
+
 import { BaseCalcProgressFormatterParams } from "../../../types/formatter";
 import { useDataTableCalcProgressFormatterCellContext } from "../../../utils/contexts/hooks";
 import DataTableBaseCalcCell from "../DataTableBaseCalcCell";

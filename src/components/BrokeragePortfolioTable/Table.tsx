@@ -1,4 +1,4 @@
-import React, {
+import {
     FocusEvent,
     KeyboardEvent,
     lazy,
@@ -8,9 +8,11 @@ import React, {
     useRef,
     useState
 } from "react";
-import { $enum } from "ts-enum-util";
+
 import { ChartData } from "chart.js/auto";
 import { Icon, Popup } from "semantic-ui-react";
+import { $enum } from "ts-enum-util";
+
 import { loadMoexQuoteByTicker } from "../../apis/moexApi";
 import { Portfolio } from "../../models/portfolios/types";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
@@ -21,14 +23,14 @@ import {
     updateGroupName,
     updatePosition
 } from "../../store/portfolios/portfoliosReducer";
+import Chart from "../Chart/Chart";
+import stylesChart from "../Chart/styles/Chart.scss";
 import { DataTableData, DataTableRef } from "../DataTable/types/base";
 import { ColumnDefinition } from "../DataTable/types/column";
 import { WithSuspense } from "../utils/WithSuspense";
 import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
-import styles from "./styles/Table.scss";
-import stylesChart from "../Chart/styles/Chart.scss";
-import Chart from "../Chart/Chart";
 import DividendsModal from "./DividendsModal";
+import styles from "./styles/Table.scss";
 
 interface TableProps {
     columns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[],
@@ -103,7 +105,13 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
     const dividendsButton = useCallback((ticket: string) => (
         <Popup
             content="Дивиденды"
-            trigger={<Icon name="suitcase" link onClick={() => setDividendsTicket(ticket)} />}
+            trigger={(
+                <Icon
+                    name="suitcase"
+                    link
+                    onClick={() => setDividendsTicket(ticket)}
+                />
+            )}
             position="top center"
             size="tiny"
         />
@@ -158,7 +166,12 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                     ? chart
                     : table
             }
-            {dividendsTicket && <DividendsModal ticker={dividendsTicket} onClose={() => setDividendsTicket(undefined)} />}
+            {dividendsTicket && (
+                <DividendsModal
+                    ticker={dividendsTicket}
+                    onClose={() => setDividendsTicket(undefined)}
+                />
+            )}
         </div>
     );
 }

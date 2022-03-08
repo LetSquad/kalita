@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import { useDataTableLinkFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
 
@@ -16,7 +17,11 @@ export default function DataTableLinkFormatterCell() {
         const link = `${params?.urlPrefix ?? ""}${cell}${params?.urlSuffix ?? ""}`;
 
         return (
-            <a href={link} target={params?.target} className={params?.className}>
+            <a
+                href={link}
+                target={params?.target}
+                className={params?.className}
+            >
                 {params?.label ?? link}
             </a>
         );

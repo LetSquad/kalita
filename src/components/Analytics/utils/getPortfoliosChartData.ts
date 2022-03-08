@@ -1,4 +1,5 @@
 import { ChartData } from "chart.js/auto";
+
 import { BrokerAccount, ModelPortfolio } from "../../../models/portfolios/types";
 
 export function getPortfoliosChartData(portfolios: ModelPortfolio[] | BrokerAccount[]): ChartData<"doughnut"> {

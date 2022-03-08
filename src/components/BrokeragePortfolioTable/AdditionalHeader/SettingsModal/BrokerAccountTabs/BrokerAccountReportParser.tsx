@@ -1,12 +1,15 @@
-import { app, dialog } from "@electron/remote";
-import React, {
+import {
     useCallback,
     useEffect,
     useMemo,
     useState
 } from "react";
+
 import { useToasts } from "react-toast-notifications";
 import { Button, Dropdown } from "semantic-ui-react";
+
+import { app, dialog } from "@electron/remote";
+
 import {
     BrokerCode,
     BrokerReportEncoding,
@@ -14,13 +17,13 @@ import {
     BrokerReportPositionCodeFormat
 } from "../../../../../models/portfolios/enums";
 import { BrokerReportLoadResult, BrokerReportMetadata } from "../../../../../models/portfolios/types";
+import openBrokerIcon from "../../../../../static/icons/open-broker.ico";
+import tinkoffBrokerIcon from "../../../../../static/icons/tinkoff-broker.png";
+import vtbBrokerIcon from "../../../../../static/icons/vtb-broker.png";
 import { useAppDispatch } from "../../../../../store/hooks";
 import { addBrokerAccountPositions } from "../../../../../store/portfolios/portfoliosReducer";
 import BrokerReportLoaderWorker from "../../../../../workers/BrokerReportLoader.worker";
 import styles from "./styles/BrokerAccountReportParser.scss";
-import vtbBrokerIcon from "../../../../../static/icons/vtb-broker.png";
-import openBrokerIcon from "../../../../../static/icons/open-broker.ico";
-import tinkoffBrokerIcon from "../../../../../static/icons/tinkoff-broker.png";
 
 const brokers: BrokerReportMetadata[] = [
     {
@@ -150,7 +153,13 @@ export default function BrokerAccountReportParser() {
                     onChange={(_, { value }) => setChosenBrokerIndex(value as number)}
                     options={brokersOptions}
                 />
-                <Button secondary basic size="mini" disabled={chosenBrokerIndex === undefined} onClick={chooseBrokerReport}>
+                <Button
+                    secondary
+                    basic
+                    size="mini"
+                    disabled={chosenBrokerIndex === undefined}
+                    onClick={chooseBrokerReport}
+                >
                     Выберите файл
                 </Button>
                 <span className={styles.chosenReportPath}>

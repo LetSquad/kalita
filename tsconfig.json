@@ -1,8 +1,14 @@
 {
+    "ts-node": {
+        "compilerOptions": {
+            "target": "es6",
+            "module": "commonjs"
+        }
+    },
     "compilerOptions": {
         "allowJs": false,
-        "target": "es6",
-        "module": "commonjs",
+        "target": "ES2017",
+        "module": "es2022",
         "rootDirs": [
             "./src",
             "./test"
@@ -13,7 +19,7 @@
             "es2019",
             "dom"
         ],
-        "jsx": "react",
+        "jsx": "react-jsx",
         "sourceMap": true,
         "strict": true,
         "noStrictGenericChecks": false,

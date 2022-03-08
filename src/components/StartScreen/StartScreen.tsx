@@ -1,10 +1,13 @@
-import { app, dialog } from "@electron/remote";
+import { useCallback, useMemo } from "react";
+
 import fs from "fs-extra";
-import React, { useCallback, useMemo } from "react";
+import nodePath from "path";
 import { useNavigate } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { Button, Icon } from "semantic-ui-react";
-import nodePath from "path";
+
+import { app, dialog } from "@electron/remote";
+
 import { currentSaveFileVersion, saveProjectFileName } from "../../models/constants";
 import { addRecentProject, removeRecentProject } from "../../store/electronCache/electronCacheReducer";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -134,7 +137,10 @@ export default function StartScreen() {
                             <div className={styles.recent}>
                                 <span className={styles.recentTitle}>Recent: </span>
                                 {recentProjects.map((recent) => (
-                                    <div className={styles.recentProject} key={recent[0]}>
+                                    <div
+                                        className={styles.recentProject}
+                                        key={recent[0]}
+                                    >
                                         <div className={styles.recentProjectTitle}>
                                             <span
                                                 aria-hidden

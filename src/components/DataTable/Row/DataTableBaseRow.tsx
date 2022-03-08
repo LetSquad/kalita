@@ -1,16 +1,27 @@
+import { MouseEvent, useCallback } from "react";
+
 import classNames from "classnames";
-import React, { MouseEvent } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { Ref, Table } from "semantic-ui-react";
+
 import DataTableCell from "../Cell/DataTableCell";
+import { ColumnDefinition } from "../types/column";
 import { DataTableBaseRowParams } from "../types/row";
 import { DataTableCellContext } from "../utils/contexts/contexts";
-import styles from "./styles/DataTableBaseRow.scss";
 import { useDataTableBodyContext, useDataTableContext } from "../utils/contexts/hooks";
+import styles from "./styles/DataTableBaseRow.scss";
 
 export default function DataTableBaseRow({ row }: DataTableBaseRowParams) {
     const { columns, data, classes } = useDataTableContext();
     const { isRowMovedEnabled } = useDataTableBodyContext();
+
+    const dataTableCellContextValues = useCallback((column: ColumnDefinition) => ({
+        id: row.id,
+        field: column.field,
+        column,
+        row,
+        cell: row[column.field]
+    }), [row]);
 
     return (
         <Draggable
@@ -33,13 +44,7 @@ export default function DataTableBaseRow({ row }: DataTableBaseRowParams) {
                         {columns.map((column) => (
                             <DataTableCellContext.Provider
                                 key={`cell-context-${column.field}-${row.id}`}
-                                value={{
-                                    id: row.id,
-                                    field: column.field,
-                                    column,
-                                    row,
-                                    cell: row[column.field]
-                                }}
+                                value={dataTableCellContextValues(column)}
                             >
                                 <DataTableCell key={`cell-${column.field}-${row.id}`} />
                             </DataTableCellContext.Provider>

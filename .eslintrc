@@ -24,7 +24,9 @@
         "react",
         "react-hooks",
         "unicorn",
-        "import"
+        "simple-import-sort",
+        "import",
+        "import-newlines"
     ],
     "rules": {
         "max-len": [
@@ -143,7 +145,34 @@
         "unicorn/prefer-node-protocol": "off",
         "unicorn/prefer-module": "off",
         "no-param-reassign": ["error", { "props": false }],
-        "operator-linebreak": ["error", "after", { "overrides": { "?": "before", ":": "before" } }]
+        "operator-linebreak": ["error", "after", { "overrides": { "?": "before", ":": "before" } }],
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-max-props-per-line": [2, {"maximum": 1, "when": "always" }],
+        "no-nested-ternary": "error",
+        "import/order": "off",
+        "simple-import-sort/imports": [
+            "error",
+            {
+                "groups": [
+                    ["^react$"],
+                    ["^\\w"],
+                    ["^"],
+                    ["^\\."]
+                ]
+            }
+        ],
+        "simple-import-sort/exports": "error",
+        "import/first": "error",
+        "import/newline-after-import": "error",
+        "import/no-duplicates": "error",
+        "import-newlines/enforce": [
+            "error",
+            {
+                "items": 3,
+                "semi": true
+            }
+        ]
     },
     "settings": {
         "import/resolver": {

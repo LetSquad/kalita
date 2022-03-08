@@ -1,5 +1,7 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import { Rating } from "semantic-ui-react";
+
 import { useDataTableStarFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
 import { defaultStarFormatterParams } from "../utils/formatterUtils";

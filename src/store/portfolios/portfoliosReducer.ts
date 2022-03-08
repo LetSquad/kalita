@@ -1,13 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import { loadMoexQuoteByTicker, loadMoexQuotesByTickers } from "../../apis/moexApi";
 import { QuoteData, QuotesData } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { MenuElementIdentifier } from "../../models/menu/types";
 import { BrokeragePortfolioTypes, Currency } from "../../models/portfolios/enums";
 import {
+    AnalyticsIdentifier,
     BrokerAccountIdentifier,
     BrokerAccountPosition,
-    BrokerReportData, CurrencyUpdatePayload,
+    BrokerReportData,
+    CurrencyUpdatePayload,
     ModelPortfolioIdentifier,
     ModelPortfolioPosition,
     PortfolioIdentifier,
@@ -15,9 +18,13 @@ import {
     Portfolios,
     PortfolioUpdatePayload
 } from "../../models/portfolios/types";
+import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import {
-    addNewElementToGroup, deleteElementFromGroup, setActiveId, setDefault
+    addNewElementToGroup,
+    deleteElementFromGroup,
+    setActiveId,
+    setDefault
 } from "../sidebarMenu/sidebarMenuReducer";
 import {
     generateNewPosition,
@@ -28,19 +35,18 @@ import {
     mapPositionFromBrokerReport,
     newBrokerAccount,
     newModelPortfolio,
-    recalculatePortfolioPercentage,
-    recalculateModelPortfolioPercentage,
     recalculateBrokerAccountPercentage,
+    recalculateModelPortfolioPercentage,
     recalculateModelPortfolioQuantity,
     recalculatePortfolioCurrency,
+    recalculatePortfolioPercentage,
+    recalculatePortfolioPrice,
     recalculateRow,
-    recalculateRowPrice,
-    recalculatePortfolioPrice
+    recalculateRowPrice
 } from "./portfoliosReducerHelper";
-import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 export interface PortfoliosState extends Portfolios {
-    currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier;
+    currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;
 }
 
 const initialState: PortfoliosState = {
@@ -82,7 +88,9 @@ export const portfoliosSlice = createSlice({
             const currentPortfolio = getCurrentPortfolio(action.payload, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
                 currentPortfolio.positions = recalculatePortfolioPercentage(currentPortfolio);
-                if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
+                    currentPortfolio.settings.quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT
+                ) {
                     currentPortfolio.positions = recalculateModelPortfolioQuantity(
                         currentPortfolio.positions,
                         getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)

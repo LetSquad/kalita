@@ -1,8 +1,10 @@
+import { useMemo } from "react";
+
 import classNames from "classnames";
-import React, { useMemo } from "react";
 import { Popup, Table } from "semantic-ui-react";
-import { DataTableBaseCellParams } from "../types/cell";
+
 import baseStyles from "../styles/base.scss";
+import { DataTableBaseCellParams } from "../types/cell";
 import { useDataTableBaseCellContext, useDataTableContext } from "../utils/contexts/hooks";
 import { getCellContentCssStyleFromColumn, getCellCssStyleFromColumn } from "../utils/utils";
 
@@ -18,7 +20,10 @@ export default function DataTableBaseCell({
     const cellContent = useMemo(() => (
         children !== undefined && withWrapper
             ? (
-                <div className={baseStyles.baseCellContentWrapper} style={getCellContentCssStyleFromColumn(column)}>
+                <div
+                    className={baseStyles.baseCellContentWrapper}
+                    style={getCellContentCssStyleFromColumn(column)}
+                >
                     {children}
                 </div>
             )

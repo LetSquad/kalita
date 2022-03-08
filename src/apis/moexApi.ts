@@ -1,6 +1,8 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { parseStringPromise } from "xml2js";
 import axios from "axios";
+import { parseStringPromise } from "xml2js";
+
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
 import {
     CurrencyQuotes,
     CurrencyQuotesMap,
@@ -51,12 +53,14 @@ function getQuotesByBoard(board: string, tickers?: string[]): Promise<Quote[]> {
     ).then((response) => convertResponseToQuotes(response.data));
 }
 
-function getMoexQuotes(tickers?: string[]): Promise<Quote[]> {
-    return Promise.all([
+async function getMoexQuotes(tickers?: string[]): Promise<Quote[]> {
+    const quotes = await Promise.all([
         getQuotesByBoard(BOARD_STOCKS, tickers),
         getQuotesByBoard(BOARD_ETFS, tickers),
         getQuotesByBoard(BOARD_FUNDS, tickers)
-    ]).then((quotes) => quotes.flat());
+    ]);
+
+    return quotes.flat();
 }
 
 function convertCurrencyResponseToQuotes(xmlStr: string): Promise<CurrencyQuotes> {
@@ -134,19 +138,20 @@ export const loadMoexQuotesByTickers = createAsyncThunk<QuotesData, string[]>(
     ])
 );
 
-export function getMoexCurrencyQuotes(): Promise<CurrencyQuotesMap> {
-    return getCurrencyQuotes()
-        .then((currencyQuotes) => createCurrencyQuotesMap(currencyQuotes));
+export async function getMoexCurrencyQuotes(): Promise<CurrencyQuotesMap> {
+    const currencyQuotes = await getCurrencyQuotes();
+    return createCurrencyQuotesMap(currencyQuotes);
 }
 
-export function getMoexQuotesByTickers(tickers: string[]): Promise<QuotesMap> {
-    return getMoexQuotes(tickers).then((quotes) => {
-        const quotesByTickers: QuotesMap = {};
-        for (const quote of quotes) {
-            quotesByTickers[quote.ticker] = quote;
-        }
-        return quotesByTickers;
-    });
+export async function getMoexQuotesByTickers(tickers: string[]): Promise<QuotesMap> {
+    const quotes = await getMoexQuotes(tickers);
+
+    const quotesByTickers: QuotesMap = {};
+    for (const quote of quotes) {
+        quotesByTickers[quote.ticker] = quote;
+    }
+
+    return quotesByTickers;
 }
 
 export function getMoexQuotesByIsinCodes(): Promise<QuotesMap> {

@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import { ModelPortfolio } from "../../../models/portfolios/types";
 import { modelPortfolioColumns } from "../columns";
 import Table from "../Table";

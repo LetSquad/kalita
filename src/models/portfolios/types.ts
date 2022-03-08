@@ -1,14 +1,14 @@
+import { CurrencyQuotesMap } from "../apis/types";
+import { ModelPortfolioSettings, PortfolioSettings } from "../settings/types";
 import { EditableTableColumns } from "../table/enums";
 import {
     BrokeragePortfolioTypes,
-    BrokerReportPositionCodeFormat,
+    BrokerCode,
     BrokerReportEncoding,
     BrokerReportFormat,
-    BrokerCode,
+    BrokerReportPositionCodeFormat,
     Currency
 } from "./enums";
-import { ModelPortfolioSettings, PortfolioSettings } from "../settings/types";
-import { CurrencyQuotesMap } from "../apis/types";
 
 export interface ModelPortfolioIdentifier {
     id: string;
@@ -20,7 +20,12 @@ export interface BrokerAccountIdentifier {
     type: BrokeragePortfolioTypes.BROKER_ACCOUNT;
 }
 
-export type PortfolioIdentifier = ModelPortfolioIdentifier | BrokerAccountIdentifier;
+export interface AnalyticsIdentifier {
+    id: string;
+    type: BrokeragePortfolioTypes.ANALYTICS;
+}
+
+export type PortfolioIdentifier = ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;
 
 export interface Portfolios {
     modelPortfolios: ModelPortfolio[];

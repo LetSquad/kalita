@@ -1,13 +1,16 @@
-import React from "react";
-import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJs, registerables } from "chart.js";
 import {
     ChartData,
     ChartOptions,
     ChartType,
     TooltipItem
 } from "chart.js/auto";
-import { getNColors } from "./utils/getNColors";
+import { Doughnut } from "react-chartjs-2";
+
 import stylesChart from "./styles/Chart.scss";
+import { getNColors } from "./utils/getNColors";
+
+ChartJs.register(...registerables);
 
 const borderWidth = 1;
 

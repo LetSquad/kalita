@@ -1,4 +1,5 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
+
 import {
     DragDropContext,
     Draggable,
@@ -7,6 +8,7 @@ import {
 } from "react-beautiful-dnd";
 import { Accordion, Icon } from "semantic-ui-react";
 import { v4 as uuidv4 } from "uuid";
+
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { SidebarMenuGroupType } from "../../../models/menu/types";
 import { useAppDispatch } from "../../../store/hooks";
@@ -66,7 +68,12 @@ export default function SidebarMenuGroup({ sidebarMenuGroupType }: SidebarMenuGr
                     )
                     : null}
                 <span>{sidebarMenuGroupType.name}</span>
-                <Icon name="plus" className={styles.addIcon} link onClick={() => addElement(sidebarMenuGroupType.type)} />
+                <Icon
+                    name="plus"
+                    className={styles.addIcon}
+                    link
+                    onClick={() => addElement(sidebarMenuGroupType.type)}
+                />
             </Accordion.Title>
             <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId={sidebarMenuGroupType.type}>

@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import { FormatterTypes } from "../../../types/formatter";
 import { useDataTableCalcFormatterCellContext } from "../../../utils/contexts/hooks";
 import DataTableBaseCalcCell from "../DataTableBaseCalcCell";

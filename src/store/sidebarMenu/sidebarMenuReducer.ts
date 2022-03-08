@@ -1,7 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import {
-    MenuElementIdentifier, MenuElementOrder, SidebarMenuElement, SidebarMenuGroupData
+    MenuElementIdentifier,
+    MenuElementOrder,
+    SidebarMenuElement,
+    SidebarMenuGroupData
 } from "../../models/menu/types";
 import { baseSidebarMenuGroups, newBrokerGroupMenuElement, newModelGroupMenuElement } from "./sidebarMenuReducerHelper";
 

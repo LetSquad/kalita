@@ -1,5 +1,4 @@
-import classNames from "classnames";
-import React, {
+import {
     FocusEvent,
     KeyboardEvent,
     MouseEvent,
@@ -9,12 +8,15 @@ import React, {
     useRef,
     useState
 } from "react";
+
+import classNames from "classnames";
 import {
     Icon,
     Input,
     Popup,
     Ref
 } from "semantic-ui-react";
+
 import { DataTableInputParams, InputEditParams } from "../types/edit";
 import { useDataTableBodyContext, useDataTableContext, useDataTableEditContext } from "../utils/contexts/hooks";
 import styles from "./styles/DataTableInput.scss";
@@ -168,7 +170,10 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                     <datalist id={`${id}-${field}-hints`}>
                         {
                             datalist.map((option) => (
-                                <option value={option.value} key={option.value}>
+                                <option
+                                    value={option.value}
+                                    key={option.value}
+                                >
                                     {option.text || option.value}
                                 </option>
                             ))
