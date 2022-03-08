@@ -5,6 +5,7 @@ import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { MenuElementIdentifier } from "../../models/menu/types";
 import { BrokeragePortfolioTypes, Currency } from "../../models/portfolios/enums";
 import {
+    AnalyticsIdentifier,
     BrokerAccountIdentifier,
     BrokerAccountPosition,
     BrokerReportData, CurrencyUpdatePayload,
@@ -40,7 +41,7 @@ import {
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 export interface PortfoliosState extends Portfolios {
-    currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier;
+    currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;
 }
 
 const initialState: PortfoliosState = {

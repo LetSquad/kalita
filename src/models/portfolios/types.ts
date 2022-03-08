@@ -20,7 +20,12 @@ export interface BrokerAccountIdentifier {
     type: BrokeragePortfolioTypes.BROKER_ACCOUNT;
 }
 
-export type PortfolioIdentifier = ModelPortfolioIdentifier | BrokerAccountIdentifier;
+export interface AnalyticsIdentifier {
+    id: string;
+    type: BrokeragePortfolioTypes.ANALYTICS;
+}
+
+export type PortfolioIdentifier = ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;
 
 export interface Portfolios {
     modelPortfolios: ModelPortfolio[];

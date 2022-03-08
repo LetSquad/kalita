@@ -26,9 +26,17 @@ const NEW_ENTRY = "Новая запись";
 const NEW_GROUP = "Новая группа";
 
 export function getPortfolioTypeFromSidebarType(sidebarType: SidebarMenuElementsTypes): BrokeragePortfolioTypes {
-    return sidebarType === SidebarMenuElementsTypes.MODEL_PORTFOLIO
-        ? BrokeragePortfolioTypes.MODEL_PORTFOLIO
-        : BrokeragePortfolioTypes.BROKER_ACCOUNT;
+    switch (sidebarType) {
+        case SidebarMenuElementsTypes.MODEL_PORTFOLIO: {
+            return BrokeragePortfolioTypes.MODEL_PORTFOLIO;
+        }
+        case SidebarMenuElementsTypes.BROKER_ACCOUNT: {
+            return BrokeragePortfolioTypes.BROKER_ACCOUNT;
+        }
+        case SidebarMenuElementsTypes.ANALYTICS: {
+            return BrokeragePortfolioTypes.ANALYTICS;
+        }
+    }
 }
 
 export const newBrokerAccount: (id: string) => BrokerAccount = (id: string) => ({
