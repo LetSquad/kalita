@@ -82,7 +82,9 @@ export const portfoliosSlice = createSlice({
             const currentPortfolio = getCurrentPortfolio(action.payload, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
                 currentPortfolio.positions = recalculatePortfolioPercentage(currentPortfolio);
-                if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
+                    currentPortfolio.settings.quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT
+                ) {
                     currentPortfolio.positions = recalculateModelPortfolioQuantity(
                         currentPortfolio.positions,
                         getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)
