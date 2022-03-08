@@ -1,6 +1,13 @@
 export enum BrokeragePortfolioTypes {
     MODEL_PORTFOLIO = "modelPortfolio",
-    BROKER_ACCOUNT = "brokerAccount"
+    BROKER_ACCOUNT = "brokerAccount",
+    ANALYTICS = "analytics"
+}
+
+export enum Currency {
+    RUB = "RUB",
+    USD = "USD",
+    EUR = "EUR"
 }
 
 export enum BrokerCode {

@@ -1,12 +1,17 @@
-import { Modal, Tab } from "semantic-ui-react";
-import React, {
-    lazy, useCallback, useMemo, useState
+import {
+    lazy,
+    useCallback,
+    useMemo,
+    useState
 } from "react";
+
+import { Modal, Tab } from "semantic-ui-react";
+
+import { BrokeragePortfolioTypes } from "../../../../models/portfolios/enums";
 import { ModelPortfolio, Portfolio } from "../../../../models/portfolios/types";
+import partsStyles from "../../../../styles/parts.scss";
 import { WithSuspense } from "../../../utils/WithSuspense";
 import styles from "./styles/SettingsModal.scss";
-import partsStyles from "../../../../styles/parts.scss";
-import { BrokeragePortfolioTypes } from "../../../../models/portfolios/enums";
 
 interface SettingsModalProps {
     currentPortfolio: Portfolio,
@@ -26,11 +31,9 @@ export default function SettingsModal({ currentPortfolio, onClose, activeTab }: 
         {
             menuItem: "Источники данных",
             render: () => (
-                <>
-                    <Tab.Pane className={styles.settingsTabPane}>
-                        <ModelPortfolioQuantityModeSelector currentPortfolio={_currentPortfolio} />
-                    </Tab.Pane>
-                </>
+                <Tab.Pane className={styles.settingsTabPane}>
+                    <ModelPortfolioQuantityModeSelector currentPortfolio={_currentPortfolio} />
+                </Tab.Pane>
             )
         }
     ], []);
@@ -62,7 +65,9 @@ export default function SettingsModal({ currentPortfolio, onClose, activeTab }: 
             <Modal.Content className={partsStyles.modalContent}>
                 <WithSuspense>
                     <Tab
-                        menu={{ fluid: true, vertical: true, tabular: true }} panes={settingsPanes} activeIndex={activeIndex}
+                        menu={{ fluid: true, vertical: true, tabular: true }}
+                        panes={settingsPanes}
+                        activeIndex={activeIndex}
                         onTabChange={(event, data) => setActiveIndex(data.activeIndex as number)}
                     />
                 </WithSuspense>

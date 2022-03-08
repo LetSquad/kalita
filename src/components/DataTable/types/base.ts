@@ -1,10 +1,17 @@
-import { KeyboardEvent, FocusEvent, ChangeEvent, MouseEvent, SyntheticEvent } from "react";
+import {
+    ChangeEvent,
+    FocusEvent,
+    KeyboardEvent,
+    MouseEvent,
+    SyntheticEvent
+} from "react";
+
+// eslint-disable-next-line import/no-cycle
 import { ColumnDefinition } from "./column";
 
 export type DataTableData = {
     id: string;
-    [key: string]: string | number | boolean | undefined;
-};
+} & Record<string, string | number | boolean | undefined>;
 
 export interface UserDataTableClasses {
     tableClassName?: string;
@@ -63,4 +70,3 @@ export interface ExportToCsvOptions {
     includeGroup?: boolean;
     includeEmptyTitle?: boolean;
 }
-

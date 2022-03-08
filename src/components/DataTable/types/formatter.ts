@@ -1,4 +1,6 @@
 import { HTMLAttributeAnchorTarget } from "react";
+
+// eslint-disable-next-line import/no-cycle
 import { DataTableData } from "./base";
 
 export enum FormatterTypes {

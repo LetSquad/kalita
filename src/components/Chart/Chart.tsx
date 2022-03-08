@@ -1,17 +1,20 @@
-import React from "react";
-import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJs, registerables } from "chart.js";
 import {
     ChartData,
     ChartOptions,
     ChartType,
     TooltipItem
 } from "chart.js/auto";
-import { getNColors } from "./utils/getNColors";
+import { Doughnut } from "react-chartjs-2";
+
 import stylesChart from "./styles/Chart.scss";
+import { getNColors } from "./utils/getNColors";
+
+ChartJs.register(...registerables);
 
 const borderWidth = 1;
 
-const options: ChartOptions = {
+const options: ChartOptions<"doughnut"> = {
     plugins: {
         tooltip: {
             callbacks: {
@@ -24,11 +27,11 @@ const options: ChartOptions = {
 };
 
 interface ChartProps {
-    data: ChartData
+    data: ChartData<"doughnut", number[]>
 }
 
 export default function Chart(props: ChartProps) {
-    const chartData: ChartData = {
+    const chartData: ChartData<"doughnut", number[]> = {
         ...props.data,
         datasets: props.data.datasets.map((dataset) => ({
             data: dataset.data,

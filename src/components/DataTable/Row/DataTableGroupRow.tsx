@@ -1,17 +1,25 @@
+import { FocusEvent, KeyboardEvent } from "react";
+
 import classNames from "classnames";
-import React, { FocusEvent, KeyboardEvent } from "react";
 import { Icon, Input, Table } from "semantic-ui-react";
+
 import { DataTableGroupRowParams } from "../types/row";
-import styles from "./styles/DataTableGroupRow.scss";
 import { useDataTableBodyGroupedContext, useDataTableContext } from "../utils/contexts/hooks";
+import styles from "./styles/DataTableGroupRow.scss";
 
 export default function DataTableGroupRow({ groupName, expandState, setExpandState }: DataTableGroupRowParams) {
     const { classes } = useDataTableContext();
     const { onGroupNameEdit, onAddRowToGroup, expandableGroup } = useDataTableBodyGroupedContext();
 
     return (
-        <Table.Row className={classNames(styles.row, classes?.groupRowClassName)} data-row-role="group">
-            <Table.Cell className={classNames(styles.cell, classes?.groupRowCellClassName)} data-cell-role="group">
+        <Table.Row
+            className={classNames(styles.row, classes?.groupRowClassName)}
+            data-row-role="group"
+        >
+            <Table.Cell
+                className={classNames(styles.cell, classes?.groupRowCellClassName)}
+                data-cell-role="group"
+            >
                 <div className={styles.container}>
                     {
                         expandableGroup && (
@@ -36,8 +44,14 @@ export default function DataTableGroupRow({ groupName, expandState, setExpandSta
                             : <span>{groupName}</span>
                     }
                 </div>
-                {onAddRowToGroup &&
-                    <Icon name="plus" link onClick={() => onAddRowToGroup(groupName)} className={styles.addButton} />}
+                {onAddRowToGroup && (
+                    <Icon
+                        name="plus"
+                        link
+                        onClick={() => onAddRowToGroup(groupName)}
+                        className={styles.addButton}
+                    />
+                )}
             </Table.Cell>
         </Table.Row>
     );

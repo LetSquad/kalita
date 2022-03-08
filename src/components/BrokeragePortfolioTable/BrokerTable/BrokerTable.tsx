@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import { BrokerAccount } from "../../../models/portfolios/types";
 import { brokerAccountColumns } from "../columns";
 import Table from "../Table";
@@ -12,5 +13,6 @@ export default function BrokerTable({ currentPortfolio }: Props) {
         <Table
             columns={(dividendsButton) => brokerAccountColumns(dividendsButton)}
             currentPortfolio={currentPortfolio}
-        />), [currentPortfolio]);
+        />
+    ), [currentPortfolio]);
 }

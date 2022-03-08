@@ -1,6 +1,22 @@
+import {
+    FocusEvent,
+    KeyboardEvent,
+    MouseEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
+
 import classNames from "classnames";
-import React, { FocusEvent, KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Icon, Input, Popup, Ref } from "semantic-ui-react";
+import {
+    Icon,
+    Input,
+    Popup,
+    Ref
+} from "semantic-ui-react";
+
 import { DataTableInputParams, InputEditParams } from "../types/edit";
 import { useDataTableBodyContext, useDataTableContext, useDataTableEditContext } from "../utils/contexts/hooks";
 import styles from "./styles/DataTableInput.scss";
@@ -12,7 +28,9 @@ const defaultParams: InputEditParams = {
 };
 
 export default function DataTableInput({ params = defaultParams, label }: DataTableInputParams) {
-    const { cell, id, column: { field, validator }, row } = useDataTableEditContext();
+    const {
+        cell, id, column: { field, validator }, row
+    } = useDataTableEditContext();
     const {
         onCellChanged: onGlobalCellChanged,
         onCellBlur: onGlobalCellBlur,
@@ -21,7 +39,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     const { data: tableData } = useDataTableContext();
 
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLDivElement>(null);
 
     const {
         transparent = false,
@@ -115,7 +133,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                             }
                             if (onGlobalCellKeyEnter) {
                                 onGlobalCellKeyEnter(id, field, event, (event.target as HTMLInputElement).value);
-                                inputRef.current?.blur();
+                                (event.target as HTMLInputElement).blur();
                             }
                         }
                     }}
@@ -152,7 +170,10 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                     <datalist id={`${id}-${field}-hints`}>
                         {
                             datalist.map((option) => (
-                                <option value={option.value} key={option.value}>
+                                <option
+                                    value={option.value}
+                                    key={option.value}
+                                >
                                     {option.text || option.value}
                                 </option>
                             ))
@@ -184,15 +205,14 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         onGlobalCellKeyEnter
     ]);
 
-    const validatorTooltipText = useMemo(() => {
-        return validator && validator.tooltip && typeof validator.tooltip.text === "function"
-            ? validator.tooltip.text(tableData, id, field, initialValue, value || cell, row)
-            : validator?.tooltip;
-    }, [cell, field, id, initialValue, row, tableData, validator, value]);
+    const validatorTooltipText = useMemo(() => (validator && validator.tooltip && typeof validator.tooltip.text === "function"
+        ? validator.tooltip.text(tableData, id, field, initialValue, value || cell, row)
+        : validator?.tooltip), [cell, field, id, initialValue, row, tableData, validator, value]);
 
     useEffect(() => {
+        // eslint-disable-next-line eqeqeq
         if (isFocus && document.activeElement != inputRef.current?.children[0]) {
-            inputRef.current?.focus();
+            (inputRef.current?.children[0] as HTMLInputElement)?.focus();
         }
     }, [isFocus]);
 

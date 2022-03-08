@@ -1,8 +1,7 @@
-import React from "react";
-import styles from "./styles/styles.scss";
-import Chart from "../Chart/Chart";
-import { useAppSelector } from "../../store/hooks";
 import { BrokerAccount, ModelPortfolio } from "../../models/portfolios/types";
+import { useAppSelector } from "../../store/hooks";
+import Chart from "../Chart/Chart";
+import styles from "./styles/styles.scss";
 import { getPortfoliosChartData } from "./utils/getPortfoliosChartData";
 
 export default function Analytics() {

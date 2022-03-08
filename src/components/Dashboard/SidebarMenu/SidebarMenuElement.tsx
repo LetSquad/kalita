@@ -1,15 +1,17 @@
-import React, {
+import {
+    FocusEvent,
+    KeyboardEvent,
+    MouseEvent,
     useCallback,
     useEffect,
     useMemo,
     useRef,
-    useState,
-    KeyboardEvent,
-    FocusEvent,
-    MouseEvent
+    useState
 } from "react";
+
 import { DraggableProvided } from "react-beautiful-dnd";
 import { Icon, Input } from "semantic-ui-react";
+
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { AnalyticsMenuElement, BrokerAccountMenuElement, ModelPortfolioMenuElement } from "../../../models/menu/types";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";

@@ -1,17 +1,19 @@
+import { useCallback, useMemo } from "react";
+
 import {
+    CheckboxProps,
     Dropdown,
     DropdownProps,
-    CheckboxProps,
     Form,
     Radio
 } from "semantic-ui-react";
-import React, { useCallback, useMemo } from "react";
+
+import { BrokerAccountMenuElement } from "../../../../../models/menu/types";
 import { ModelPortfolio } from "../../../../../models/portfolios/types";
-import styles from "../styles/SettingsModal.scss";
+import { ModelPortfolioQuantityMode } from "../../../../../models/settings/enums";
 import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
 import { updateModelPortfolioQuantityMode, updateModelPortfolioQuantitySources } from "../../../../../store/portfolios/portfoliosReducer";
-import { BrokerAccountMenuElement } from "../../../../../models/menu/types";
-import { ModelPortfolioQuantityMode } from "../../../../../models/settings/enums";
+import styles from "../styles/SettingsModal.scss";
 
 interface ModelPortfolioQuantityModeSelectorProps {
     currentPortfolio: ModelPortfolio,
@@ -60,7 +62,9 @@ export default function ModelPortfolioQuantityModeSelector({ currentPortfolio }:
                 <Form.Field>
                     <Dropdown
                         placeholder="Выберите брокерские счета"
-                        fluid multiple selection
+                        fluid
+                        multiple
+                        selection
                         options={brokerReportsOptions}
                         value={currentPortfolio.settings.quantitySources}
                         onChange={onQuantitySourcesSelect}

@@ -1,11 +1,12 @@
-import React, { lazy } from "react";
+import { lazy } from "react";
+
+import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { useAppSelector } from "../../store/hooks";
 import { currentPortfolioSelector } from "../../store/portfolios/selectors";
+import Analytics from "../Analytics/Analytics";
 import { Kalita } from "../Kalita/Kalita";
 import { WithSuspense } from "../utils/WithSuspense";
 import styles from "./styles/DashboardContent.scss";
-import { SidebarMenuElementsTypes } from "../../models/menu/enums";
-import Analytics from "../Analytics/Analytics";
 
 const Table = lazy(/* webpackChunkName: "model-portfolio-table" */() =>
     import("../BrokeragePortfolioTable/TableWrapper"));

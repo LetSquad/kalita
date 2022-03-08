@@ -1,12 +1,14 @@
+import { CurrencyQuotesMap } from "../apis/types";
+import { ModelPortfolioSettings, PortfolioSettings } from "../settings/types";
 import { EditableTableColumns } from "../table/enums";
 import {
     BrokeragePortfolioTypes,
-    BrokerReportPositionCodeFormat,
+    BrokerCode,
     BrokerReportEncoding,
     BrokerReportFormat,
-    BrokerCode
+    BrokerReportPositionCodeFormat,
+    Currency
 } from "./enums";
-import { ModelPortfolioSettings } from "../settings/types";
 
 export interface ModelPortfolioIdentifier {
     id: string;
@@ -18,7 +20,12 @@ export interface BrokerAccountIdentifier {
     type: BrokeragePortfolioTypes.BROKER_ACCOUNT;
 }
 
-export type PortfolioIdentifier = ModelPortfolioIdentifier | BrokerAccountIdentifier;
+export interface AnalyticsIdentifier {
+    id: string;
+    type: BrokeragePortfolioTypes.ANALYTICS;
+}
+
+export type PortfolioIdentifier = ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;
 
 export interface Portfolios {
     modelPortfolios: ModelPortfolio[];
@@ -39,6 +46,7 @@ export interface BrokerAccount {
     id: string;
     type: BrokeragePortfolioTypes.BROKER_ACCOUNT;
     positions: BrokerAccountPosition[];
+    settings: PortfolioSettings;
 }
 
 export type PortfolioPosition = {
@@ -74,6 +82,11 @@ export interface PortfolioReorderPayload {
     readonly oldOrder: number;
     readonly newOrder: number;
     readonly newGroupName?: string;
+}
+
+export interface CurrencyUpdatePayload {
+    readonly currency: Currency;
+    readonly quotes: CurrencyQuotesMap;
 }
 
 export interface BrokerReportMetadata {

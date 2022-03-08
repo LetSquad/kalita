@@ -1,5 +1,12 @@
+// eslint-disable-next-line import/no-cycle
 import { DataTableData } from "./base";
-import { MoneyFormatter, PercentageFormatter, ProgressFormatter, StarFormatter } from "./formatter";
+// eslint-disable-next-line import/no-cycle
+import {
+    MoneyFormatter,
+    PercentageFormatter,
+    ProgressFormatter,
+    StarFormatter
+} from "./formatter";
 
 export enum CalcPosition {
     TOP = "top",

@@ -1,8 +1,8 @@
-import React from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { Ref, Table } from "semantic-ui-react";
-import { useDataTableBodyContext, useDataTableContext } from "../utils/contexts/hooks";
+
 import DataTableBaseRow from "../Row/DataTableBaseRow";
+import { useDataTableBodyContext, useDataTableContext } from "../utils/contexts/hooks";
 
 export default function DataTableUngroupedBody() {
     const { data } = useDataTableContext();
@@ -18,7 +18,10 @@ export default function DataTableUngroupedBody() {
                             {...provided.droppableProps}
                         >
                             {data.map((row) => (
-                                <DataTableBaseRow row={row} key={row.id} />
+                                <DataTableBaseRow
+                                    row={row}
+                                    key={row.id}
+                                />
                             ))}
                             {provided.placeholder}
                         </Table.Body>

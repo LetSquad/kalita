@@ -1,9 +1,11 @@
-import _ from "lodash";
-import React from "react";
+import sum from "lodash.sum";
+
+import { Currency } from "../../models/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { ModelPortfolioSettings } from "../../models/settings/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
+import { getSymbol } from "../../utils/currencyUtils";
 import { CalcPosition } from "../DataTable/types/calc";
 import { ColumnDefinition, VerticalAlignValues } from "../DataTable/types/column";
 import { EditTypes } from "../DataTable/types/edit";
@@ -69,7 +71,10 @@ function averagePriceValidator(
     return AVERAGE_PRICE_INVALID;
 }
 
-export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[] = (dividendsButton) => [
+export const commonColumns: (
+    baseCurrency: Currency,
+    dividendsButton: (ticker: string) => JSX.Element
+) => ColumnDefinition[] = (baseCurrency, dividendsButton) => [
     {
         title: "Инструмент",
         field: BaseColumnNames.TICKER,
@@ -128,7 +133,7 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
         vertAlign: VerticalAlignValues.MIDDLE,
         groupCalc: {
             position: CalcPosition.TOP,
-            calcFunction: (column) => _.sum(column),
+            calcFunction: (column) => sum(column),
             formatter: {
                 type: FormatterTypes.PERCENTAGE,
                 params: {
@@ -142,7 +147,7 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
         formatter: {
             type: FormatterTypes.MONEY,
             params: {
-                currency: "₽",
+                currency: getSymbol(baseCurrency),
                 additionalSpace: true
             }
         },
@@ -153,29 +158,29 @@ export const commonColumns: (dividendsButton: (ticket: string) => JSX.Element) =
         formatter: {
             type: FormatterTypes.MONEY,
             params: {
-                currency: "₽",
+                currency: getSymbol(baseCurrency),
                 additionalSpace: true
             }
         },
         vertAlign: VerticalAlignValues.MIDDLE,
         groupCalc: {
             position: CalcPosition.TOP,
-            calcFunction: (column) => _.sum(column),
+            calcFunction: (column) => sum(column),
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: "₽",
+                    currency: getSymbol(baseCurrency),
                     additionalSpace: true
                 }
             }
         },
         tableCalc: {
             position: CalcPosition.TOP,
-            calcFunction: (column) => _.sum(column),
+            calcFunction: (column) => sum(column),
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: "₽",
+                    currency: getSymbol(baseCurrency),
                     additionalSpace: true
                 }
             }
@@ -228,11 +233,11 @@ export const modelPortfolioColumnsWidth = [
 ];
 
 const _modelPortfolioColumns: (
-    dividendsButton: (ticket: string) => JSX.Element,
+    dividendsButton: (ticker: string) => JSX.Element,
     portfolioSettings: ModelPortfolioSettings
 ) => ColumnDefinition[] =
     (dividendsButton, portfolioSettings) => [
-        ...commonColumns(dividendsButton),
+        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton),
         {
             title: "Вес",
             field: ModelPortfolioColumnNames.WEIGHT,
@@ -264,11 +269,11 @@ const _modelPortfolioColumns: (
             },
             groupCalc: {
                 position: CalcPosition.TOP,
-                calcFunction: (column) => _.sum(column)
+                calcFunction: (column) => sum(column)
             },
             tableCalc: {
                 position: CalcPosition.TOP,
-                calcFunction: (column) => _.sum(column)
+                calcFunction: (column) => sum(column)
             }
         }, {
             title: "Целевая сумма",
@@ -276,29 +281,29 @@ const _modelPortfolioColumns: (
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: "₽",
+                    currency: getSymbol(portfolioSettings.baseCurrency),
                     additionalSpace: true
                 }
             },
             vertAlign: VerticalAlignValues.MIDDLE,
             groupCalc: {
                 position: CalcPosition.TOP,
-                calcFunction: (column) => _.sum(column),
+                calcFunction: (column) => sum(column),
                 formatter: {
                     type: FormatterTypes.MONEY,
                     params: {
-                        currency: "₽",
+                        currency: getSymbol(portfolioSettings.baseCurrency),
                         additionalSpace: true
                     }
                 }
             },
             tableCalc: {
                 position: CalcPosition.TOP,
-                calcFunction: (column) => _.sum(column),
+                calcFunction: (column) => sum(column),
                 formatter: {
                     type: FormatterTypes.MONEY,
                     params: {
-                        currency: "₽",
+                        currency: getSymbol(portfolioSettings.baseCurrency),
                         additionalSpace: true
                     }
                 }
@@ -359,7 +364,7 @@ const _modelPortfolioColumns: (
     ];
 
 export const modelPortfolioColumns: (
-    dividendsButton: (ticket: string) => JSX.Element,
+    dividendsButton: (ticker: string) => JSX.Element,
     portfolioSettings: ModelPortfolioSettings
 ) => ColumnDefinition[] =
     (dividendsButton, portfolioSettings) => _modelPortfolioColumns(dividendsButton, portfolioSettings).sort((columnA, columnB) =>
@@ -392,16 +397,16 @@ export const brokerAccountColumnsWidth = [
     40
 ];
 
-export const _brokerAccountColumns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[] =
+export const _brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.Element) => ColumnDefinition[] =
     (dividendsButton) => [
-        ...commonColumns(dividendsButton),
+        ...commonColumns(Currency.RUB, dividendsButton),
         {
             title: "Цена покупки",
             field: BrokerAccountColumnNames.AVERAGE_PRICE,
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: "₽",
+                    currency: getSymbol(Currency.RUB),
                     additionalSpace: true
                 }
             },
@@ -462,7 +467,7 @@ export const _brokerAccountColumns: (dividendsButton: (ticket: string) => JSX.El
         }
     ];
 
-export const brokerAccountColumns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[] =
+export const brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.Element) => ColumnDefinition[] =
     (dividendsButton) => _brokerAccountColumns(dividendsButton).sort((columnA, columnB) =>
         brokerAccountColumnsOrder.indexOf(columnA.field as BaseColumnNames | BrokerAccountColumnNames) -
     brokerAccountColumnsOrder.indexOf(columnB.field as BaseColumnNames | BrokerAccountColumnNames))

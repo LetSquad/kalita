@@ -1,7 +1,9 @@
+import { useCallback, useEffect, useMemo } from "react";
+
 import fs from "fs-extra";
-import { useCallback, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
+
 import { currentSaveFileVersion, saveProjectFileName } from "../../models/constants";
 import { SidebarMenuGroupData } from "../../models/menu/types";
 import { Portfolios } from "../../models/portfolios/types";
@@ -11,7 +13,10 @@ import { setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
 
 export function WithSaving(props: { children: JSX.Element }): JSX.Element {
     const dispatch = useAppDispatch();
-    const history = useHistory();
+
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
     const { addToast } = useToasts();
 
     const modelPortfoliosMenu = useAppSelector((state) => state.sidebarMenu.modelPortfolios);
@@ -19,17 +24,18 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
     const modelPortfoliosData = useAppSelector((state) => state.portfolios.modelPortfolios);
     const brokerAccountsData = useAppSelector((state) => state.portfolios.brokerAccounts);
 
+    const currentProjectPath = useMemo(() => searchParams.get("currentProject"), [searchParams]);
+
     const setStartState = useCallback(({ menu, portfolios }: {
         menu: SidebarMenuGroupData,
-        portfolios: Portfolios,
+        portfolios: Portfolios
     }) => {
         dispatch(setMenuGroups(menu));
         dispatch(setPortfolios(portfolios));
     }, [dispatch]);
 
     useEffect(() => {
-        const folderPath = decodeURI(history.location.search.replace("?currentProject=", ""));
-        const filePath = `${folderPath}/${saveProjectFileName}`;
+        const filePath = `${currentProjectPath}/${saveProjectFileName}`;
 
         if (fs.existsSync(filePath)) {
             try {
@@ -39,20 +45,19 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
                 } = fs.readJSONSync(filePath);
                 setStartState(saveFile.content);
             } catch {
-                addToast(`Ошибка открытия проекта "${folderPath}"`, { appearance: "error" });
-                history.push("/");
+                addToast(`Ошибка открытия проекта "${currentProjectPath}"`, { appearance: "error" });
+                navigate("/");
             }
         } else {
-            addToast(`Проект "${folderPath}" отсутствует или сломан`, { appearance: "error" });
-            history.push("/");
+            addToast(`Проект "${currentProjectPath}" отсутствует или сломан`, { appearance: "error" });
+            navigate("/");
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        const folderPath = decodeURI(history.location.search.replace("?currentProject=", ""));
-        if (folderPath !== "") {
-            const filePath = `${folderPath}/${saveProjectFileName}`;
+        if (currentProjectPath !== "") {
+            const filePath = `${currentProjectPath}/${saveProjectFileName}`;
             fs.writeJson(filePath, {
                 version: currentSaveFileVersion,
                 content: {
@@ -61,7 +66,7 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
                 }
             })
                 .catch(() => {
-                    addToast(`Ошибка сохранения проекта "${folderPath}"`, { appearance: "error" });
+                    addToast(`Ошибка сохранения проекта "${currentProjectPath}"`, { appearance: "error" });
                 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

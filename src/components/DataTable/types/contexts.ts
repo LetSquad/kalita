@@ -1,4 +1,5 @@
 import { CSSProperties } from "react";
+
 import { DataTableData, UserDataTableClasses } from "./base";
 import {
     BaseFormatterColumnDefinition,
@@ -68,5 +69,3 @@ export interface DataTableEditContextParams<T> {
     row: DataTableData;
     column: Required<Pick<BaseFormatterColumnDefinition, "field">> & Pick<BaseFormatterColumnDefinition, "validator">
 }
-
-

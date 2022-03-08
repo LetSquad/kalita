@@ -1,6 +1,8 @@
+import { useMemo } from "react";
+
 import classNames from "classnames";
-import React from "react";
 import { Table } from "semantic-ui-react";
+
 import DataTableCalcRow from "../Row/DataTableCalcRow";
 import DataTableHeaderRow from "../Row/DataTableHeaderRow";
 import { CalcPosition, CalcType } from "../types/calc";
@@ -11,16 +13,16 @@ import styles from "./styles/DataTableHeader.scss";
 export default function DataTableHeader() {
     const { data, classes } = useDataTableContext();
 
+    const dataTableCalcContextValues = useMemo(() => ({
+        position: CalcPosition.TOP,
+        type: CalcType.TABLE,
+        data
+    }), [data]);
+
     return (
         <Table.Header className={classNames(styles.header, classes?.headerClassName)}>
             <DataTableHeaderRow />
-            <DataTableCalcContext.Provider
-                value={{
-                    position: CalcPosition.TOP,
-                    type: CalcType.TABLE,
-                    data
-                }}
-            >
+            <DataTableCalcContext.Provider value={dataTableCalcContextValues}>
                 <DataTableCalcRow />
             </DataTableCalcContext.Provider>
         </Table.Header>

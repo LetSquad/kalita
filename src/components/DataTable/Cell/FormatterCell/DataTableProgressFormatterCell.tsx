@@ -1,5 +1,7 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import { Progress } from "semantic-ui-react";
+
 import { BaseProgressFormatterParams } from "../../types/formatter";
 import { useDataTableProgressFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
@@ -32,20 +34,18 @@ export default function DataTableProgressFormatterCell() {
         color
     } = params;
 
-    const formattedProgress = useMemo(() => {
-        return (
-            <Progress
-                className={className}
-                label={label}
-                progress={progress}
-                indicating={indicating}
-                success={success ? success(cell, id, row) : undefined}
-                warning={warning ? warning(cell, id, row) : undefined}
-                error={error ? error(cell, id, row) : undefined}
-                style={color && { color }}
-            />
-        );
-    }, [cell, className, color, error, id, indicating, label, progress, row, success, warning]);
+    const formattedProgress = useMemo(() => (
+        <Progress
+            className={className}
+            label={label}
+            progress={progress}
+            indicating={indicating}
+            success={success ? success(cell, id, row) : undefined}
+            warning={warning ? warning(cell, id, row) : undefined}
+            error={error ? error(cell, id, row) : undefined}
+            style={color && { color }}
+        />
+    ), [cell, className, color, error, id, indicating, label, progress, row, success, warning]);
 
     return <DataTableBaseCell>{formattedProgress}</DataTableBaseCell>;
 }

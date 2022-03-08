@@ -1,10 +1,12 @@
+/* eslint-disable import/no-import-module-exports */
+
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import createElectronReloadWebpackPlugin from "electron-reload-webpack-plugin";
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import webpack, { Configuration } from "webpack";
-import HtmlWebpackPlugin from "html-webpack-plugin";
-import { CleanWebpackPlugin } from "clean-webpack-plugin";
-import { merge } from "webpack-merge";
-import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
-import createElectronReloadWebpackPlugin from "electron-reload-webpack-plugin";
+import { Configuration as DevServerConfiguration } from "webpack-dev-server";
 
 export const PATHS = {
     src: path.join(__dirname, "./src"),
@@ -49,21 +51,19 @@ module.exports = () => {
         ? []
         : devPlugins)];
 
-    const devOptions: Configuration = {
-        devServer: {
-            static: {
-                directory: PATHS.dist
-            },
-            port: 8085,
-            client: {
-                overlay: {
-                    warnings: false,
-                    errors: true
-                }
-            },
-            hot: true,
-            historyApiFallback: true
-        }
+    const devOptions: DevServerConfiguration = {
+        static: {
+            directory: PATHS.dist
+        },
+        port: 8085,
+        client: {
+            overlay: {
+                warnings: false,
+                errors: true
+            }
+        },
+        hot: true,
+        historyApiFallback: true
     };
 
     const config: Configuration = {
@@ -162,5 +162,5 @@ module.exports = () => {
         plugins
     };
 
-    return isProduction ? config : merge(config, devOptions);
+    return isProduction ? config : { ...config, devServer: devOptions };
 };

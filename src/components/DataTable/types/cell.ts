@@ -1,8 +1,14 @@
 import { CSSProperties } from "react";
+
 import { DataTableData } from "./base";
 import { CalcType } from "./calc";
 import { ColumnDefinition, FormatterColumnDefinition } from "./column";
-import { MoneyFormatter, PercentageFormatter, ProgressCalcFormatter, StarFormatter } from "./formatter";
+import {
+    MoneyFormatter,
+    PercentageFormatter,
+    ProgressCalcFormatter,
+    StarFormatter
+} from "./formatter";
 
 export interface DataTableHeaderCellParams {
     column: ColumnDefinition;

@@ -1,10 +1,13 @@
-import { app, dialog } from "@electron/remote";
+import { useCallback, useMemo } from "react";
+
 import fs from "fs-extra";
-import React, { useCallback, useMemo } from "react";
-import { useHistory } from "react-router-dom";
+import nodePath from "path";
+import { useNavigate } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { Button, Icon } from "semantic-ui-react";
-import nodePath from "path";
+
+import { app, dialog } from "@electron/remote";
+
 import { currentSaveFileVersion, saveProjectFileName } from "../../models/constants";
 import { addRecentProject, removeRecentProject } from "../../store/electronCache/electronCacheReducer";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -14,7 +17,7 @@ import styles from "./styles/StartScreen.scss";
 
 export default function StartScreen() {
     const dispatch = useAppDispatch();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const recentProjects = useAppSelector((state) => state.electronCache.recentProjects);
 
@@ -59,24 +62,24 @@ export default function StartScreen() {
                         }
                     });
                     addRecent(path);
-                    history.push(`/dashboard?currentProject=${path}`);
+                    navigate(`/dashboard?currentProject=${path}`);
                 } catch {
                     fs.removeSync(path);
                     addToast("Ошибка при создании проекта", { appearance: "error" });
                 }
             }
         }
-    }, [addRecent, addToast, history]);
+    }, [addRecent, addToast, navigate]);
 
     const openProjectByPath = useCallback((path: string) => {
         if (fs.existsSync(`${path}${nodePath.sep}${saveProjectFileName}`)) {
             addRecent(path);
-            history.push(`/dashboard?currentProject=${path}`);
+            navigate(`/dashboard?currentProject=${path}`);
         } else {
             addToast(`Проект "${path}" сломан`, { appearance: "error" });
             removeRecent(path);
         }
-    }, [addRecent, addToast, history, removeRecent]);
+    }, [addRecent, addToast, navigate, removeRecent]);
 
     const openRecentProject = useCallback((recent: [string, string]) => {
         if (fs.existsSync(recent[1])) {
@@ -134,17 +137,23 @@ export default function StartScreen() {
                             <div className={styles.recent}>
                                 <span className={styles.recentTitle}>Recent: </span>
                                 {recentProjects.map((recent) => (
-                                    <div className={styles.recentProject} key={recent[0]}>
+                                    <div
+                                        className={styles.recentProject}
+                                        key={recent[0]}
+                                    >
                                         <div className={styles.recentProjectTitle}>
                                             <span
-                                                aria-hidden onClick={() => openRecentProject(recent)}
+                                                aria-hidden
+                                                onClick={() => openRecentProject(recent)}
                                                 className={styles.reverseEllipsisContent}
                                             >
                                                 {recent[1]}
                                             </span>
                                         </div>
                                         <Icon
-                                            name="close" link className={styles.recentProjectCloseLink}
+                                            name="close"
+                                            link
+                                            className={styles.recentProjectCloseLink}
                                             onClick={() => removeRecent(recent[0])}
                                         />
                                     </div>
