@@ -2,7 +2,10 @@
 import { DataTableData } from "./base";
 // eslint-disable-next-line import/no-cycle
 import {
-    MoneyFormatter, PercentageFormatter, ProgressFormatter, StarFormatter
+    MoneyFormatter,
+    PercentageFormatter,
+    ProgressFormatter,
+    StarFormatter
 } from "./formatter";
 
 export enum CalcPosition {

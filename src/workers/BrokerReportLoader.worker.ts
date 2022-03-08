@@ -1,6 +1,8 @@
 import * as fs from "fs-extra";
-import * as xml2js from "xml2js";
 import * as XLSXL from "xlsx";
+import * as xml2js from "xml2js";
+
+import { getMoexQuotesByIsinCodes, getMoexQuotesByTickers } from "../apis/moexApi";
 import {
     BrokerCode,
     BrokerReportEncoding,
@@ -8,10 +10,9 @@ import {
     BrokerReportPositionCodeFormat
 } from "../models/portfolios/enums";
 import { BrokerReportPath } from "../models/portfolios/types";
-import { getMoexQuotesByIsinCodes, getMoexQuotesByTickers } from "../apis/moexApi";
-import { parseVtbReport } from "../utils/report/vtbBrokerReportUtils";
 import { parseOpenBrokerReport } from "../utils/report/openBrokerReoprtUtils";
 import { parseTinkoffReport } from "../utils/report/tinkoffBrokerReportUtils";
+import { parseVtbReport } from "../utils/report/vtbBrokerReportUtils";
 
 // eslint-disable-next-line no-restricted-globals
 const ctx: Worker = self as any;

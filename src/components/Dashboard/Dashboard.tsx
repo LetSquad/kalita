@@ -1,9 +1,14 @@
+import { useEffect, useMemo, useState } from "react";
+
 import nodePath from "path";
-import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
-    Icon, Menu, Segment, Sidebar
+    Icon,
+    Menu,
+    Segment,
+    Sidebar
 } from "semantic-ui-react";
+
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setCurrentProjectName } from "../../store/sidebarMenu/sidebarMenuReducer";
 import partsStyles from "../../styles/parts.scss";
@@ -28,14 +33,19 @@ export default function Dashboard() {
 
     useEffect(() => {
         const currentProjectPath = searchParams.get("currentProject");
-        dispatch(setCurrentProjectName(currentProjectPath?.slice(currentProjectPath?.lastIndexOf(nodePath.sep) + 1)));
+        if (currentProjectPath) {
+            dispatch(setCurrentProjectName(currentProjectPath.slice(currentProjectPath.lastIndexOf(nodePath.sep) + 1)));
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
 
     return (
         <WithSaving>
             <div className={partsStyles.baseContainer}>
-                <Sidebar.Pushable as={Segment} className={styles.pushableSegment}>
+                <Sidebar.Pushable
+                    as={Segment}
+                    className={styles.pushableSegment}
+                >
                     <Sidebar
                         as={Menu}
                         animation="push"
@@ -47,13 +57,26 @@ export default function Dashboard() {
                     >
                         {
                             sidebarVisible
-                                ? <SidebarMenu projectName={projectName} onSidebarClose={() => setSidebarVisible(false)} />
+                                ? (
+                                    <SidebarMenu
+                                        projectName={projectName}
+                                        onSidebarClose={() => setSidebarVisible(false)}
+                                    />
+                                )
                                 : (
-                                    <div aria-hidden onClick={() => setSidebarVisible(true)} className={styles.sidebarClose}>
+                                    <div
+                                        aria-hidden
+                                        onClick={() => setSidebarVisible(true)}
+                                        className={styles.sidebarClose}
+                                    >
                                         <div className={styles.sidebarCloseTitleContainer}>
                                             <span className={styles.sidebarCloseTitle}>{closeSidebarTitle}</span>
                                         </div>
-                                        <Icon className={styles.sidebarCloseIcon} name="angle double right" link />
+                                        <Icon
+                                            className={styles.sidebarCloseIcon}
+                                            name="angle double right"
+                                            link
+                                        />
                                     </div>
                                 )
                         }

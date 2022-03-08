@@ -1,8 +1,14 @@
-import * as React from "react";
+import {
+    Component,
+    ErrorInfo,
+    PropsWithChildren,
+    ReactChild
+} from "react";
+
 import { ErrorScreen } from "./ErrorScreen";
 
-export class WithErrorBoundaries extends React.Component<React.PropsWithChildren<{}>, { error: Error | undefined }> {
-    constructor(props: React.PropsWithChildren<{ children: React.ReactChild }>) {
+export class WithErrorBoundaries extends Component<PropsWithChildren<{}>, { error: Error | undefined }> {
+    constructor(props: PropsWithChildren<{ children: ReactChild }>) {
         super(props);
         this.state = {
             error: undefined
@@ -15,7 +21,7 @@ export class WithErrorBoundaries extends React.Component<React.PropsWithChildren
         };
     }
 
-    public componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+    public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
         console.log(error);
         console.log(errorInfo);
     }

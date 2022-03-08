@@ -1,15 +1,22 @@
-import { configureStore } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import {
-    FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE
+    FLUSH,
+    PAUSE,
+    PERSIST,
+    PURGE,
+    REGISTER,
+    REHYDRATE
 } from "redux-persist/es/constants";
 import persistStore from "redux-persist/es/persistStore";
 import storage from "redux-persist/lib/storage";
 import promise from "redux-promise-middleware";
 import thunk from "redux-thunk";
+
+import { configureStore } from "@reduxjs/toolkit";
+
 import electronCacheReducer from "./electronCache/electronCacheReducer";
-import sidebarMenuReducer from "./sidebarMenu/sidebarMenuReducer";
 import portfoliosReducer from "./portfolios/portfoliosReducer";
+import sidebarMenuReducer from "./sidebarMenu/sidebarMenuReducer";
 
 const electronCachePersistConfig = {
     key: "electronCache",
@@ -29,7 +36,8 @@ export const store = configureStore({
         serializableCheck: {
             ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
         }
-    }).prepend([promise, thunk])
+        // eslint-disable-next-line unicorn/prefer-spread
+    }).concat([promise, thunk])
 });
 
 export const persistor = persistStore(store);

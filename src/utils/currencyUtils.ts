@@ -1,5 +1,5 @@
-import { Currency } from "../models/portfolios/enums";
 import { DividendCurrency, MoexCurrency } from "../models/apis/enums";
+import { Currency } from "../models/portfolios/enums";
 
 export function moexCurrencyToInternalCurrency(moexCurrency: MoexCurrency): Currency {
     switch (moexCurrency) {

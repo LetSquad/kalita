@@ -1,5 +1,7 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
+
 import { Icon } from "semantic-ui-react";
+
 import { useAppDispatch } from "../../store/hooks";
 import { deleteRowById } from "../../store/portfolios/portfoliosReducer";
 
@@ -16,7 +18,11 @@ export function ActionBlock({ rowId }: ActionBlockProps) {
 
     return (
         <div>
-            <Icon name="remove" link onClick={deleteRow} />
+            <Icon
+                name="remove"
+                link
+                onClick={deleteRow}
+            />
         </div>
     );
 }

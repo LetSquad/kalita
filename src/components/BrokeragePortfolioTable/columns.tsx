@@ -1,9 +1,11 @@
 import sum from "lodash.sum";
-import React from "react";
+
+import { Currency } from "../../models/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
 import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { ModelPortfolioSettings } from "../../models/settings/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
+import { getSymbol } from "../../utils/currencyUtils";
 import { CalcPosition } from "../DataTable/types/calc";
 import { ColumnDefinition, VerticalAlignValues } from "../DataTable/types/column";
 import { EditTypes } from "../DataTable/types/edit";
@@ -11,8 +13,6 @@ import { FormatterTypes } from "../DataTable/types/formatter";
 import { TooltipPosition } from "../DataTable/types/tooltip";
 import { ActionBlock } from "./ActionBlock";
 import styles from "./styles/columns.scss";
-import { getSymbol } from "../../utils/currencyUtils";
-import { Currency } from "../../models/portfolios/enums";
 
 const TICKER_INVALID_FORMAT = "Тикер должен состоять только из больших латинских букв и цифр и быть от 1 до 12 символов";
 const TICKER_DUPLICATE = "Тикер должен быть уникальным в рамках портфеля";

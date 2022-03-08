@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import { loadMoexQuoteByTicker, loadMoexQuotesByTickers } from "../../apis/moexApi";
 import { QuoteData, QuotesData } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
@@ -8,7 +9,8 @@ import {
     AnalyticsIdentifier,
     BrokerAccountIdentifier,
     BrokerAccountPosition,
-    BrokerReportData, CurrencyUpdatePayload,
+    BrokerReportData,
+    CurrencyUpdatePayload,
     ModelPortfolioIdentifier,
     ModelPortfolioPosition,
     PortfolioIdentifier,
@@ -16,9 +18,13 @@ import {
     Portfolios,
     PortfolioUpdatePayload
 } from "../../models/portfolios/types";
+import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import {
-    addNewElementToGroup, deleteElementFromGroup, setActiveId, setDefault
+    addNewElementToGroup,
+    deleteElementFromGroup,
+    setActiveId,
+    setDefault
 } from "../sidebarMenu/sidebarMenuReducer";
 import {
     generateNewPosition,
@@ -29,16 +35,15 @@ import {
     mapPositionFromBrokerReport,
     newBrokerAccount,
     newModelPortfolio,
-    recalculatePortfolioPercentage,
-    recalculateModelPortfolioPercentage,
     recalculateBrokerAccountPercentage,
+    recalculateModelPortfolioPercentage,
     recalculateModelPortfolioQuantity,
     recalculatePortfolioCurrency,
+    recalculatePortfolioPercentage,
+    recalculatePortfolioPrice,
     recalculateRow,
-    recalculateRowPrice,
-    recalculatePortfolioPrice
+    recalculateRowPrice
 } from "./portfoliosReducerHelper";
-import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
 
 export interface PortfoliosState extends Portfolios {
     currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;

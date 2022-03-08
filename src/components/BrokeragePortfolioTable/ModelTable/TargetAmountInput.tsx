@@ -1,22 +1,24 @@
-import React, {
+import {
     useCallback,
     useEffect,
     useMemo,
     useState
 } from "react";
+
 import {
     Dropdown,
     Icon,
     Input,
     Popup
 } from "semantic-ui-react";
+
+import { getMoexCurrencyQuotes } from "../../../apis/moexApi";
+import { Currency } from "../../../models/portfolios/enums";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import { updateBaseCurrency, updateTotalTargetAmount } from "../../../store/portfolios/portfoliosReducer";
 import { baseCurrencySelector, currentTargetAmountSelector } from "../../../store/portfolios/selectors";
-import styles from "./styles/TargetAmountInput.scss";
-import { Currency } from "../../../models/portfolios/enums";
 import { getSymbol } from "../../../utils/currencyUtils";
-import { getMoexCurrencyQuotes } from "../../../apis/moexApi";
+import styles from "./styles/TargetAmountInput.scss";
 
 export default function TargetAmountInput() {
     const dispatch = useAppDispatch();
@@ -90,7 +92,12 @@ export default function TargetAmountInput() {
                 onClose={() => setQuestionOpen(false)}
                 onOpen={() => setQuestionOpen(true)}
                 position="bottom center"
-                trigger={<Icon className={styles.inputQuestion} name="question circle outline" />}
+                trigger={(
+                    <Icon
+                        className={styles.inputQuestion}
+                        name="question circle outline"
+                    />
+                )}
                 content="Целевая сумма должна быть числом и не должна превышать 999999999999"
             />
         </div>

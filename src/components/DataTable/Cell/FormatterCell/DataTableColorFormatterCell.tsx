@@ -1,4 +1,3 @@
-import React from "react";
 import { useDataTableColorFormatterCellContext } from "../../utils/contexts/hooks";
 import DataTableBaseCell from "../DataTableBaseCell";
 

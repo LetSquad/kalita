@@ -1,5 +1,5 @@
-import { ModelPortfolioQuantityMode } from "./enums";
 import { Currency } from "../portfolios/enums";
+import { ModelPortfolioQuantityMode } from "./enums";
 
 export interface PortfolioSettings {
     baseCurrency: Currency;

@@ -1,4 +1,3 @@
-import React from "react";
 import { useDataTableCalcMoneyFormatterCellContext } from "../../../utils/contexts/hooks";
 import { defaultMoneyFormatterParams, formatMoneyFormatterValue } from "../../utils/formatterUtils";
 import DataTableBaseCalcCell from "../DataTableBaseCalcCell";

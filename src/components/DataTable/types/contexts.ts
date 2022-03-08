@@ -1,4 +1,5 @@
 import { CSSProperties } from "react";
+
 import { DataTableData, UserDataTableClasses } from "./base";
 import {
     BaseFormatterColumnDefinition,

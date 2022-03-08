@@ -1,6 +1,11 @@
 import {
-    FocusEvent, SyntheticEvent, ChangeEvent, MouseEvent, KeyboardEvent
+    ChangeEvent,
+    FocusEvent,
+    KeyboardEvent,
+    MouseEvent,
+    SyntheticEvent
 } from "react";
+
 // eslint-disable-next-line import/no-cycle
 import { DataTableData } from "./base";
 
@@ -60,13 +65,13 @@ export interface InputEditParams {
  *
  * @interface
  * @name DropdownEditParams
- * @param {boolean} [multiple=false]                                                             - Can multiple options be selected
- * @param {boolean} [search=false]                                                               - Is it possible to search by options
- * @param {boolean} [clearable=false]                                                            - Will there be an icon for instantly clearing the contents of the input
- * @param {boolean} [inline=false]                                                               - Will the dropdown be embedded in the text
- * @param {string} [placeholder]                                                                 - Placeholder label in dropdown, when value is empty
- * @param {Options} options                                                                      - List with options
- * @param {(rowId: string, event: SyntheticEvent<HTMLElement>, value: T) => void} [onCellChange] - Callback when changing dropdown value
+ * @param {boolean} [multiple=false]                                                                                                 - Can multiple options be selected
+ * @param {boolean} [search=false]                                                                                                   - Is it possible to search by options
+ * @param {boolean} [clearable=false]                                                                                                - Will there be an icon for instantly clearing the contents of the input
+ * @param {boolean} [inline=false]                                                                                                   - Will the dropdown be embedded in the text
+ * @param {string} [placeholder]                                                                                                     - Placeholder label in dropdown, when value is empty
+ * @param {Options} options                                                                                                          - List with options
+ * @param {(rowId: string, event: SyntheticEvent<HTMLElement>, value: string | number | undefined | boolean) => void} [onCellChange] - Callback when changing dropdown value
  */
 export interface DropdownEditParams<T = string | number | undefined | boolean> {
     multiple?: boolean;

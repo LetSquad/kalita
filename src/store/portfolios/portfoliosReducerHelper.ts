@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+
 import { CurrencyQuotesMap, Quote, QuotesMap } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { BrokeragePortfolioTypes, Currency } from "../../models/portfolios/enums";

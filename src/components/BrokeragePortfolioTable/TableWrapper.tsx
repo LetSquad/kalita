@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 import { Portfolio } from "../../models/portfolios/types";
 import BrokerTable from "./BrokerTable/BrokerTable";

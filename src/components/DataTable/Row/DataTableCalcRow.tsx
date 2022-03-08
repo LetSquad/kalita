@@ -1,6 +1,8 @@
+import { useCallback, useMemo } from "react";
+
 import classNames from "classnames";
-import React, { useMemo } from "react";
 import { Table } from "semantic-ui-react";
+
 import DataTableCalcFormatterCell from "../Cell/CalcCell/CalcFormatterCell/DataTableCalcFormatterCell";
 import { DataTableData } from "../types/base";
 import { CalcFunction, CalcType } from "../types/calc";
@@ -38,31 +40,41 @@ export default function DataTableCalcRow() {
         return _calcColumnsCount;
     }, [calcColumns]);
 
-    const cells = useMemo(() => (calcColumnsCount
-        ? [...calcColumns.entries()].map((calcColumn) => {
-            const columnData = data.map((row) => row[calcColumn[0]]);
-            const calcResult = calcColumn[1].calcFunction ? calcColumn[1].calcFunction(columnData, calcColumn[0]) : undefined;
+    const dataTableCalcCellContextValues = useCallback((
+        calcColumn: [
+            string,
+            { calcFunction: CalcFunction | undefined, column: ColumnDefinition }
+        ]
+    ) => {
+        const columnData = data.map((row) => row[calcColumn[0]]);
+        const calcResult = calcColumn[1].calcFunction ? calcColumn[1].calcFunction(columnData, calcColumn[0]) : undefined;
 
-            return (
-                <DataTableCalcCellContext.Provider
-                    key={`calc-cell-context-${type}-${position}-${calcColumn[0]}`}
-                    value={{
-                        cell: calcResult,
-                        field: calcColumn[0],
-                        column: calcColumn[1].column,
-                        calcType: type,
-                        columnData
-                    }}
-                >
-                    <DataTableCalcFormatterCell key={`calc-cell-${type}-${position}-${calcColumn[0]}`} />
-                </DataTableCalcCellContext.Provider>
-            );
-        })
-        : undefined), [calcColumns, calcColumnsCount, data, position, type]);
+        return {
+            cell: calcResult,
+            field: calcColumn[0],
+            column: calcColumn[1].column,
+            calcType: type,
+            columnData
+        };
+    }, [data, type]);
+
+    const cells = useMemo(() => (calcColumnsCount
+        ? [...calcColumns.entries()].map((calcColumn) => (
+            <DataTableCalcCellContext.Provider
+                key={`calc-cell-context-${type}-${position}-${calcColumn[0]}`}
+                value={dataTableCalcCellContextValues(calcColumn)}
+            >
+                <DataTableCalcFormatterCell key={`calc-cell-${type}-${position}-${calcColumn[0]}`} />
+            </DataTableCalcCellContext.Provider>
+        ))
+        : undefined), [calcColumns, calcColumnsCount, dataTableCalcCellContextValues, position, type]);
 
     return cells
         ? (
-            <Table.Row className={classNames(styles.row, classes?.calcRowClassName)} data-row-role="calc">
+            <Table.Row
+                className={classNames(styles.row, classes?.calcRowClassName)}
+                data-row-role="calc"
+            >
                 {cells}
             </Table.Row>
         )

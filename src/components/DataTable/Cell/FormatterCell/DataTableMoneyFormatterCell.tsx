@@ -1,4 +1,5 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
+
 import DataTableDropdown from "../../Edit/DataTableDropdown";
 import DataTableInput from "../../Edit/DataTableInput";
 import { DropdownEdit, EditTypes, InputEdit } from "../../types/edit";
@@ -18,7 +19,12 @@ export default function DataTableMoneyFormatterCell() {
     } = useDataTableMoneyFormatterCellContext();
 
     const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => (_edit.type === EditTypes.INPUT
-        ? <DataTableInput params={_edit.params} label={params.currency} />
+        ? (
+            <DataTableInput
+                params={_edit.params}
+                label={params.currency}
+            />
+        )
         : <DataTableDropdown params={_edit.params} />), [params.currency]);
 
     return edit

@@ -1,13 +1,15 @@
-import classNames from "classnames";
-import React, {
+import {
     ForwardedRef,
     forwardRef,
     useCallback,
     useImperativeHandle,
     useMemo
 } from "react";
+
+import classNames from "classnames";
 import { DropResult } from "react-beautiful-dnd";
 import { Table } from "semantic-ui-react";
+
 import DataTableBody from "./Body/DataTableBody";
 import DataTableFooter from "./Footer/DataTableFooter";
 import DataTableHeader from "./Header/DataTableHeader";
@@ -44,49 +46,49 @@ const DataTable = forwardRef(({
     const hasFooterCalc = useMemo(() => columns.map((column) =>
         column.tableCalc && column.tableCalc.position === CalcPosition.BOTTOM).includes(true), [columns]);
 
-    const content = useMemo(() => (data.length > 0
-        ? (
-            <Table className={styles.innerTableBody}>
-                <DataTableBodyContext.Provider
-                    value={{
-                        groupBy,
-                        onAddRowToGroup,
-                        onGroupNameEdit,
-                        expandableGroup,
-                        onDragEnd,
-                        isRowMovedEnabled: !!onRowMoved,
-                        onCellChanged,
-                        onCellBlur,
-                        onCellKeyEnter
-                    }}
-                >
-                    <DataTableBody />
-                </DataTableBodyContext.Provider>
-            </Table>
-        )
-        : <div className={styles.innerTablePlaceholder}>{emptyTablePlaceholder ?? "Данные недоступны"}</div>),
-    [
-        data.length,
+    const dataTableBodyContextValues = useMemo(() => ({
         groupBy,
         onAddRowToGroup,
         onGroupNameEdit,
         expandableGroup,
         onDragEnd,
-        onRowMoved,
+        isRowMovedEnabled: !!onRowMoved,
         onCellChanged,
         onCellBlur,
+        onCellKeyEnter
+    }), [
+        expandableGroup,
+        groupBy,
+        onAddRowToGroup,
+        onCellBlur,
+        onCellChanged,
         onCellKeyEnter,
-        emptyTablePlaceholder
+        onDragEnd,
+        onGroupNameEdit,
+        onRowMoved
     ]);
 
+    const content = useMemo(
+        () => (data.length > 0
+            ? (
+                <Table className={styles.innerTableBody}>
+                    <DataTableBodyContext.Provider value={dataTableBodyContextValues}>
+                        <DataTableBody />
+                    </DataTableBodyContext.Provider>
+                </Table>
+            )
+            : <div className={styles.innerTablePlaceholder}>{emptyTablePlaceholder ?? "Данные недоступны"}</div>),
+        [data.length, dataTableBodyContextValues, emptyTablePlaceholder]
+    );
+
+    const dataTableContextValues = useMemo(() => ({
+        columns,
+        data,
+        classes
+    }), [classes, columns, data]);
+
     return (
-        <DataTableContext.Provider
-            value={{
-                columns,
-                data,
-                classes
-            }}
-        >
+        <DataTableContext.Provider value={dataTableContextValues}>
             <div className={classNames(styles.tableContainer, classes?.tableClassName)}>
                 <Table className={styles.innerTableHeader}>
                     <DataTableHeader />

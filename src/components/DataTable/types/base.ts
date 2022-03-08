@@ -1,6 +1,11 @@
 import {
-    KeyboardEvent, FocusEvent, ChangeEvent, MouseEvent, SyntheticEvent
+    ChangeEvent,
+    FocusEvent,
+    KeyboardEvent,
+    MouseEvent,
+    SyntheticEvent
 } from "react";
+
 // eslint-disable-next-line import/no-cycle
 import { ColumnDefinition } from "./column";
 
