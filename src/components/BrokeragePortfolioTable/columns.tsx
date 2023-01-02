@@ -2,7 +2,7 @@ import sum from "lodash.sum";
 
 import { Currency } from "../../models/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
-import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
+import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { ModelPortfolioSettings } from "../../models/settings/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import { getSymbol } from "../../utils/currencyUtils";
@@ -73,8 +73,9 @@ function averagePriceValidator(
 
 export const commonColumns: (
     baseCurrency: Currency,
-    dividendsButton: (ticker: string) => JSX.Element
-) => ColumnDefinition[] = (baseCurrency, dividendsButton) => [
+    dividendsButton: (ticker: string) => JSX.Element,
+    priceMode?: ModelPortfolioPriceMode
+) => ColumnDefinition[] = (baseCurrency, dividendsButton, priceMode) => [
     {
         title: "Инструмент",
         field: BaseColumnNames.TICKER,
@@ -85,7 +86,7 @@ export const commonColumns: (
                 dashed: true
             }
         },
-        validator: {
+        validator: priceMode === ModelPortfolioPriceMode.MANUAL_INPUT ? undefined : {
             validate: (
                 tableData,
                 rowId,
@@ -144,6 +145,12 @@ export const commonColumns: (
     }, {
         title: "Цена",
         field: BaseColumnNames.CURRENT_PRICE,
+        edit: priceMode === ModelPortfolioPriceMode.MANUAL_INPUT ? {
+            type: EditTypes.INPUT,
+            params: {
+                dashed: true
+            }
+        } : undefined,
         formatter: {
             type: FormatterTypes.MONEY,
             params: {
@@ -237,7 +244,7 @@ const _modelPortfolioColumns: (
     portfolioSettings: ModelPortfolioSettings
 ) => ColumnDefinition[] =
     (dividendsButton, portfolioSettings) => [
-        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton),
+        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton, portfolioSettings.priceMode),
         {
             title: "Вес",
             field: ModelPortfolioColumnNames.WEIGHT,

@@ -14,7 +14,9 @@ import { Icon, Popup } from "semantic-ui-react";
 import { $enum } from "ts-enum-util";
 
 import { loadMoexQuoteByTicker } from "../../apis/moexApi";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 import { Portfolio } from "../../models/portfolios/types";
+import { ModelPortfolioPriceMode } from "../../models/settings/enums";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
 import { useAppDispatch } from "../../store/hooks";
 import {
@@ -81,10 +83,13 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 .asValueOrThrow(field as string),
             newValue: value as string
         }));
-        if (field === BaseColumnNames.TICKER) {
+        if (field === BaseColumnNames.TICKER &&
+            !(currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
+                currentPortfolio.settings.priceMode === ModelPortfolioPriceMode.MANUAL_INPUT)
+        ) {
             dispatch(loadMoexQuoteByTicker(value as string));
         }
-    }, [dispatch]);
+    }, [dispatch, currentPortfolio]);
 
     const chart = useMemo(() => {
         const chartData: ChartData<"doughnut"> | null = {

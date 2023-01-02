@@ -8,18 +8,19 @@ import {
     Radio
 } from "semantic-ui-react";
 
+import { loadMoexQuotesByTickers } from "../../../../../apis/moexApi";
 import { BrokerAccountMenuElement } from "../../../../../models/menu/types";
 import { ModelPortfolio } from "../../../../../models/portfolios/types";
-import { ModelPortfolioQuantityMode } from "../../../../../models/settings/enums";
+import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../../../../models/settings/enums";
 import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
-import { updateModelPortfolioQuantityMode, updateModelPortfolioQuantitySources } from "../../../../../store/portfolios/portfoliosReducer";
+import { updateModelPortfolioPriceMode, updateModelPortfolioQuantityMode, updateModelPortfolioQuantitySources } from "../../../../../store/portfolios/portfoliosReducer";
 import styles from "../styles/SettingsModal.scss";
 
-interface ModelPortfolioQuantityModeSelectorProps {
+interface ModelPortfolioDataSourcesSelectorProps {
     currentPortfolio: ModelPortfolio,
 }
 
-export default function ModelPortfolioQuantityModeSelector({ currentPortfolio }: ModelPortfolioQuantityModeSelectorProps) {
+export default function ModelPortfolioDataSourcesSelector({ currentPortfolio }: ModelPortfolioDataSourcesSelectorProps) {
     const dispatch = useAppDispatch();
 
     const brokerAccounts: BrokerAccountMenuElement[] = useAppSelector((state) => state.sidebarMenu.brokerAccounts.elements);
@@ -28,6 +29,15 @@ export default function ModelPortfolioQuantityModeSelector({ currentPortfolio }:
         () => brokerAccounts.map((e) => ({ key: e.id, text: e.name, value: e.id })),
         [brokerAccounts]
     );
+
+    const onPriceModeCheck = useCallback((_, data: CheckboxProps) => {
+        const priceMode = data.value as ModelPortfolioPriceMode;
+        dispatch(updateModelPortfolioPriceMode(priceMode));
+        if (priceMode === ModelPortfolioPriceMode.MARKET_DATA) {
+            const tickers: string[] = currentPortfolio.positions.map((position) => position.ticker);
+            dispatch(loadMoexQuotesByTickers(tickers));
+        }
+    }, [dispatch, currentPortfolio]);
 
     const onQuantityModeCheck = useCallback((_, data: CheckboxProps) => {
         dispatch(updateModelPortfolioQuantityMode(data.value as ModelPortfolioQuantityMode));
@@ -39,6 +49,26 @@ export default function ModelPortfolioQuantityModeSelector({ currentPortfolio }:
 
     return (
         <Form>
+            <h3>Цена</h3>
+            <Form.Field>
+                <Radio
+                    label="Ручной ввод"
+                    name="priceSource"
+                    value={ModelPortfolioPriceMode.MANUAL_INPUT}
+                    checked={currentPortfolio.settings.priceMode === ModelPortfolioPriceMode.MANUAL_INPUT}
+                    className={styles.settingsRadio}
+                    onChange={onPriceModeCheck}
+                />
+                <Radio
+                    label="Рыночные данные"
+                    name="priceSource"
+                    value={ModelPortfolioPriceMode.MARKET_DATA}
+                    checked={currentPortfolio.settings.priceMode === ModelPortfolioPriceMode.MARKET_DATA}
+                    className={styles.settingsRadio}
+                    onChange={onPriceModeCheck}
+                />
+            </Form.Field>
+
             <h3>В портфеле</h3>
             <Form.Field>
                 <Radio

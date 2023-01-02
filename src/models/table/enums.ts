@@ -1,6 +1,7 @@
 export enum EditableTableColumns {
     TICKER = "ticker",
     WEIGHT = "weight",
+    CURRENT_PRICE = "currentPrice",
     QUANTITY = "quantity",
     AVERAGE_PRICE = "averagePrice"
 }

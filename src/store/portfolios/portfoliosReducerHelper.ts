@@ -16,10 +16,11 @@ import {
     PortfolioPosition,
     PortfolioUpdatePayload
 } from "../../models/portfolios/types";
-import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
+import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
 import { moexCurrencyToInternalCurrency } from "../../utils/currencyUtils";
+import { parseMoney } from "../../utils/parseUtils";
 
 export const defaultTotalTargetAmount = 1_000_000;
 
@@ -56,6 +57,7 @@ export const newModelPortfolio: (id: string) => ModelPortfolio = (id: string) =>
     totalTargetAmount: defaultTotalTargetAmount,
     settings: {
         baseCurrency: Currency.RUB,
+        priceMode: ModelPortfolioPriceMode.MARKET_DATA,
         quantityMode: ModelPortfolioQuantityMode.MANUAL_INPUT,
         quantitySources: []
     }
@@ -82,18 +84,6 @@ export function getCurrentPortfolio(
     }
 
     return brokerAccounts.find((account) => account.id === currentTable.id);
-}
-
-export function getCurrentPortfolioIndex(
-    currentTable: PortfolioIdentifier,
-    modelPortfolios: ModelPortfolio[],
-    brokerAccounts: BrokerAccount[]
-): number {
-    if (currentTable.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-        return modelPortfolios.findIndex((portfolio) => portfolio.id === currentTable.id);
-    }
-
-    return brokerAccounts.findIndex((account) => account.id === currentTable.id);
 }
 
 export function getBrokerAccountsPositionsByIds(
@@ -167,10 +157,18 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
                     [tableUpdate.valueKey]: Number.parseInt(tableUpdate.newValue, 10)
                 };
             }
+            if (tableUpdate.valueKey === EditableTableColumns.CURRENT_PRICE) {
+                const currentPrice: number = parseMoney(tableUpdate.newValue);
+                return {
+                    ...row,
+                    [tableUpdate.valueKey]: currentPrice,
+                    amount: currentPrice * row.quantity
+                };
+            }
             if (tableUpdate.valueKey === EditableTableColumns.AVERAGE_PRICE) {
                 return {
                     ...row,
-                    [tableUpdate.valueKey]: Number.parseFloat(Number.parseFloat(tableUpdate.newValue.replace(",", ".")).toFixed(5))
+                    [tableUpdate.valueKey]: parseMoney(tableUpdate.newValue)
                 };
             }
             return {

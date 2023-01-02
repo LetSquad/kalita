@@ -3,7 +3,9 @@ import { useCallback } from "react";
 import { Icon } from "semantic-ui-react";
 
 import { loadMoexQuotesByTickers } from "../../../apis/moexApi";
+import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
 import { Portfolio } from "../../../models/portfolios/types";
+import { ModelPortfolioPriceMode } from "../../../models/settings/enums";
 import { useAppDispatch } from "../../../store/hooks";
 import { addNewGroup } from "../../../store/portfolios/portfoliosReducer";
 import { AdditionalHeaderMenu } from "./AdditionalHeaderMenu";
@@ -47,12 +49,16 @@ export function AdditionalHeader({
                     className={styles.additionalHeaderIcon}
                     onClick={onToggleChartMode}
                 />
-                <Icon
-                    name="sync alternate"
-                    link
-                    className={styles.additionalHeaderIcon}
-                    onClick={() => updateQuotesCurrentPrice()}
-                />
+                {currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
+                    currentPortfolio.settings.priceMode === ModelPortfolioPriceMode.MARKET_DATA
+                    ? (
+                        <Icon
+                            name="sync alternate"
+                            link
+                            className={styles.additionalHeaderIcon}
+                            onClick={() => updateQuotesCurrentPrice()}
+                        />
+                    ) : null}
                 <Icon
                     name="plus"
                     link
