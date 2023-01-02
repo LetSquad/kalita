@@ -11,6 +11,7 @@ export function moexCurrencyToInternalCurrency(moexCurrency: MoexCurrency): Curr
 export function getSymbol(currency: Currency | DividendCurrency) {
     switch (currency) {
         case Currency.RUB: case DividendCurrency.RUB: return "₽";
+        case Currency.CNY: return "¥";
         case Currency.USD: case DividendCurrency.USD: return "$";
         case Currency.EUR: return "€";
     }

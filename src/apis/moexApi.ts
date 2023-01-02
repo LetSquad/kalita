@@ -23,9 +23,10 @@ const BOARD_STOCKS = "TQBR";
 const BOARD_ETFS = "TQTF";
 const BOARD_FUNDS = "TQIF";
 
+const QUOTE_CNY = "CNYFIXME";
 const QUOTE_USD = "USDFIXME";
-const QUOTES_EUR = "EURFIXME";
-const QUOTES_EUR_USD = "EURUSDFIXME";
+const QUOTE_EUR = "EURFIXME";
+const QUOTE_EUR_USD = "EURUSDFIXME";
 
 const QUOTES_FILTER_LIMIT = 10;
 
@@ -107,18 +108,31 @@ function parseCurrencyQuotes(json: MoexCurrencyData): CurrencyQuotes {
 
 function createCurrencyQuotesMap(moexQuotes: CurrencyQuotes): CurrencyQuotesMap {
     const map: CurrencyQuotesMap = {};
+
     const rubMap: CurrencyQuotes = {};
+    rubMap[Currency.CNY] = 1 / moexQuotes[QUOTE_CNY];
     rubMap[Currency.USD] = 1 / moexQuotes[QUOTE_USD];
-    rubMap[Currency.EUR] = 1 / moexQuotes[QUOTES_EUR];
+    rubMap[Currency.EUR] = 1 / moexQuotes[QUOTE_EUR];
     map[Currency.RUB] = rubMap;
+
+    const cnyMap: CurrencyQuotes = {};
+    cnyMap[Currency.RUB] = moexQuotes[QUOTE_CNY];
+    cnyMap[Currency.USD] = moexQuotes[QUOTE_CNY] / moexQuotes[QUOTE_USD];
+    cnyMap[Currency.EUR] = moexQuotes[QUOTE_CNY] / moexQuotes[QUOTE_EUR];
+    map[Currency.CNY] = cnyMap;
+
     const usdMap: CurrencyQuotes = {};
     usdMap[Currency.RUB] = moexQuotes[QUOTE_USD];
-    usdMap[Currency.EUR] = 1 / moexQuotes[QUOTES_EUR_USD];
+    usdMap[Currency.CNY] = moexQuotes[QUOTE_USD] / moexQuotes[QUOTE_CNY];
+    usdMap[Currency.EUR] = 1 / moexQuotes[QUOTE_EUR_USD];
     map[Currency.USD] = usdMap;
+
     const eurMap: CurrencyQuotes = {};
-    eurMap[Currency.RUB] = moexQuotes[QUOTES_EUR];
-    eurMap[Currency.USD] = moexQuotes[QUOTES_EUR_USD];
+    eurMap[Currency.RUB] = moexQuotes[QUOTE_EUR];
+    eurMap[Currency.CNY] = moexQuotes[QUOTE_EUR] / moexQuotes[QUOTE_CNY];
+    eurMap[Currency.USD] = moexQuotes[QUOTE_EUR_USD];
     map[Currency.EUR] = eurMap;
+
     return map;
 }
 
