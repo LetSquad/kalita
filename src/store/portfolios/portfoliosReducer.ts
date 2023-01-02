@@ -18,7 +18,7 @@ import {
     Portfolios,
     PortfolioUpdatePayload
 } from "../../models/portfolios/types";
-import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
+import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import {
     addNewElementToGroup,
@@ -151,6 +151,12 @@ export const portfoliosSlice = createSlice({
             }
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
+                const currentPosition = (currentPortfolio.positions as Array<ModelPortfolioPosition | BrokerAccountPosition>)
+                    .find((p) => p.id === action.payload.id);
+                if (currentPosition) {
+                    state.activeGroup = currentPosition.groupName;
+                }
+
                 recalculateRow(currentPortfolio, action.payload);
 
                 if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
@@ -161,7 +167,9 @@ export const portfoliosSlice = createSlice({
                             currentPortfolio.positions,
                             getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)
                         );
-                    } else if (action.payload.valueKey === EditableTableColumns.WEIGHT) {
+                    } else if (action.payload.valueKey === EditableTableColumns.WEIGHT ||
+                        action.payload.valueKey === EditableTableColumns.CURRENT_PRICE
+                    ) {
                         currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
                     }
                 } else if (
@@ -258,6 +266,16 @@ export const portfoliosSlice = createSlice({
             currentPortfolio.settings.baseCurrency = action.payload.currency;
             currentPortfolio.positions = recalculatePortfolioCurrency(currentPortfolio, previousCurrency, action.payload.quotes);
             currentPortfolio.positions = recalculatePortfolioPercentage(currentPortfolio);
+        },
+        updateModelPortfolioPriceMode: (state: PortfoliosState, action: PayloadAction<ModelPortfolioPriceMode>) => {
+            if (!state.currentTable) {
+                return;
+            }
+
+            const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
+            if (currentPortfolio && currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                currentPortfolio.settings.priceMode = action.payload;
+            }
         },
         updateModelPortfolioQuantityMode: (state: PortfoliosState, action: PayloadAction<ModelPortfolioQuantityMode>) => {
             if (!state.currentTable) {
@@ -360,6 +378,7 @@ export const {
     deleteRowById,
     updateTotalTargetAmount,
     updateBaseCurrency,
+    updateModelPortfolioPriceMode,
     updateModelPortfolioQuantityMode,
     updateModelPortfolioQuantitySources
 } = portfoliosSlice.actions;

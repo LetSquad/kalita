@@ -22,7 +22,7 @@ interface SettingsModalProps {
 const BrokerAccountReportParser = lazy(/* webpackChunkName: "brokerAccountReportParser" */() =>
     import("./BrokerAccountTabs/BrokerAccountReportParser"));
 const ModelPortfolioQuantityModeSelector = lazy(/* webpackChunkName: "modelPortfolioQuantityModeSelector" */() =>
-    import("./ModelPortfolioTabs/ModelPortfolioQuantityModeSelector"));
+    import("./ModelPortfolioTabs/ModelPortfolioDataSourcesSelector"));
 
 export default function SettingsModal({ currentPortfolio, onClose, activeTab }: SettingsModalProps) {
     const [activeIndex, setActiveIndex] = useState<number>(activeTab);
