@@ -47,12 +47,14 @@ import {
 
 export interface PortfoliosState extends Portfolios {
     currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;
+    activeGroup?: string;
 }
 
 const initialState: PortfoliosState = {
     modelPortfolios: [],
     brokerAccounts: [],
-    currentTable: undefined
+    currentTable: undefined,
+    activeGroup: undefined
 };
 
 export const portfoliosSlice = createSlice({
@@ -85,6 +87,8 @@ export const portfoliosSlice = createSlice({
         },
         setCurrentPortfolio: (state: PortfoliosState, action: PayloadAction<PortfolioIdentifier>) => {
             state.currentTable = action.payload;
+            state.activeGroup = undefined;
+
             const currentPortfolio = getCurrentPortfolio(action.payload, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
                 currentPortfolio.positions = recalculatePortfolioPercentage(currentPortfolio);
@@ -96,16 +100,26 @@ export const portfoliosSlice = createSlice({
                         getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)
                     );
                 }
+
+                if (currentPortfolio.positions.length > 0) {
+                    state.activeGroup = currentPortfolio.positions[0].groupName;
+                }
             }
         },
-        addNewPosition: (state: PortfoliosState, action: PayloadAction<string>) => {
+        addNewPosition: (state: PortfoliosState, action: PayloadAction<string | undefined>) => {
             if (!state.currentTable) {
+                return;
+            }
+            if (action.payload) {
+                state.activeGroup = action.payload;
+            }
+            if (!state.activeGroup) {
                 return;
             }
 
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
-                generateNewPosition(currentPortfolio, action.payload);
+                generateNewPosition(currentPortfolio, state.activeGroup);
             }
         },
         addBrokerAccountPositions: (state: PortfoliosState, action: PayloadAction<BrokerReportData>) => {
@@ -126,7 +140,9 @@ export const portfoliosSlice = createSlice({
             }
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
-                generateNewPosition(currentPortfolio, getNewGroupName(currentPortfolio.positions));
+                const groupName: string = getNewGroupName(currentPortfolio.positions);
+                state.activeGroup = groupName;
+                generateNewPosition(currentPortfolio, groupName);
             }
         },
         update: (state: PortfoliosState, action: PayloadAction<PortfolioUpdatePayload>) => {
@@ -160,10 +176,14 @@ export const portfoliosSlice = createSlice({
             if (!state.currentTable) {
                 return;
             }
+
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
+            let positionGroup: string;
             if (currentPortfolio) {
                 if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
                     const movedPosition = currentPortfolio.positions.splice(action.payload.oldOrder, 1)[0];
+                    positionGroup = movedPosition.groupName;
+
                     currentPortfolio.positions.splice(
                         action.payload.newOrder,
                         0,
@@ -171,18 +191,23 @@ export const portfoliosSlice = createSlice({
                     );
                 } else {
                     const movedPosition = currentPortfolio.positions.splice(action.payload.oldOrder, 1)[0];
+                    positionGroup = movedPosition.groupName;
+
                     currentPortfolio.positions.splice(
                         action.payload.newOrder,
                         0,
                         action.payload.newGroupName ? { ...movedPosition, groupName: action.payload.newGroupName } : movedPosition
                     );
                 }
+
+                state.activeGroup = action.payload.newGroupName ? action.payload.newGroupName : positionGroup;
             }
         },
         updateGroupName: (state: PortfoliosState, action: PayloadAction<{ oldGroupName: string, newGroupName: string }>) => {
             if (!state.currentTable) {
                 return;
             }
+            state.activeGroup = action.payload.newGroupName;
 
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
@@ -268,6 +293,7 @@ export const portfoliosSlice = createSlice({
         },
         resetCurrentPortfolio: (state: PortfoliosState) => {
             state.currentTable = undefined;
+            state.activeGroup = undefined;
         }
     },
     extraReducers: (builder) => {
