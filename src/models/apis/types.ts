@@ -26,7 +26,7 @@ export interface QuoteDividends {
 
 export interface MoexQuote {
     SECID: string;
-    PREVADMITTEDQUOTE: string;
+    PREVLEGALCLOSEPRICE: string;
     SHORTNAME: string;
     ISIN: string;
     CURRENCYID: MoexCurrency;
