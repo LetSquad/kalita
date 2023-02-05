@@ -36,7 +36,7 @@ const moexHttpClient = axios.create({
 });
 
 function getUrl(board: string): string {
-    const filters = "iss.meta=off&iss.only=securities&securities.columns=SECID,PREVADMITTEDQUOTE,SHORTNAME,ISIN,CURRENCYID";
+    const filters = "iss.meta=off&iss.only=securities&securities.columns=SECID,PREVLEGALCLOSEPRICE,SHORTNAME,ISIN,CURRENCYID";
     return `/iss/engines/stock/markets/shares/boards/${board}/securities.xml?${filters}`;
 }
 
@@ -80,7 +80,7 @@ function parseQuotes(json: MoexData): Quote[] {
         if (Array.isArray(row)) {
             return row.map((el: MoexQuote) => ({
                 ticker: el.SECID,
-                price: Number.parseFloat(Number.parseFloat(el.PREVADMITTEDQUOTE).toFixed(5)),
+                price: Number.parseFloat(Number.parseFloat(el.PREVLEGALCLOSEPRICE).toFixed(5)),
                 isin: el.ISIN,
                 name: el.SHORTNAME,
                 currency: el.CURRENCYID
@@ -88,7 +88,7 @@ function parseQuotes(json: MoexData): Quote[] {
         }
         return [{
             ticker: row.SECID,
-            price: Number.parseFloat(Number.parseFloat(row.PREVADMITTEDQUOTE).toFixed(5)),
+            price: Number.parseFloat(Number.parseFloat(row.PREVLEGALCLOSEPRICE).toFixed(5)),
             isin: row.ISIN,
             name: row.SHORTNAME,
             currency: row.CURRENCYID

@@ -49,7 +49,7 @@ export function AdditionalHeader({
                     className={styles.additionalHeaderIcon}
                     onClick={onToggleChartMode}
                 />
-                {currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
+                {currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT ||
                     currentPortfolio.settings.priceMode === ModelPortfolioPriceMode.MARKET_DATA
                     ? (
                         <Icon
