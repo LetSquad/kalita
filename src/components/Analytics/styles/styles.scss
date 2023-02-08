@@ -1,4 +1,42 @@
+@use 'src/styles/parts' as *;
+@use '../AdditionalHeader/styles/AdditionalHeader' as additionalHeader;
+
+$tabulator-header-height: 40px;
+$tabulator-calc-height: 30px;
+$tabulator-full-header-height: calc(#{$tabulator-header-height} + #{$tabulator-calc-height});
+
 .container {
+  @extend %base-container;
+}
+
+.table {
+  height: calc(100% - #{additionalHeader.$additional-header-height});
+
+  .base-cell {
+    padding: 3px 11px !important;
+  }
+
+  .specific-cell {
+    padding: 5px 11px !important;
+  }
+
+  .base-row {
+    height: 25px;
+    line-height: 21px;
+  }
+
+  .specific-row {
+    height: 28px;
+    line-height: 17px;
+  }
+
+  .header-row {
+    height: 40px;
+    line-height: 13px;
+  }
+}
+
+.chart-container {
   display: flex;
   flex-direction: row;
   height: 100%;
