@@ -1,4 +1,10 @@
-import { useCallback, useMemo } from "react";
+import * as React from "react";
+import {
+    FormEvent,
+    SyntheticEvent,
+    useCallback,
+    useMemo
+} from "react";
 
 import {
     CheckboxProps,
@@ -30,20 +36,20 @@ export default function ModelPortfolioDataSourcesSelector({ currentPortfolio }: 
         [brokerAccounts]
     );
 
-    const onPriceModeCheck = useCallback((_, data: CheckboxProps) => {
+    const onPriceModeCheck = useCallback((event: FormEvent<HTMLInputElement>, data: CheckboxProps) => {
         const priceMode = data.value as ModelPortfolioPriceMode;
         dispatch(updateModelPortfolioPriceMode(priceMode));
         if (priceMode === ModelPortfolioPriceMode.MARKET_DATA) {
             const tickers: string[] = currentPortfolio.positions.map((position) => position.ticker);
-            dispatch(loadMoexQuotesByTickers(tickers));
+            dispatch(loadMoexQuotesByTickers({ tickers }));
         }
     }, [dispatch, currentPortfolio]);
 
-    const onQuantityModeCheck = useCallback((_, data: CheckboxProps) => {
+    const onQuantityModeCheck = useCallback((event: FormEvent<HTMLInputElement>, data: CheckboxProps) => {
         dispatch(updateModelPortfolioQuantityMode(data.value as ModelPortfolioQuantityMode));
     }, [dispatch]);
 
-    const onQuantitySourcesSelect = useCallback((_, data: DropdownProps) => {
+    const onQuantitySourcesSelect = useCallback((event: SyntheticEvent<HTMLElement>, data: DropdownProps) => {
         dispatch(updateModelPortfolioQuantitySources(data.value as string[]));
     }, [dispatch]);
 

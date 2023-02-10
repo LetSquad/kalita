@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { loadMoexQuoteByTicker, loadMoexQuotesByTickers } from "../../apis/moexApi";
-import { QuoteData, QuotesData } from "../../models/apis/types";
+import { QuoteData } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { MenuElementIdentifier } from "../../models/menu/types";
 import { BrokeragePortfolioTypes, Currency } from "../../models/portfolios/enums";
@@ -208,7 +208,7 @@ export const portfoliosSlice = createSlice({
                     );
                 }
 
-                state.activeGroup = action.payload.newGroupName ? action.payload.newGroupName : positionGroup;
+                state.activeGroup = action.payload.newGroupName ?? positionGroup;
             }
         },
         updateGroupName: (state: PortfoliosState, action: PayloadAction<{ oldGroupName: string, newGroupName: string }>) => {
@@ -325,12 +325,24 @@ export const portfoliosSlice = createSlice({
                     }
                 }
             })
-            .addCase(loadMoexQuotesByTickers.fulfilled, (state: PortfoliosState, action: PayloadAction<QuotesData>) => {
-                if (state.currentTable) {
+            .addCase(loadMoexQuotesByTickers.fulfilled, (state: PortfoliosState, action) => {
+                if (state.currentTable && !action.meta.arg.isGlobalUpdate) {
                     const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                     if (currentPortfolio) {
                         currentPortfolio.positions = recalculatePortfolioPrice(currentPortfolio, action.payload[0], action.payload[1]);
                         currentPortfolio.positions = recalculatePortfolioPercentage(currentPortfolio);
+                    }
+                }
+
+                if (action.meta.arg.isGlobalUpdate) {
+                    for (const portfolio of [
+                        ...state.modelPortfolios.filter((_portfolio) => (
+                            _portfolio.settings.priceMode === ModelPortfolioPriceMode.MARKET_DATA
+                        )),
+                        ...state.brokerAccounts
+                    ]) {
+                        portfolio.positions = recalculatePortfolioPrice(portfolio, action.payload[0], action.payload[1]);
+                        portfolio.positions = recalculatePortfolioPercentage(portfolio);
                     }
                 }
             })

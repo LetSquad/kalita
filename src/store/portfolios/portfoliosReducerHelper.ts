@@ -105,7 +105,7 @@ export function generateNewPosition(currentPortfolio: Portfolio, groupName: stri
 }
 
 export function mapPositionFromBrokerReport(groupName: string, position: BrokerReportPosition): BrokerAccountPosition {
-    const currentPrice = position.currentPrice ? position.currentPrice : position.averagePrice;
+    const currentPrice = position.currentPrice ?? position.averagePrice;
     return {
         id: uuidv4(),
         name: position.name,

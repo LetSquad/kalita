@@ -140,13 +140,13 @@ export const loadMoexQuoteByTicker = createAsyncThunk<QuoteData, string>(
     "loadMoexQuoteByTicker",
     async (ticker: string) => Promise.all([
         getMoexCurrencyQuotes(),
-        getMoexQuotes([ticker]).then((quotes) => (quotes[0] ? quotes[0] : undefined))
+        getMoexQuotes([ticker]).then((quotes) => (quotes[0] ?? undefined))
     ])
 );
 
-export const loadMoexQuotesByTickers = createAsyncThunk<QuotesData, string[]>(
+export const loadMoexQuotesByTickers = createAsyncThunk<QuotesData, { tickers: string[], isGlobalUpdate?: boolean }>(
     "loadMoexQuotesByTickers",
-    async (tickers: string[]) => Promise.all([
+    async ({ tickers }) => Promise.all([
         getMoexCurrencyQuotes(),
         getMoexQuotesByTickers(tickers)
     ])

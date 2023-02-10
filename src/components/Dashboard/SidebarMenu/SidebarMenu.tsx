@@ -3,8 +3,10 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "semantic-ui-react";
 
+import { loadMoexQuotesByTickers } from "../../../apis/moexApi";
 import { SidebarMenuElementsTypes } from "../../../models/menu/enums";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { allTickerSelector } from "../../../store/portfolios/selectors";
 import { setDefault } from "../../../store/sidebarMenu/sidebarMenuReducer";
 import SidebarMenuElement from "./SidebarMenuElement";
 import SidebarMenuGroup from "./SidebarMenuGroup";
@@ -21,21 +23,34 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
 
     const modelPortfolios = useAppSelector((state) => state.sidebarMenu.modelPortfolios);
     const brokerAccounts = useAppSelector((state) => state.sidebarMenu.brokerAccounts);
+    const allTickers = useAppSelector(allTickerSelector);
 
     const closeProject = useCallback(() => {
         dispatch(setDefault());
         navigate("/");
     }, [dispatch, navigate]);
 
+    const updatePortfolios = useCallback(() => {
+        dispatch(loadMoexQuotesByTickers({ tickers: allTickers, isGlobalUpdate: true }));
+    }, [allTickers, dispatch]);
+
     return (
         <div className={styles.sidebar}>
             <div className={styles.titleContainer}>
                 <span className={styles.title}>{projectName}</span>
-                <Icon
-                    name="log out"
-                    link
-                    onClick={closeProject}
-                />
+                <div className={styles.titleIconContainer}>
+                    <Icon
+                        className={styles.titleRefreshIcon}
+                        name="sync alternate"
+                        link
+                        onClick={updatePortfolios}
+                    />
+                    <Icon
+                        name="log out"
+                        link
+                        onClick={closeProject}
+                    />
+                </div>
             </div>
             <div className={styles.separator} />
             <div className={styles.menuGroupContainer}>

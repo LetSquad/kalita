@@ -35,46 +35,54 @@ ctx.addEventListener("message", (event: MessageEvent<BrokerReportPath>) => {
         })
         .then((rawReport) => {
             switch (event.data.brokerCode) {
-                case BrokerCode.VTB: return parseVtbReport(event.data.brokerName, rawReport);
-                case BrokerCode.OPEN_BROKER: return parseOpenBrokerReport(event.data.brokerName, rawReport);
-                case BrokerCode.TINKOFF: return parseTinkoffReport(event.data.brokerName, rawReport);
+                case BrokerCode.VTB: {
+                    return parseVtbReport(event.data.brokerName, rawReport);
+                }
+                case BrokerCode.OPEN_BROKER: {
+                    return parseOpenBrokerReport(event.data.brokerName, rawReport);
+                }
+                case BrokerCode.TINKOFF: {
+                    return parseTinkoffReport(event.data.brokerName, rawReport);
+                }
             }
         })
         .then((brokerReport) => {
             switch (event.data.positionCodeFormat) {
                 case BrokerReportPositionCodeFormat.ISIN: {
-                    return getMoexQuotesByIsinCodes().then((quotes) => ({
-                        accountName: brokerReport.accountName,
-                        positions: brokerReport.positions.map((position) => {
-                            const quote = quotes[position.code];
-                            if (quote) {
-                                return {
-                                    ...position,
-                                    code: quote.ticker,
-                                    name: quote.name,
-                                    currentPrice: quote.price
-                                };
-                            }
-                            return position;
-                        })
-                    }));
+                    return getMoexQuotesByIsinCodes()
+                        .then((quotes) => ({
+                            accountName: brokerReport.accountName,
+                            positions: brokerReport.positions.map((position) => {
+                                const quote = quotes[position.code];
+                                if (quote) {
+                                    return {
+                                        ...position,
+                                        code: quote.ticker,
+                                        name: quote.name,
+                                        currentPrice: quote.price
+                                    };
+                                }
+                                return position;
+                            })
+                        }));
                 }
                 case BrokerReportPositionCodeFormat.TICKER: {
                     const tickers: string[] = brokerReport.positions.map((positions) => positions.code);
-                    return getMoexQuotesByTickers(tickers).then((quotes) => ({
-                        accountName: brokerReport.accountName,
-                        positions: brokerReport.positions.map((position) => {
-                            const quote = quotes[position.code];
-                            if (quote) {
-                                return {
-                                    ...position,
-                                    name: quote.name,
-                                    currentPrice: quote.price
-                                };
-                            }
-                            return position;
-                        })
-                    }));
+                    return getMoexQuotesByTickers(tickers)
+                        .then((quotes) => ({
+                            accountName: brokerReport.accountName,
+                            positions: brokerReport.positions.map((position) => {
+                                const quote = quotes[position.code];
+                                if (quote) {
+                                    return {
+                                        ...position,
+                                        name: quote.name,
+                                        currentPrice: quote.price
+                                    };
+                                }
+                                return position;
+                            })
+                        }));
                 }
             }
         })

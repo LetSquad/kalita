@@ -28,13 +28,13 @@ export default function DataTableFormatterCell() {
             return typeof cell === "number" ? <DataTablePercentageFormatterCell /> : baseCell;
         }
         case FormatterTypes.LINK: {
-            return cell !== undefined ? <DataTableLinkFormatterCell /> : baseCell;
+            return cell === undefined ? baseCell : <DataTableLinkFormatterCell />;
         }
         case FormatterTypes.COLOR: {
             return typeof cell === "string" ? <DataTableColorFormatterCell /> : baseCell;
         }
         case FormatterTypes.IMAGE: {
-            return cell !== undefined ? <DataTableImageFormatterCell /> : baseCell;
+            return cell === undefined ? baseCell : <DataTableImageFormatterCell />;
         }
         case FormatterTypes.STAR: {
             return typeof cell === "number" ? <DataTableStarFormatterCell /> : baseCell;

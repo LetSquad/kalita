@@ -76,7 +76,7 @@ export default function SidebarMenuElement({
         }
     }, [dispatch, menuElement.name, active]);
 
-    const elementRenameInput = useCallback((_currentEditValue) => (
+    const elementRenameInput = useCallback((_currentEditValue: string) => (
         <Input
             value={_currentEditValue}
             fluid
@@ -106,9 +106,9 @@ export default function SidebarMenuElement({
     ), [menuElement.id, menuElement.name, menuElement.type, setActiveMenuElementId]);
 
     const elementTitle = useMemo(() => (
-        currentEditValue !== undefined
-            ? elementRenameInput(currentEditValue)
-            : elementNameBlock
+        currentEditValue === undefined
+            ? elementNameBlock
+            : elementRenameInput(currentEditValue)
     ), [currentEditValue, elementNameBlock, elementRenameInput]);
 
     const editButton = useMemo(() => {

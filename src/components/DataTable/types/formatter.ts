@@ -145,7 +145,7 @@ export interface DefaultProgressFormatterParams {
  * @param {(cellData: number, rowId: string, rowData: DataTableData) => boolean} [error]   - Progress bar shows error
  * @param {(cellData: number, rowId: string, rowData: DataTableData) => boolean} [warning] - Progress bar shows warning
  */
-export interface BaseProgressFormatterParams extends DefaultProgressFormatterParams{
+export interface BaseProgressFormatterParams extends DefaultProgressFormatterParams {
     success?: (cellData: number, rowId: string, rowData: DataTableData) => boolean;
     error?: (cellData: number, rowId: string, rowData: DataTableData) => boolean;
     warning?: (cellData: number, rowId: string, rowData: DataTableData) => boolean;
@@ -185,7 +185,7 @@ export interface TotalProgressFormatterParams extends BaseProgressFormatterParam
  * @param {(cellData: number, columnData: number[]) => boolean} [error]   - Progress bar shows error
  * @param {(cellData: number, columnData: number[]) => boolean} [warning] - Progress bar shows warning
  */
-export interface BaseCalcProgressFormatterParams extends DefaultProgressFormatterParams{
+export interface BaseCalcProgressFormatterParams extends DefaultProgressFormatterParams {
     success?: (cellData: number, columnData: number[]) => boolean;
     error?: (cellData: number, columnData: number[]) => boolean;
     warning?: (cellData: number, columnData: number[]) => boolean;
