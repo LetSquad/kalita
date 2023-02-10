@@ -30,7 +30,7 @@ export function AdditionalHeader({
 
     const updateQuotesCurrentPrice = useCallback(() => {
         const tickers: string[] = currentPortfolio.positions.map((position) => position.ticker);
-        dispatch(loadMoexQuotesByTickers(tickers));
+        dispatch(loadMoexQuotesByTickers({ tickers }));
     }, [dispatch, currentPortfolio]);
 
     return (

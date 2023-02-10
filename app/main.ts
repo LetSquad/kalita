@@ -1,8 +1,9 @@
 import electron from "electron";
-import isElectronDev from "electron-is-dev";
-import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from "electron-devtools-installer";
 import { client } from "electron-connect";
-import { initialize as remoteInitialize, enable } from "@electron/remote/main";
+import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from "electron-devtools-installer";
+import isElectronDev from "electron-is-dev";
+
+import { enable, initialize as remoteInitialize } from "@electron/remote/main";
 
 const {
     app,
@@ -88,6 +89,7 @@ app.on("quit", () => {
 });
 
 app.whenReady()
+    // eslint-disable-next-line unicorn/prefer-top-level-await
     .then(() => {
         if (isElectronDev) {
             installExtension(REACT_DEVELOPER_TOOLS)

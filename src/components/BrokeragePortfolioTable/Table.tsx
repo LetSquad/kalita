@@ -51,11 +51,11 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const importTableToCsvText = useCallback(() => dataTableRef.current?.exportToCsv({ includeGroup: true }), []);
 
-    const addRowToGroup = useCallback((groupName) => {
+    const addRowToGroup = useCallback((groupName: string) => {
         dispatch(addNewPosition(groupName));
     }, [dispatch]);
 
-    const updateGroup = useCallback((oldGroupName, newGroupName) => {
+    const updateGroup = useCallback((oldGroupName: string, newGroupName: string) => {
         dispatch(updateGroupName({
             oldGroupName,
             newGroupName

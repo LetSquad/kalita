@@ -25,7 +25,7 @@ export function formatMoneyFormatterValue({
     precision = 2,
     zerosRemove = false
 }: MoneyFormatterParams & { value: number }) {
-    let precisionValue: string | number = precision !== false ? value.toFixed(precision) : value;
+    let precisionValue: string | number = precision === false ? value : value.toFixed(precision);
     precisionValue = zerosRemove ? Number(precisionValue) : precisionValue;
     const formattedValues = String(precisionValue).split(".");
 
@@ -54,7 +54,7 @@ export function formatPercentageFormatterValue({
     precision = 2,
     zerosRemove = false
 }: PercentageFormatterParams & { value: number }) {
-    let precisionValue: string | number = precision !== false ? value.toFixed(precision) : value;
+    let precisionValue: string | number = precision === false ? value : value.toFixed(precision);
     precisionValue = zerosRemove ? Number(precisionValue) : precisionValue;
 
     return `${precisionValue}${additionalSpace ? " " : ""}%`;

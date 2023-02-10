@@ -76,8 +76,9 @@ export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }:
                 </Dropdown.Menu>
             </Dropdown>
             {
-                settingsModalActiveTab !== undefined
-                    ? (
+                settingsModalActiveTab === undefined
+                    ? null
+                    : (
                         <WithSuspense>
                             <SettingsModal
                                 currentPortfolio={currentPortfolio}
@@ -86,7 +87,6 @@ export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }:
                             />
                         </WithSuspense>
                     )
-                    : null
             }
         </>
     );
