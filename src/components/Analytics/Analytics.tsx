@@ -33,8 +33,9 @@ export default function Analytics() {
         <AnalyticsTable
             modelPortfolioNames={modelPortfolioNames}
             modelPortfolios={modelPortfolios}
+            brokerAccounts={brokerAccounts}
         />
-    ), [modelPortfolioNames, modelPortfolios]);
+    ), [modelPortfolioNames, modelPortfolios, brokerAccounts]);
 
     const handleToggleChartMode = useCallback(() => {
         setIsChartMode((old) => !old);

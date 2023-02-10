@@ -7,7 +7,7 @@ export function getPortfoliosChartData(portfolios: ModelPortfolio[] | BrokerAcco
     let totalAmount = 0;
     for (const portfolio of portfolios) {
         for (const position of portfolio.positions) {
-            const key: string = position.name ? position.name : position.ticker;
+            const key: string = position.name ?? position.ticker;
             const tickerAmount: number = (amountMap.get(key) || 0) + position.amount;
             amountMap.set(key, tickerAmount);
             totalAmount += position.amount;
