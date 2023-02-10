@@ -40,7 +40,8 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
                 <span className={styles.title}>{projectName}</span>
                 <div className={styles.titleIconContainer}>
                     <Icon
-                        name="refresh"
+                        className={styles.titleRefreshIcon}
+                        name="sync alternate"
                         link
                         onClick={updatePortfolios}
                     />

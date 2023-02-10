@@ -335,7 +335,12 @@ export const portfoliosSlice = createSlice({
                 }
 
                 if (action.meta.arg.isGlobalUpdate) {
-                    for (const portfolio of [...state.modelPortfolios, ...state.brokerAccounts]) {
+                    for (const portfolio of [
+                        ...state.modelPortfolios.filter((_portfolio) => (
+                            _portfolio.settings.priceMode === ModelPortfolioPriceMode.MARKET_DATA
+                        )),
+                        ...state.brokerAccounts
+                    ]) {
                         portfolio.positions = recalculatePortfolioPrice(portfolio, action.payload[0], action.payload[1]);
                         portfolio.positions = recalculatePortfolioPercentage(portfolio);
                     }
