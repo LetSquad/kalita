@@ -1,57 +1,27 @@
-import {
-    useCallback,
-    useMemo,
-    useRef,
-    useState
-} from "react";
+import { useMemo, useRef } from "react";
 
 import { AnalyticsTableData } from "../../../models/analytics/types";
 import { MODEL_PORTFOLIOS } from "../../../models/constants";
 import { ModelPortfolioMenuGroup } from "../../../models/menu/types";
 import { Currency } from "../../../models/portfolios/enums";
-import { BrokerAccount, ModelPortfolio } from "../../../models/portfolios/types";
-import { useAppSelector } from "../../../store/hooks";
-import Chart from "../../Chart/Chart";
+import { ModelPortfolio } from "../../../models/portfolios/types";
 import DataTable from "../../DataTable/DataTable";
 import { DataTableRef } from "../../DataTable/types/base";
 import { WithSuspense } from "../../utils/WithSuspense";
-import { AdditionalHeader } from "../AdditionalHeader/AdditionalHeader";
-import styles from "../styles/styles.scss";
-import { getPortfoliosChartData } from "../utils/getPortfoliosChartData";
 import { analyticsColumns } from "./columns";
+import styles from "./styles/AnalyticsTable.scss";
 
-export default function AnalyticsTable() {
-    const [isChartMode, setIsChartMode] = useState<boolean>(false);
+interface Props {
+    modelPortfolioNames: ModelPortfolioMenuGroup
+    modelPortfolios: ModelPortfolio[]
+}
+
+export default function AnalyticsTable({ modelPortfolioNames, modelPortfolios }: Props) {
     const analyticsTableRef = useRef<DataTableRef>(null);
-
-    const modelPortfolioNames: ModelPortfolioMenuGroup = useAppSelector((state) => (
-        state.sidebarMenu.modelPortfolios
-    ));
-    const modelPortfolios: ModelPortfolio[] = useAppSelector((state) => (
-        state.portfolios.modelPortfolios
-    ));
-
-    const brokerAccounts: BrokerAccount[] = useAppSelector((state) => (
-        state.portfolios.brokerAccounts
-    ));
-
-    const chart = useMemo(() => (
-        <div className={styles.chartContainer}>
-            <div className={styles.chart}>
-                <h2>Модельные портфели</h2>
-                <Chart data={getPortfoliosChartData(modelPortfolios)} />
-            </div>
-            <div className={styles.chart}>
-                <h2>Брокерские счета</h2>
-                <Chart data={getPortfoliosChartData(brokerAccounts)} />
-            </div>
-        </div>
-    ), [modelPortfolios, brokerAccounts]);
 
     const tableData: AnalyticsTableData[] = useMemo(() => {
         const totalAmount: number = modelPortfolios.flatMap(
-            (p) =>
-                (p.settings.baseCurrency === Currency.RUB ? p.positions.map((pos) => pos.amount) : [])
+            (p) => (p.settings.baseCurrency === Currency.RUB ? p.positions.map((pos) => pos.amount) : [])
         ).reduce((acc, a) => acc + a, 0);
 
         return modelPortfolioNames.elements.flatMap((pn) => {
@@ -72,7 +42,7 @@ export default function AnalyticsTable() {
         });
     }, [modelPortfolioNames, modelPortfolios]);
 
-    const table = useMemo(() => (
+    return (
         <WithSuspense>
             <DataTable
                 columns={analyticsColumns()}
@@ -92,23 +62,5 @@ export default function AnalyticsTable() {
                 ref={analyticsTableRef}
             />
         </WithSuspense>
-    ), [tableData]);
-
-    const handleToggleChartMode = useCallback(() => {
-        setIsChartMode((old) => !old);
-    }, [setIsChartMode]);
-
-    return (
-        <div className={styles.container}>
-            <AdditionalHeader
-                isChartMode={isChartMode}
-                onToggleChartMode={handleToggleChartMode}
-            />
-            {
-                isChartMode
-                    ? chart
-                    : table
-            }
-        </div>
     );
 }
