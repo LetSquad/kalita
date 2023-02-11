@@ -27,3 +27,7 @@ export enum BrokerAccountColumnNames {
     AVERAGE_PRICE = "averagePrice",
     QUANTITY = "quantity"
 }
+
+export enum AnalyticsTableColumnNames {
+    PORTFOLIO = "portfolio"
+}

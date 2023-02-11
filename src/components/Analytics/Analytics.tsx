@@ -1,27 +1,57 @@
+import { useCallback, useMemo, useState } from "react";
+
+import { ModelPortfolioMenuGroup } from "../../models/menu/types";
 import { BrokerAccount, ModelPortfolio } from "../../models/portfolios/types";
 import { useAppSelector } from "../../store/hooks";
-import Chart from "../Chart/Chart";
-import styles from "./styles/styles.scss";
-import { getPortfoliosChartData } from "./utils/getPortfoliosChartData";
+import { AdditionalHeader } from "./AdditionalHeader/AdditionalHeader";
+import AnalyticsChart from "./AnalyticsChart/AnalyticsChart";
+import AnalyticsTable from "./AnalyticsTable/AnalyticsTable";
+import styles from "./styles/Analytics.scss";
 
 export default function Analytics() {
+    const [isChartMode, setIsChartMode] = useState<boolean>(false);
+
+    const modelPortfolioNames: ModelPortfolioMenuGroup = useAppSelector((state) => (
+        state.sidebarMenu.modelPortfolios
+    ));
     const modelPortfolios: ModelPortfolio[] = useAppSelector((state) => (
         state.portfolios.modelPortfolios
     ));
+
     const brokerAccounts: BrokerAccount[] = useAppSelector((state) => (
         state.portfolios.brokerAccounts
     ));
 
+    const chart = useMemo(() => (
+        <AnalyticsChart
+            modelPortfolios={modelPortfolios}
+            brokerAccounts={brokerAccounts}
+        />
+    ), [modelPortfolios, brokerAccounts]);
+
+    const table = useMemo(() => (
+        <AnalyticsTable
+            modelPortfolioNames={modelPortfolioNames}
+            modelPortfolios={modelPortfolios}
+            brokerAccounts={brokerAccounts}
+        />
+    ), [modelPortfolioNames, modelPortfolios, brokerAccounts]);
+
+    const handleToggleChartMode = useCallback(() => {
+        setIsChartMode((old) => !old);
+    }, [setIsChartMode]);
+
     return (
         <div className={styles.container}>
-            <div className={styles.chart}>
-                <h2>Модельные портфели</h2>
-                <Chart data={getPortfoliosChartData(modelPortfolios)} />
-            </div>
-            <div className={styles.chart}>
-                <h2>Брокерские счета</h2>
-                <Chart data={getPortfoliosChartData(brokerAccounts)} />
-            </div>
+            <AdditionalHeader
+                isChartMode={isChartMode}
+                onToggleChartMode={handleToggleChartMode}
+            />
+            {
+                isChartMode
+                    ? chart
+                    : table
+            }
         </div>
     );
 }

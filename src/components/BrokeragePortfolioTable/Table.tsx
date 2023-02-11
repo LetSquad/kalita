@@ -93,7 +93,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
 
     const chart = useMemo(() => {
         const chartData: ChartData<"doughnut"> | null = {
-            labels: currentPortfolio.positions.map((row) => row.ticker),
+            labels: currentPortfolio.positions.map((row) => (row.name ?? row.ticker)),
             datasets: [{
                 data: currentPortfolio.positions.map((row) => row.percentage)
             }]

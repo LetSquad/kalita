@@ -43,12 +43,17 @@ export default function DividendsModal({ ticker, onClose }: DividendsModalProps)
             </Table.Header>
 
             <Table.Body>
-                {_dividends.filter((dividend) => dividend.value !== 0).map((dividend) => (
-                    <Table.Row key={dividend.date}>
-                        <Table.Cell>{dividend.date}</Table.Cell>
-                        <Table.Cell>{`${dividend.value} ${getSymbol(dividend.currency)}`}</Table.Cell>
-                    </Table.Row>
-                ))}
+                {
+                    _dividends.filter((dividend) => dividend.value !== 0)
+                        .sort(
+                            (first, second) => Date.parse(second.date) - Date.parse(first.date)
+                        ).map((dividend) => (
+                            <Table.Row key={dividend.date}>
+                                <Table.Cell>{dividend.date}</Table.Cell>
+                                <Table.Cell>{`${dividend.value} ${getSymbol(dividend.currency)}`}</Table.Cell>
+                            </Table.Row>
+                        ))
+                }
             </Table.Body>
         </Table>
     ), []);
