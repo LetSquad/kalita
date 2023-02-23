@@ -15,6 +15,9 @@ export function parseOpenBrokerPositions(data: any): Map<string, string> {
 }
 
 export function parseOpenBrokerDeals(data: any): Map<string, BrokerReportDeal[]> {
+    if (!data.broker_report.spot_main_deals_conclusion) {
+        return new Map();
+    }
     const dealsSection = data.broker_report.spot_main_deals_conclusion[0].item;
     if (!dealsSection || dealsSection.length === 0) {
         return new Map();
