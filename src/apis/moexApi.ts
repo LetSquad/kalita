@@ -110,24 +110,28 @@ function createCurrencyQuotesMap(moexQuotes: CurrencyQuotes): CurrencyQuotesMap 
     const map: CurrencyQuotesMap = {};
 
     const rubMap: CurrencyQuotes = {};
+    rubMap[Currency.RUB] = 1;
     rubMap[Currency.CNY] = 1 / moexQuotes[QUOTE_CNY];
     rubMap[Currency.USD] = 1 / moexQuotes[QUOTE_USD];
     rubMap[Currency.EUR] = 1 / moexQuotes[QUOTE_EUR];
     map[Currency.RUB] = rubMap;
 
     const cnyMap: CurrencyQuotes = {};
+    cnyMap[Currency.CNY] = 1;
     cnyMap[Currency.RUB] = moexQuotes[QUOTE_CNY];
     cnyMap[Currency.USD] = moexQuotes[QUOTE_CNY] / moexQuotes[QUOTE_USD];
     cnyMap[Currency.EUR] = moexQuotes[QUOTE_CNY] / moexQuotes[QUOTE_EUR];
     map[Currency.CNY] = cnyMap;
 
     const usdMap: CurrencyQuotes = {};
+    usdMap[Currency.USD] = 1;
     usdMap[Currency.RUB] = moexQuotes[QUOTE_USD];
     usdMap[Currency.CNY] = moexQuotes[QUOTE_USD] / moexQuotes[QUOTE_CNY];
     usdMap[Currency.EUR] = 1 / moexQuotes[QUOTE_EUR_USD];
     map[Currency.USD] = usdMap;
 
     const eurMap: CurrencyQuotes = {};
+    eurMap[Currency.EUR] = 1;
     eurMap[Currency.RUB] = moexQuotes[QUOTE_EUR];
     eurMap[Currency.CNY] = moexQuotes[QUOTE_EUR] / moexQuotes[QUOTE_CNY];
     eurMap[Currency.USD] = moexQuotes[QUOTE_EUR_USD];

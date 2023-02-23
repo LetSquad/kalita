@@ -7,7 +7,7 @@ import { CalcPosition } from "../../DataTable/types/calc";
 import { ColumnDefinition, VerticalAlignValues } from "../../DataTable/types/column";
 import { FormatterTypes } from "../../DataTable/types/formatter";
 
-export const analyticsColumns: () => ColumnDefinition[] = () => [
+export const analyticsColumns: (currency: Currency) => ColumnDefinition[] = (currency: Currency) => [
     {
         title: "Портфель",
         field: AnalyticsTableColumnNames.PORTFOLIO,
@@ -38,7 +38,7 @@ export const analyticsColumns: () => ColumnDefinition[] = () => [
         formatter: {
             type: FormatterTypes.MONEY,
             params: {
-                currency: getSymbol(Currency.RUB),
+                currency: getSymbol(currency),
                 additionalSpace: true
             }
         },
@@ -49,7 +49,7 @@ export const analyticsColumns: () => ColumnDefinition[] = () => [
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: getSymbol(Currency.RUB),
+                    currency: getSymbol(currency),
                     additionalSpace: true
                 }
             }
@@ -60,7 +60,7 @@ export const analyticsColumns: () => ColumnDefinition[] = () => [
             formatter: {
                 type: FormatterTypes.MONEY,
                 params: {
-                    currency: getSymbol(Currency.RUB),
+                    currency: getSymbol(currency),
                     additionalSpace: true
                 }
             }

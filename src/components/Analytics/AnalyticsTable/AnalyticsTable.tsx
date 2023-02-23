@@ -1,10 +1,12 @@
 import { useMemo, useRef } from "react";
 
 import { AnalyticsTableData } from "../../../models/analytics/types";
+import { CurrencyQuotesMap } from "../../../models/apis/types";
 import { MODEL_PORTFOLIOS } from "../../../models/constants";
 import { ModelPortfolioMenuGroup } from "../../../models/menu/types";
 import { Currency } from "../../../models/portfolios/enums";
 import { BrokerAccount, ModelPortfolio } from "../../../models/portfolios/types";
+import { getCurrencyQuote } from "../../../utils/currencyUtils";
 import DataTable from "../../DataTable/DataTable";
 import { DataTableRef } from "../../DataTable/types/base";
 import { WithSuspense } from "../../utils/WithSuspense";
@@ -12,12 +14,22 @@ import { analyticsColumns } from "./columns";
 import styles from "./styles/AnalyticsTable.scss";
 
 interface Props {
+    analyticsCurrency: Currency
+    currencyQuotes: CurrencyQuotesMap
     modelPortfolioNames: ModelPortfolioMenuGroup
     modelPortfolios: ModelPortfolio[]
     brokerAccounts: BrokerAccount[]
 }
 
-export default function AnalyticsTable({ modelPortfolioNames, modelPortfolios, brokerAccounts }: Props) {
+export default function AnalyticsTable(
+    {
+        analyticsCurrency,
+        currencyQuotes,
+        modelPortfolioNames,
+        modelPortfolios,
+        brokerAccounts
+    }: Props
+) {
     const analyticsTableRef = useRef<DataTableRef>(null);
 
     const tableData: AnalyticsTableData[] = useMemo(() => {
@@ -26,9 +38,8 @@ export default function AnalyticsTable({ modelPortfolioNames, modelPortfolios, b
         for (const portfolio of modelPortfolios) {
             for (const position of portfolio.positions) {
                 modelPortfolioPositions.add(position.ticker);
-                if (portfolio.settings.baseCurrency === Currency.RUB) {
-                    totalAmount += position.amount;
-                }
+                const currencyQuote = getCurrencyQuote(portfolio.settings.baseCurrency, analyticsCurrency, currencyQuotes);
+                totalAmount += (currencyQuote ? position.amount * currencyQuote : 0);
             }
         }
 
@@ -56,32 +67,32 @@ export default function AnalyticsTable({ modelPortfolioNames, modelPortfolios, b
         const modelPortfolioData: AnalyticsTableData[] = [];
         for (const pn of modelPortfolioNames.elements) {
             const portfolio = modelPortfolios.find((p) => p.id === pn.id);
-            if (portfolio && portfolio.settings.baseCurrency === Currency.RUB) {
-                const portfolioAmount: number = portfolio.positions.map((pos) => pos.amount)
+            if (portfolio) {
+                const currencyQuote = getCurrencyQuote(portfolio.settings.baseCurrency, analyticsCurrency, currencyQuotes);
+                const portfolioAmount: number = portfolio.positions
+                    .map((pos) => (currencyQuote ? pos.amount * currencyQuote : 0))
                     .reduce((acc, a) => acc + a, 0);
                 const proportion: number = portfolioAmount / totalAmount;
 
-                modelPortfolioData.push({
-                    id: portfolio.id,
-                    portfolio: pn.name,
-                    percentage: proportion * 100,
-                    amount: portfolioAmount,
-                    groupName: MODEL_PORTFOLIOS
-                });
-
-                for (const position of portfolio.positions) {
-                    modelPortfolioPositions.add(position.ticker);
+                if (portfolioAmount > 0) {
+                    modelPortfolioData.push({
+                        id: portfolio.id,
+                        portfolio: pn.name,
+                        percentage: proportion * 100,
+                        amount: portfolioAmount,
+                        groupName: MODEL_PORTFOLIOS
+                    });
                 }
             }
         }
 
         return [...modelPortfolioData, ...brokerAccountData];
-    }, [modelPortfolioNames, modelPortfolios, brokerAccounts]);
+    }, [modelPortfolios, brokerAccounts, modelPortfolioNames.elements, analyticsCurrency, currencyQuotes]);
 
     return (
         <WithSuspense>
             <DataTable
-                columns={analyticsColumns()}
+                columns={analyticsColumns(analyticsCurrency)}
                 data={tableData}
                 groupBy="groupName"
                 expandableGroup
