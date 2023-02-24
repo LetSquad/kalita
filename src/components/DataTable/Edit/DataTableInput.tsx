@@ -31,6 +31,7 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
     const {
         cell, id, column: { field, validator }, row
     } = useDataTableEditContext();
+
     const {
         onCellChanged: onGlobalCellChanged,
         onCellBlur: onGlobalCellBlur,
@@ -215,6 +216,12 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
             (inputRef.current?.children[0] as HTMLInputElement)?.focus();
         }
     }, [isFocus]);
+
+    useEffect(() => {
+        if (!onCellChange && !onGlobalCellChanged) {
+            setValue(cell);
+        }
+    }, [cell, onCellChange, onGlobalCellChanged]);
 
     return useMemo(() => (
         <>

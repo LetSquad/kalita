@@ -1,4 +1,4 @@
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { Loader } from "semantic-ui-react";
@@ -9,7 +9,7 @@ import App from "./components/App";
 import { persistor, store } from "./store";
 import partsStyles from "./styles/parts.scss";
 
-render(
+createRoot(document.querySelector("#app") as Element).render(
     (
         <Provider store={store}>
             <PersistGate
@@ -26,5 +26,5 @@ render(
                 <App />
             </PersistGate>
         </Provider>
-    ), document.querySelector("#app")
+    )
 );
