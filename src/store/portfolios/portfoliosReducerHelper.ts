@@ -19,7 +19,7 @@ import {
 import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
-import { moexCurrencyToInternalCurrency } from "../../utils/currencyUtils";
+import { getCurrencyQuote, moexCurrencyToInternalCurrency } from "../../utils/currencyUtils";
 import { parseMoney } from "../../utils/parseUtils";
 
 export const defaultTotalTargetAmount = 1_000_000;
@@ -196,13 +196,7 @@ export function recalculatePortfolioCurrency(
     currencyQuotes: CurrencyQuotesMap
 ): ModelPortfolioPosition[] | BrokerAccountPosition[] {
     return portfolio.positions.map((position) => {
-        const currencyQuote = currencyQuotes[previousCurrency]
-            ? currencyQuotes[previousCurrency][portfolio.settings.baseCurrency]
-            : undefined;
-        if (!currencyQuote) {
-            // TODO: replace with toast
-            console.warn(`There is no quote for currency pair ${previousCurrency}:${portfolio.settings.baseCurrency}`);
-        }
+        const currencyQuote = getCurrencyQuote(previousCurrency, portfolio.settings.baseCurrency, currencyQuotes);
         const currentPrice = currencyQuote ? position.currentPrice * currencyQuote : 0;
         return {
             ...position,

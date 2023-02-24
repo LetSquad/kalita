@@ -1,4 +1,5 @@
 import { DividendCurrency, MoexCurrency } from "../models/apis/enums";
+import { CurrencyQuotesMap } from "../models/apis/types";
 import { Currency } from "../models/portfolios/enums";
 
 export function moexCurrencyToInternalCurrency(moexCurrency: MoexCurrency): Currency {
@@ -12,7 +13,7 @@ export function moexCurrencyToInternalCurrency(moexCurrency: MoexCurrency): Curr
     }
 }
 
-export function getSymbol(currency: Currency | DividendCurrency) {
+export function getSymbol(currency: Currency | DividendCurrency): string {
     switch (currency) {
         case Currency.RUB:
         case DividendCurrency.RUB: {
@@ -29,4 +30,19 @@ export function getSymbol(currency: Currency | DividendCurrency) {
             return "€";
         }
     }
+}
+
+export function getCurrencyQuote(
+    baseCurrency: Currency,
+    targetCurrency: Currency,
+    currencyQuotes: CurrencyQuotesMap
+): number | undefined {
+    const currencyQuote = currencyQuotes[baseCurrency]
+        ? currencyQuotes[baseCurrency][targetCurrency]
+        : undefined;
+    if (!currencyQuote) {
+        // TODO: replace with toast
+        console.warn(`There is no quote for currency pair ${baseCurrency}:${targetCurrency}`);
+    }
+    return currencyQuote;
 }
