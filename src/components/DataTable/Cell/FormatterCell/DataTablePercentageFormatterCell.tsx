@@ -18,16 +18,34 @@ export default function DataTablePercentageFormatterCell() {
         }
     } = useDataTablePercentageFormatterCellContext();
 
+    const formatter = useCallback((value: number | string | undefined) => {
+        if (value === undefined) {
+            return value;
+        }
+
+        if (typeof value === "string") {
+            const numberValue = Number(value);
+
+            if (!Number.isNaN(numberValue)) {
+                return formatPercentageFormatterValue({ ...params, value: numberValue });
+            }
+
+            return value;
+        }
+
+        return formatPercentageFormatterValue({ ...params, value });
+    }, [params]);
+
     const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => (_edit.type === EditTypes.INPUT
         ? (
             <DataTableInput
-                params={_edit.params}
+                params={{ ..._edit.params, formatter }}
                 label="%"
             />
         )
-        : <DataTableDropdown params={_edit.params} />), []);
+        : <DataTableDropdown params={_edit.params} />), [formatter]);
 
     return edit
         ? <DataTableBaseCell>{editContent(edit)}</DataTableBaseCell>
-        : <DataTableBaseCell>{formatPercentageFormatterValue({ ...params, value: cell })}</DataTableBaseCell>;
+        : <DataTableBaseCell>{formatter(cell)}</DataTableBaseCell>;
 }

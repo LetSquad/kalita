@@ -39,6 +39,7 @@ export interface Options<T> {
  * @param {boolean} [clearable=false]                                                                                                                         - Will there be an icon for instantly clearing the contents of the input
  * @param {Options} [datalist]                                                                                                                                - List with tips
  * @param {string} [className]                                                                                                                                - The class name that will be passed to the input element
+ * @param {(value: string | number | undefined) => void} [formatter]                                                                                                               - Formats a value according to the given formatter
  * @param {(rowId: string, field: keyof DataTableData, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLElement>, value: string) => void} [onCellChange] - Callback when changing input value
  * @param {(rowId: string, field: keyof DataTableData, event: FocusEvent<HTMLInputElement>, value: string) => void} [onCellBlur]                              - Blur input callback
  * @param {(rowId: string, field: keyof DataTableData, event: KeyboardEvent<HTMLInputElement>, value: string) => void} [onKeyEnter]                           - Enter key input callback
@@ -50,6 +51,7 @@ export interface InputEditParams {
     clearable?: boolean;
     datalist?: Options<string>[];
     className?: string;
+    formatter?: (value: string | number | undefined) => void;
     onCellChange?: (
         rowId: string,
         field: keyof DataTableData,
