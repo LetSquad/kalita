@@ -18,16 +18,34 @@ export default function DataTableMoneyFormatterCell() {
         }
     } = useDataTableMoneyFormatterCellContext();
 
+    const formatter = useCallback((value: number | string | undefined) => {
+        if (value === undefined) {
+            return value;
+        }
+
+        if (typeof value === "string") {
+            const numberValue = Number(value);
+
+            if (!Number.isNaN(numberValue)) {
+                return formatMoneyFormatterValue({ ...params, value: numberValue });
+            }
+
+            return value;
+        }
+
+        return formatMoneyFormatterValue({ ...params, value });
+    }, [params]);
+
     const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => (_edit.type === EditTypes.INPUT
         ? (
             <DataTableInput
-                params={_edit.params}
+                params={{ ..._edit.params, formatter }}
                 label={params.currency}
             />
         )
-        : <DataTableDropdown params={_edit.params} />), [params.currency]);
+        : <DataTableDropdown params={_edit.params} />), [formatter, params.currency]);
 
     return edit
         ? <DataTableBaseCell>{editContent(edit)}</DataTableBaseCell>
-        : <DataTableBaseCell>{formatMoneyFormatterValue({ ...params, value: cell })}</DataTableBaseCell>;
+        : <DataTableBaseCell>{formatter(cell)}</DataTableBaseCell>;
 }
