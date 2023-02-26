@@ -29,7 +29,8 @@ export enum CurrencyPosition {
  * @param {string} [currency]                                          - Currency symbol
  * @param {CurrencyPosition} [currencyPosition=CurrencyPosition.AFTER] - Where will the currency symbol be located?
  * @param {boolean} [additionalSpace=false]                            - Whether to add a space between the number and the currency symbol
- * @param {number | false} [precision=2]                               - The number of digits after the decimal point to which the number will be rounded
+ * @param {number | false} [precision=2]                               - The number of digits after the decimal point to which the number will be rounded. The rest will be filled with zeros
+ * @param {number | false} [extendedPrecision=2]                       - The number of digits after the decimal point to which the number will be rounded if there are no trailing zeros
  * @param {boolean} [zerosRemove=false]                                - Whether to remove extra zeros at the end
  */
 export interface MoneyFormatterParams {
@@ -39,6 +40,7 @@ export interface MoneyFormatterParams {
     currencyPosition?: CurrencyPosition;
     additionalSpace?: boolean;
     precision?: number | false;
+    extendedPrecision?: number | false;
     zerosRemove?: boolean;
 }
 

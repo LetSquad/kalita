@@ -164,7 +164,8 @@ export const commonColumns: (
             type: FormatterTypes.MONEY,
             params: {
                 currency: getSymbol(baseCurrency),
-                additionalSpace: true
+                additionalSpace: true,
+                extendedPrecision: 4
             }
         },
         vertAlign: VerticalAlignValues.MIDDLE
@@ -429,7 +430,8 @@ export const _brokerAccountColumns: (
                 type: FormatterTypes.MONEY,
                 params: {
                     currency: getSymbol(Currency.RUB),
-                    additionalSpace: true
+                    additionalSpace: true,
+                    extendedPrecision: 4
                 }
             },
             edit: {
