@@ -52,12 +52,13 @@ export function formatPercentageFormatterValue({
     value,
     additionalSpace = false,
     precision = 2,
-    zerosRemove = false
+    zerosRemove = false,
+    withLabel = true
 }: PercentageFormatterParams & { value: number }) {
     let precisionValue: string | number = precision === false ? value : value.toFixed(precision);
     precisionValue = zerosRemove ? Number(precisionValue) : precisionValue;
 
-    return `${precisionValue}${additionalSpace ? " " : ""}%`;
+    return `${precisionValue}${additionalSpace ? " " : ""}${withLabel ? "%" : ""}`;
 }
 
 export const defaultStarFormatterParams: StarFormatterParams = {

@@ -148,7 +148,8 @@ export const commonColumns: (
         edit: priceMode === ModelPortfolioPriceMode.MANUAL_INPUT ? {
             type: EditTypes.INPUT,
             params: {
-                dashed: true
+                dashed: true,
+                withFormatting: true
             }
         } : undefined,
         formatter: {
@@ -420,7 +421,8 @@ export const _brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.El
             edit: {
                 type: EditTypes.INPUT,
                 params: {
-                    dashed: true
+                    dashed: true,
+                    withFormatting: true
                 }
             },
             validator: {
