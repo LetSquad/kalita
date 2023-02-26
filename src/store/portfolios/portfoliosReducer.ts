@@ -177,6 +177,17 @@ export const portfoliosSlice = createSlice({
                         action.payload.valueKey === EditableTableColumns.QUANTITY
                 ) {
                     currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
+                    for (const modelPortfolio of state.modelPortfolios) {
+                        if (
+                            modelPortfolio.settings.quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT &&
+                            modelPortfolio.settings.quantitySources.includes(currentPortfolio.id)
+                        ) {
+                            modelPortfolio.positions = recalculateModelPortfolioQuantity(
+                                modelPortfolio.positions,
+                                getBrokerAccountsPositionsByIds(state.brokerAccounts, modelPortfolio.settings.quantitySources)
+                            );
+                        }
+                    }
                 }
             }
         },
