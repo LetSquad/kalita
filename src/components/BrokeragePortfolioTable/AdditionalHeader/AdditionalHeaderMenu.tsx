@@ -1,4 +1,9 @@
-import { lazy, useCallback, useState } from "react";
+import {
+    lazy,
+    useCallback,
+    useMemo,
+    useState
+} from "react";
 
 import fs from "fs-extra";
 import { useToasts } from "react-toast-notifications";
@@ -49,6 +54,30 @@ export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }:
         }
     }, [addToast, importTableToCsvText]);
 
+    const commonMenuItems = useMemo(() => (
+        <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
+            Общие настройки
+        </Dropdown.Item>
+    ), []);
+
+    const modelPortfolioMenuItems = useMemo(() => (
+        <>
+            {commonMenuItems}
+            <Dropdown.Item onClick={() => setSettingsModalActiveTab(1)}>
+                Источники данных
+            </Dropdown.Item>
+        </>
+    ), [commonMenuItems]);
+
+    const brokerAccountMenuItems = useMemo(() => (
+        <>
+            {commonMenuItems}
+            <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
+                Загрузка отчёта брокера
+            </Dropdown.Item>
+        </>
+    ), [commonMenuItems]);
+
     return (
         <>
             <Dropdown
@@ -63,15 +92,9 @@ export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }:
                     <Dropdown.Item onClick={importToCsv}>Экспорт в CSV...</Dropdown.Item>
                     <Dropdown.Divider className={styles.divider} />
                     {
-                        currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO ? (
-                            <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
-                                Источники данных
-                            </Dropdown.Item>
-                        ) : (
-                            <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
-                                Загрузка отчёта брокера
-                            </Dropdown.Item>
-                        )
+                        currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO
+                            ? modelPortfolioMenuItems
+                            : brokerAccountMenuItems
                     }
                 </Dropdown.Menu>
             </Dropdown>

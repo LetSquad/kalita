@@ -2,7 +2,7 @@ import sum from "lodash.sum";
 
 import { Currency } from "../../models/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
-import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../models/settings/enums";
+import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode, TickerViewMode } from "../../models/settings/enums";
 import { ModelPortfolioSettings } from "../../models/settings/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import { getSymbol } from "../../utils/currencyUtils";
@@ -74,8 +74,9 @@ function averagePriceValidator(
 export const commonColumns: (
     baseCurrency: Currency,
     dividendsButton: (ticker: string) => JSX.Element,
+    tickerViewMode: TickerViewMode,
     priceMode?: ModelPortfolioPriceMode
-) => ColumnDefinition[] = (baseCurrency, dividendsButton, priceMode) => [
+) => ColumnDefinition[] = (baseCurrency, dividendsButton, tickerViewMode, priceMode) => [
     {
         title: "Инструмент",
         field: BaseColumnNames.TICKER,
@@ -84,7 +85,7 @@ export const commonColumns: (
             type: EditTypes.INPUT,
             params: {
                 dashed: true,
-                withFormatting: true,
+                withFormatting: tickerViewMode === TickerViewMode.TICKER_NAME,
                 viewContentFormatter: (
                     rowId,
                     field,
@@ -249,10 +250,11 @@ export const modelPortfolioColumnsWidth = [
 
 const _modelPortfolioColumns: (
     dividendsButton: (ticker: string) => JSX.Element,
-    portfolioSettings: ModelPortfolioSettings
+    portfolioSettings: ModelPortfolioSettings,
+    tickerViewMode: TickerViewMode
 ) => ColumnDefinition[] =
-    (dividendsButton, portfolioSettings) => [
-        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton, portfolioSettings.priceMode),
+    (dividendsButton, portfolioSettings, tickerViewMode) => [
+        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton, tickerViewMode, portfolioSettings.priceMode),
         {
             title: "Вес",
             field: ModelPortfolioColumnNames.WEIGHT,
@@ -380,15 +382,17 @@ const _modelPortfolioColumns: (
 
 export const modelPortfolioColumns: (
     dividendsButton: (ticker: string) => JSX.Element,
-    portfolioSettings: ModelPortfolioSettings
+    portfolioSettings: ModelPortfolioSettings,
+    tickerViewMode: TickerViewMode
 ) => ColumnDefinition[] =
-    (dividendsButton, portfolioSettings) => _modelPortfolioColumns(dividendsButton, portfolioSettings).sort((columnA, columnB) =>
-        modelPortfolioColumnsOrder.indexOf(columnA.field as BaseColumnNames | ModelPortfolioColumnNames) -
+    (dividendsButton, portfolioSettings, tickerViewMode) =>
+        _modelPortfolioColumns(dividendsButton, portfolioSettings, tickerViewMode).sort((columnA, columnB) =>
+            modelPortfolioColumnsOrder.indexOf(columnA.field as BaseColumnNames | ModelPortfolioColumnNames) -
     modelPortfolioColumnsOrder.indexOf(columnB.field as BaseColumnNames | ModelPortfolioColumnNames))
-        .map((column, index) => ({
-            ...column,
-            width: modelPortfolioColumnsWidth[index]
-        }));
+            .map((column, index) => ({
+                ...column,
+                width: modelPortfolioColumnsWidth[index]
+            }));
 
 export const brokerAccountColumnsOrder = [
     BaseColumnNames.TICKER,
@@ -412,9 +416,12 @@ export const brokerAccountColumnsWidth = [
     40
 ];
 
-export const _brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.Element) => ColumnDefinition[] =
-    (dividendsButton) => [
-        ...commonColumns(Currency.RUB, dividendsButton),
+export const _brokerAccountColumns: (
+    dividendsButton: (ticker: string) => JSX.Element,
+    tickerViewMode: TickerViewMode
+) => ColumnDefinition[] =
+    (dividendsButton, tickerViewMode) => [
+        ...commonColumns(Currency.RUB, dividendsButton, tickerViewMode),
         {
             title: "Цена покупки",
             field: BrokerAccountColumnNames.AVERAGE_PRICE,
@@ -483,8 +490,11 @@ export const _brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.El
         }
     ];
 
-export const brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.Element) => ColumnDefinition[] =
-    (dividendsButton) => _brokerAccountColumns(dividendsButton).sort((columnA, columnB) =>
+export const brokerAccountColumns: (
+    dividendsButton: (ticker: string) => JSX.Element,
+    tickerViewMode: TickerViewMode
+) => ColumnDefinition[] =
+    (dividendsButton, tickerViewMode) => _brokerAccountColumns(dividendsButton, tickerViewMode).sort((columnA, columnB) =>
         brokerAccountColumnsOrder.indexOf(columnA.field as BaseColumnNames | BrokerAccountColumnNames) -
     brokerAccountColumnsOrder.indexOf(columnB.field as BaseColumnNames | BrokerAccountColumnNames))
         .map((column, index) => ({

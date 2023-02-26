@@ -23,11 +23,25 @@ const BrokerAccountReportParser = lazy(/* webpackChunkName: "brokerAccountReport
     import("./BrokerAccountTabs/BrokerAccountReportParser"));
 const ModelPortfolioQuantityModeSelector = lazy(/* webpackChunkName: "modelPortfolioQuantityModeSelector" */() =>
     import("./ModelPortfolioTabs/ModelPortfolioDataSourcesSelector"));
+const CommonSettings = lazy(/* webpackChunkName: "commonSettings" */() =>
+    import("./CommonTabs/CommonSettings"));
 
 export default function SettingsModal({ currentPortfolio, onClose, activeTab }: SettingsModalProps) {
     const [activeIndex, setActiveIndex] = useState<number>(activeTab);
 
+    const commonPanes = useMemo(() => [
+        {
+            menuItem: "Общие настройки",
+            render: () => (
+                <Tab.Pane className={styles.settingsTabPane}>
+                    <CommonSettings />
+                </Tab.Pane>
+            )
+        }
+    ], []);
+
     const modelPortfolioPanes = useCallback((_currentPortfolio: ModelPortfolio) => [
+        ...commonPanes,
         {
             menuItem: "Источники данных",
             render: () => (
@@ -36,9 +50,10 @@ export default function SettingsModal({ currentPortfolio, onClose, activeTab }: 
                 </Tab.Pane>
             )
         }
-    ], []);
+    ], [commonPanes]);
 
     const brokerAccountPanes = useMemo(() => [
+        ...commonPanes,
         {
             menuItem: "Загрузка отчёта брокера",
             render: () => (
@@ -47,7 +62,8 @@ export default function SettingsModal({ currentPortfolio, onClose, activeTab }: 
                 </Tab.Pane>
             )
         }
-    ], []);
+    ], [commonPanes]);
+
     const settingsPanes = useMemo(
         () => (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO
             ? modelPortfolioPanes(currentPortfolio)
