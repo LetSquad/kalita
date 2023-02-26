@@ -19,7 +19,7 @@ export default function CommonSettings() {
 
     return (
         <Form>
-            <h3>Отображение тикера</h3>
+            <h3>Название инструмента</h3>
             <Form.Field>
                 <Radio
                     label="Имя"
