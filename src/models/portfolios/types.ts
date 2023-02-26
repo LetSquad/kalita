@@ -51,7 +51,7 @@ export interface BrokerAccount {
 
 export type PortfolioPosition = {
     readonly id: string;
-    readonly name?: string;
+    name?: string;
     readonly ticker: string;
     readonly percentage: number;
     readonly currentPrice: number;
