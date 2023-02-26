@@ -3,11 +3,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { InstrumentViewMode } from "../../models/settings/enums";
 
 export interface SettingsState {
-    tickerViewMode: InstrumentViewMode;
+    instrumentViewMode: InstrumentViewMode;
 }
 
 const initialState: SettingsState = {
-    tickerViewMode: InstrumentViewMode.TICKER
+    instrumentViewMode: InstrumentViewMode.TICKER
 };
 
 export const settingsSlice = createSlice({
@@ -15,10 +15,10 @@ export const settingsSlice = createSlice({
     initialState,
     reducers: {
         setTickerViewMode: (state: SettingsState, action: PayloadAction<InstrumentViewMode>) => {
-            state.tickerViewMode = action.payload;
+            state.instrumentViewMode = action.payload;
         },
         setSettings: (state: SettingsState, action: PayloadAction<SettingsState>) => {
-            state.tickerViewMode = action.payload.tickerViewMode || InstrumentViewMode.TICKER;
+            state.instrumentViewMode = action.payload.instrumentViewMode || InstrumentViewMode.TICKER;
         }
     }
 });

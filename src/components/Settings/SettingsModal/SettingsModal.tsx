@@ -7,14 +7,14 @@ import {
 
 import { Modal, Tab } from "semantic-ui-react";
 
-import { BrokeragePortfolioTypes } from "../../../../models/portfolios/enums";
-import { ModelPortfolio, Portfolio } from "../../../../models/portfolios/types";
-import partsStyles from "../../../../styles/parts.scss";
-import { WithSuspense } from "../../../utils/WithSuspense";
+import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
+import { ExtendedPortfolio, ModelPortfolio } from "../../../models/portfolios/types";
+import partsStyles from "../../../styles/parts.scss";
+import { WithSuspense } from "../../utils/WithSuspense";
 import styles from "./styles/SettingsModal.scss";
 
 interface SettingsModalProps {
-    currentPortfolio: Portfolio,
+    currentPortfolio: ExtendedPortfolio,
     readonly onClose: () => void;
     readonly activeTab: number;
 }
@@ -64,12 +64,19 @@ export default function SettingsModal({ currentPortfolio, onClose, activeTab }: 
         }
     ], [commonPanes]);
 
-    const settingsPanes = useMemo(
-        () => (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO
-            ? modelPortfolioPanes(currentPortfolio)
-            : brokerAccountPanes),
-        [currentPortfolio, modelPortfolioPanes, brokerAccountPanes]
-    );
+    const settingsPanes = useMemo(() => {
+        switch (currentPortfolio.type) {
+            case BrokeragePortfolioTypes.BROKER_ACCOUNT: {
+                return brokerAccountPanes;
+            }
+            case BrokeragePortfolioTypes.MODEL_PORTFOLIO: {
+                return modelPortfolioPanes(currentPortfolio);
+            }
+            case BrokeragePortfolioTypes.ANALYTICS: {
+                return commonPanes;
+            }
+        }
+    }, [currentPortfolio, brokerAccountPanes, modelPortfolioPanes, commonPanes]);
 
     return (
         <Modal

@@ -74,9 +74,9 @@ function averagePriceValidator(
 export const commonColumns: (
     baseCurrency: Currency,
     dividendsButton: (ticker: string) => JSX.Element,
-    tickerViewMode: InstrumentViewMode,
+    instrumentViewMode: InstrumentViewMode,
     priceMode?: ModelPortfolioPriceMode
-) => ColumnDefinition[] = (baseCurrency, dividendsButton, tickerViewMode, priceMode) => [
+) => ColumnDefinition[] = (baseCurrency, dividendsButton, instrumentViewMode, priceMode) => [
     {
         title: "Инструмент",
         field: BaseColumnNames.TICKER,
@@ -85,7 +85,7 @@ export const commonColumns: (
             type: EditTypes.INPUT,
             params: {
                 dashed: true,
-                withFormatting: tickerViewMode === InstrumentViewMode.INSTRUMENT_NAME,
+                withFormatting: instrumentViewMode === InstrumentViewMode.INSTRUMENT_NAME,
                 viewContentFormatter: (
                     rowId,
                     field,
@@ -129,7 +129,7 @@ export const commonColumns: (
                 value,
                 rowData
             ) => (
-                tickerViewMode === InstrumentViewMode.INSTRUMENT_NAME && rowData.name
+                instrumentViewMode === InstrumentViewMode.INSTRUMENT_NAME && rowData.name
                     ? rowData.ticker as string
                     : rowData.name as string || undefined
             )
@@ -256,10 +256,10 @@ export const modelPortfolioColumnsWidth = [
 const _modelPortfolioColumns: (
     dividendsButton: (ticker: string) => JSX.Element,
     portfolioSettings: ModelPortfolioSettings,
-    tickerViewMode: InstrumentViewMode
+    instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
-    (dividendsButton, portfolioSettings, tickerViewMode) => [
-        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton, tickerViewMode, portfolioSettings.priceMode),
+    (dividendsButton, portfolioSettings, instrumentViewMode) => [
+        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton, instrumentViewMode, portfolioSettings.priceMode),
         {
             title: "Вес",
             field: ModelPortfolioColumnNames.WEIGHT,
@@ -388,10 +388,10 @@ const _modelPortfolioColumns: (
 export const modelPortfolioColumns: (
     dividendsButton: (ticker: string) => JSX.Element,
     portfolioSettings: ModelPortfolioSettings,
-    tickerViewMode: InstrumentViewMode
+    instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
-    (dividendsButton, portfolioSettings, tickerViewMode) =>
-        _modelPortfolioColumns(dividendsButton, portfolioSettings, tickerViewMode).sort((columnA, columnB) =>
+    (dividendsButton, portfolioSettings, instrumentViewMode) =>
+        _modelPortfolioColumns(dividendsButton, portfolioSettings, instrumentViewMode).sort((columnA, columnB) =>
             modelPortfolioColumnsOrder.indexOf(columnA.field as BaseColumnNames | ModelPortfolioColumnNames) -
     modelPortfolioColumnsOrder.indexOf(columnB.field as BaseColumnNames | ModelPortfolioColumnNames))
             .map((column, index) => ({
@@ -423,10 +423,10 @@ export const brokerAccountColumnsWidth = [
 
 export const _brokerAccountColumns: (
     dividendsButton: (ticker: string) => JSX.Element,
-    tickerViewMode: InstrumentViewMode
+    instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
-    (dividendsButton, tickerViewMode) => [
-        ...commonColumns(Currency.RUB, dividendsButton, tickerViewMode),
+    (dividendsButton, instrumentViewMode) => [
+        ...commonColumns(Currency.RUB, dividendsButton, instrumentViewMode),
         {
             title: "Цена покупки",
             field: BrokerAccountColumnNames.AVERAGE_PRICE,
@@ -498,9 +498,9 @@ export const _brokerAccountColumns: (
 
 export const brokerAccountColumns: (
     dividendsButton: (ticker: string) => JSX.Element,
-    tickerViewMode: InstrumentViewMode
+    instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
-    (dividendsButton, tickerViewMode) => _brokerAccountColumns(dividendsButton, tickerViewMode).sort((columnA, columnB) =>
+    (dividendsButton, instrumentViewMode) => _brokerAccountColumns(dividendsButton, instrumentViewMode).sort((columnA, columnB) =>
         brokerAccountColumnsOrder.indexOf(columnA.field as BaseColumnNames | BrokerAccountColumnNames) -
     brokerAccountColumnsOrder.indexOf(columnB.field as BaseColumnNames | BrokerAccountColumnNames))
         .map((column, index) => ({

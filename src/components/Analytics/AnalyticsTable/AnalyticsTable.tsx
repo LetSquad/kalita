@@ -6,6 +6,8 @@ import { MODEL_PORTFOLIOS } from "../../../models/constants";
 import { ModelPortfolioMenuGroup } from "../../../models/menu/types";
 import { Currency } from "../../../models/portfolios/enums";
 import { BrokerAccount, ModelPortfolio } from "../../../models/portfolios/types";
+import { InstrumentViewMode } from "../../../models/settings/enums";
+import { useAppSelector } from "../../../store/hooks";
 import { getCurrencyQuote } from "../../../utils/currencyUtils";
 import DataTable from "../../DataTable/DataTable";
 import { DataTableRef } from "../../DataTable/types/base";
@@ -32,6 +34,8 @@ export default function AnalyticsTable(
 ) {
     const analyticsTableRef = useRef<DataTableRef>(null);
 
+    const instrumentViewMode = useAppSelector((state) => state.settings.instrumentViewMode);
+
     const tableData: AnalyticsTableData[] = useMemo(() => {
         const modelPortfolioPositions = new Set<string>();
         let totalAmount = 0;
@@ -55,7 +59,9 @@ export default function AnalyticsTable(
                     const proportion: number = position.amount / totalAmount;
                     brokerAccountData.push({
                         id: position.id,
-                        portfolio: position.name ?? position.ticker,
+                        portfolio: instrumentViewMode === InstrumentViewMode.INSTRUMENT_NAME && position.name
+                            ? position.name
+                            : position.ticker,
                         percentage: proportion * 100,
                         amount: position.amount,
                         groupName: "Неучтённые позиции"
@@ -87,7 +93,7 @@ export default function AnalyticsTable(
         }
 
         return [...modelPortfolioData, ...brokerAccountData];
-    }, [modelPortfolios, brokerAccounts, modelPortfolioNames.elements, analyticsCurrency, currencyQuotes]);
+    }, [modelPortfolios, analyticsCurrency, currencyQuotes, brokerAccounts, instrumentViewMode, modelPortfolioNames.elements]);
 
     return (
         <WithSuspense>

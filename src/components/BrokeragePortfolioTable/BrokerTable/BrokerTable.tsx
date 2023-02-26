@@ -10,12 +10,12 @@ interface Props {
 }
 
 export default function BrokerTable({ currentPortfolio }: Props) {
-    const tickerViewMode = useAppSelector((state) => state.settings.tickerViewMode);
+    const instrumentViewMode = useAppSelector((state) => state.settings.instrumentViewMode);
 
     return useMemo(() => (
         <Table
-            columns={(dividendsButton) => brokerAccountColumns(dividendsButton, tickerViewMode)}
+            columns={(dividendsButton) => brokerAccountColumns(dividendsButton, instrumentViewMode)}
             currentPortfolio={currentPortfolio}
         />
-    ), [currentPortfolio, tickerViewMode]);
+    ), [currentPortfolio, instrumentViewMode]);
 }

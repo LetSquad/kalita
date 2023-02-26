@@ -8,7 +8,7 @@ import { Portfolio } from "../../../models/portfolios/types";
 import { ModelPortfolioPriceMode } from "../../../models/settings/enums";
 import { useAppDispatch } from "../../../store/hooks";
 import { addNewGroup } from "../../../store/portfolios/portfoliosReducer";
-import { AdditionalHeaderMenu } from "./AdditionalHeaderMenu";
+import { SettingsMenu } from "../../Settings/SettingsMenu";
 import styles from "./styles/AdditionalHeader.scss";
 
 interface Props {
@@ -39,7 +39,7 @@ export function AdditionalHeader({
                 {additionalHeaderPart}
             </div>
             <div>
-                <AdditionalHeaderMenu
+                <SettingsMenu
                     currentPortfolio={currentPortfolio}
                     importTableToCsvText={importTableToCsvText}
                 />

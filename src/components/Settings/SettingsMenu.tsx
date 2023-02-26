@@ -11,26 +11,26 @@ import { Dropdown } from "semantic-ui-react";
 
 import { app, dialog } from "@electron/remote";
 
-import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
-import { Portfolio } from "../../../models/portfolios/types";
-import { WithSuspense } from "../../utils/WithSuspense";
-import headerStyles from "./styles/AdditionalHeader.scss";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
+import { ExtendedPortfolio } from "../../models/portfolios/types";
+import headerStyles from "../BrokeragePortfolioTable/AdditionalHeader/styles/AdditionalHeader.scss";
+import { WithSuspense } from "../utils/WithSuspense";
 import styles from "./styles/AdditionalHeaderMenu.scss";
 
 interface Props {
-    currentPortfolio: Portfolio,
-    importTableToCsvText: () => string | undefined;
+    currentPortfolio: ExtendedPortfolio,
+    importTableToCsvText?: () => string | undefined;
 }
 
 const SettingsModal = lazy(/* webpackChunkName: "settingsModal" */() =>
     import("./SettingsModal/SettingsModal"));
 
-export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }: Props) {
+export function SettingsMenu({ currentPortfolio, importTableToCsvText }: Props) {
     const { addToast } = useToasts();
 
     const [settingsModalActiveTab, setSettingsModalActiveTab] = useState<number>();
 
-    const importToCsv = useCallback(() => {
+    const importToCsv = useCallback((_importTableToCsvText: () => string | undefined) => {
         const path = dialog.showSaveDialogSync({
             title: "Сохранить CSV",
             defaultPath: `${app.getPath("home")}/portfolio.csv`,
@@ -41,7 +41,7 @@ export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }:
         });
 
         if (path) {
-            const content = importTableToCsvText();
+            const content = _importTableToCsvText();
             if (content) {
                 try {
                     fs.createFileSync(path);
@@ -52,7 +52,7 @@ export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }:
                 }
             }
         }
-    }, [addToast, importTableToCsvText]);
+    }, [addToast]);
 
     const commonMenuItems = useMemo(() => (
         <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
@@ -78,6 +78,20 @@ export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }:
         </>
     ), [commonMenuItems]);
 
+    const menuItems = useMemo(() => {
+        switch (currentPortfolio.type) {
+            case BrokeragePortfolioTypes.BROKER_ACCOUNT: {
+                return brokerAccountMenuItems;
+            }
+            case BrokeragePortfolioTypes.MODEL_PORTFOLIO: {
+                return modelPortfolioMenuItems;
+            }
+            case BrokeragePortfolioTypes.ANALYTICS: {
+                return commonMenuItems;
+            }
+        }
+    }, [brokerAccountMenuItems, commonMenuItems, currentPortfolio.type, modelPortfolioMenuItems]);
+
     return (
         <>
             <Dropdown
@@ -89,13 +103,14 @@ export function AdditionalHeaderMenu({ currentPortfolio, importTableToCsvText }:
                 direction="left"
             >
                 <Dropdown.Menu>
-                    <Dropdown.Item onClick={importToCsv}>Экспорт в CSV...</Dropdown.Item>
-                    <Dropdown.Divider className={styles.divider} />
-                    {
-                        currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO
-                            ? modelPortfolioMenuItems
-                            : brokerAccountMenuItems
-                    }
+                    {importTableToCsvText && (
+                        <>
+                            <Dropdown.Item onClick={() => importToCsv(importTableToCsvText)}>Экспорт в CSV...</Dropdown.Item>
+                            <Dropdown.Divider className={styles.divider} />
+                        </>
+
+                    )}
+                    {menuItems}
                 </Dropdown.Menu>
             </Dropdown>
             {

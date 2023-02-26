@@ -34,6 +34,8 @@ export interface Portfolios {
 
 export type Portfolio = ModelPortfolio | BrokerAccount;
 
+export type ExtendedPortfolio = Portfolio | Analytics;
+
 export interface ModelPortfolio {
     id: string;
     type: BrokeragePortfolioTypes.MODEL_PORTFOLIO;
@@ -47,6 +49,10 @@ export interface BrokerAccount {
     type: BrokeragePortfolioTypes.BROKER_ACCOUNT;
     positions: BrokerAccountPosition[];
     settings: PortfolioSettings;
+}
+
+export interface Analytics {
+    type: BrokeragePortfolioTypes.ANALYTICS;
 }
 
 export type PortfolioPosition = {
