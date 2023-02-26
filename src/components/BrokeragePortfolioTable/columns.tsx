@@ -128,7 +128,11 @@ export const commonColumns: (
                 field,
                 value,
                 rowData
-            ) => rowData.name as string || undefined
+            ) => (
+                tickerViewMode === TickerViewMode.TICKER_NAME && rowData.name
+                    ? rowData.ticker as string
+                    : rowData.name as string || undefined
+            )
         }
     }, {
         title: "Доля",
