@@ -83,7 +83,14 @@ export const commonColumns: (
         edit: {
             type: EditTypes.INPUT,
             params: {
-                dashed: true
+                dashed: true,
+                withFormatting: true,
+                viewContentFormatter: (
+                    rowId,
+                    field,
+                    value,
+                    rowData
+                ) => rowData.name ?? value
             }
         },
         validator: priceMode === ModelPortfolioPriceMode.MANUAL_INPUT ? undefined : {

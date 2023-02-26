@@ -86,7 +86,11 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
                 <Input
                     label={label ? { basic: true, content: label } : undefined}
                     labelPosition={label ? "right" : undefined}
-                    value={!isFocus && withFormatting && viewContentFormatter ? viewContentFormatter(inputValue) : inputValue}
+                    value={
+                        !isFocus && withFormatting && viewContentFormatter
+                            ? viewContentFormatter(id, field, inputValue, row)
+                            : inputValue
+                    }
                     placeholder={placeholder}
                     error={!isValid}
                     onFocus={() => setIsFocus(true)}
@@ -191,15 +195,16 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         </div>
     ), [
         label,
-        viewContentFormatter,
-        withFormatting,
-        inputValue,
         isFocus,
+        withFormatting,
+        viewContentFormatter,
+        id,
+        field,
+        inputValue,
+        row,
         placeholder,
         isValid,
         datalist,
-        id,
-        field,
         transparent,
         dashed,
         className,

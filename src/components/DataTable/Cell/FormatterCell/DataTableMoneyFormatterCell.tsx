@@ -42,7 +42,9 @@ export default function DataTableMoneyFormatterCell() {
             <DataTableInput
                 params={{
                     ..._edit.params,
-                    viewContentFormatter: formatter({ ...params, currency: undefined, additionalSpace: false })
+                    viewContentFormatter: (id, field, value) => (
+                        formatter({ ...params, currency: undefined, additionalSpace: false })(value)
+                    )
                 }}
                 label={params.currency}
             />

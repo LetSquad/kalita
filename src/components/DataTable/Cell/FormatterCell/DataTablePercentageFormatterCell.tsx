@@ -40,7 +40,12 @@ export default function DataTablePercentageFormatterCell() {
     const editContent = useCallback((_edit: DropdownEdit<number> | InputEdit) => (_edit.type === EditTypes.INPUT
         ? (
             <DataTableInput
-                params={{ ..._edit.params, viewContentFormatter: formatter({ ...params, withLabel: false }) }}
+                params={{
+                    ..._edit.params,
+                    viewContentFormatter: (id, field, value) => (
+                        formatter({ ...params, withLabel: false })(value)
+                    )
+                }}
                 label="%"
             />
         )
