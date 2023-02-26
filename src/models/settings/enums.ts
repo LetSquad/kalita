@@ -8,7 +8,7 @@ export enum ModelPortfolioQuantityMode {
     BROKER_ACCOUNT = "brokerAccount"
 }
 
-export enum TickerViewMode {
+export enum InstrumentViewMode {
     TICKER = "ticker",
-    TICKER_NAME = "tickerName"
+    INSTRUMENT_NAME = "instrumentName"
 }

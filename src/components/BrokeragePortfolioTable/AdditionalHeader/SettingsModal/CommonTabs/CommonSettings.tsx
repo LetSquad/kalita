@@ -3,7 +3,7 @@ import { FormEvent, useCallback } from "react";
 
 import { CheckboxProps, Form, Radio } from "semantic-ui-react";
 
-import { TickerViewMode } from "../../../../../models/settings/enums";
+import { InstrumentViewMode } from "../../../../../models/settings/enums";
 import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
 import { setTickerViewMode } from "../../../../../store/settings/settingsReducer";
 import styles from "../styles/SettingsModal.scss";
@@ -14,7 +14,7 @@ export default function CommonSettings() {
     const tickerViewMode = useAppSelector((state) => state.settings.tickerViewMode);
 
     const onTickerViewModeCheck = useCallback((event: FormEvent<HTMLInputElement>, data: CheckboxProps) => {
-        dispatch(setTickerViewMode(data.value as TickerViewMode));
+        dispatch(setTickerViewMode(data.value as InstrumentViewMode));
     }, [dispatch]);
 
     return (
@@ -24,16 +24,16 @@ export default function CommonSettings() {
                 <Radio
                     label="Имя"
                     name="tickerView"
-                    value={TickerViewMode.TICKER_NAME}
-                    checked={tickerViewMode === TickerViewMode.TICKER_NAME}
+                    value={InstrumentViewMode.INSTRUMENT_NAME}
+                    checked={tickerViewMode === InstrumentViewMode.INSTRUMENT_NAME}
                     className={styles.settingsRadio}
                     onChange={onTickerViewModeCheck}
                 />
                 <Radio
                     label="Тикер"
                     name="tickerView"
-                    value={TickerViewMode.TICKER}
-                    checked={tickerViewMode === TickerViewMode.TICKER}
+                    value={InstrumentViewMode.TICKER}
+                    checked={tickerViewMode === InstrumentViewMode.TICKER}
                     className={styles.settingsRadio}
                     onChange={onTickerViewModeCheck}
                 />

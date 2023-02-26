@@ -1,24 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { TickerViewMode } from "../../models/settings/enums";
+import { InstrumentViewMode } from "../../models/settings/enums";
 
 export interface SettingsState {
-    tickerViewMode: TickerViewMode;
+    tickerViewMode: InstrumentViewMode;
 }
 
 const initialState: SettingsState = {
-    tickerViewMode: TickerViewMode.TICKER
+    tickerViewMode: InstrumentViewMode.TICKER
 };
 
 export const settingsSlice = createSlice({
     name: "settings",
     initialState,
     reducers: {
-        setTickerViewMode: (state: SettingsState, action: PayloadAction<TickerViewMode>) => {
+        setTickerViewMode: (state: SettingsState, action: PayloadAction<InstrumentViewMode>) => {
             state.tickerViewMode = action.payload;
         },
         setSettings: (state: SettingsState, action: PayloadAction<SettingsState>) => {
-            state.tickerViewMode = action.payload.tickerViewMode || TickerViewMode.TICKER;
+            state.tickerViewMode = action.payload.tickerViewMode || InstrumentViewMode.TICKER;
         }
     }
 });
