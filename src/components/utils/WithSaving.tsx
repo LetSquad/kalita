@@ -31,7 +31,7 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
     const setStartState = useCallback(({ menu, portfolios, settings }: {
         menu: SidebarMenuGroupData,
         portfolios: Portfolios,
-        settings: SettingsState
+        settings?: SettingsState
     }) => {
         dispatch(setMenuGroups(menu));
         dispatch(setPortfolios(portfolios));
@@ -45,7 +45,7 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
             try {
                 const saveFile: {
                     version: string,
-                    content: { menu: SidebarMenuGroupData, portfolios: Portfolios, settings: SettingsState }
+                    content: { menu: SidebarMenuGroupData, portfolios: Portfolios, settings?: SettingsState }
                 } = fs.readJSONSync(filePath);
                 setStartState(saveFile.content);
             } catch {

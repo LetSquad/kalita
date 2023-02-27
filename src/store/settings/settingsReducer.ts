@@ -17,8 +17,8 @@ export const settingsSlice = createSlice({
         setTickerViewMode: (state: SettingsState, action: PayloadAction<InstrumentViewMode>) => {
             state.instrumentViewMode = action.payload;
         },
-        setSettings: (state: SettingsState, action: PayloadAction<SettingsState>) => {
-            state.instrumentViewMode = action.payload.instrumentViewMode || InstrumentViewMode.TICKER;
+        setSettings: (state: SettingsState, action: PayloadAction<SettingsState | undefined>) => {
+            state.instrumentViewMode = action.payload?.instrumentViewMode || InstrumentViewMode.TICKER;
         }
     }
 });
