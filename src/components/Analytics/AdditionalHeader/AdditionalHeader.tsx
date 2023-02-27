@@ -2,8 +2,9 @@ import { useMemo } from "react";
 
 import { Dropdown, Icon } from "semantic-ui-react";
 
-import { Currency } from "../../../models/portfolios/enums";
+import { BrokeragePortfolioTypes, Currency } from "../../../models/portfolios/enums";
 import { getSymbol } from "../../../utils/currencyUtils";
+import { SettingsMenu } from "../../Settings/SettingsMenu";
 import styles from "./styles/AdditionalHeader.scss";
 
 interface Props {
@@ -38,6 +39,7 @@ export function AdditionalHeader(
                 />
             </div>
             <div>
+                <SettingsMenu currentPortfolio={{ type: BrokeragePortfolioTypes.ANALYTICS }} />
                 <Icon
                     name={isChartMode ? "table" : "chart pie"}
                     link

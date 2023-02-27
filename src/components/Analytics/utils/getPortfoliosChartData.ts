@@ -3,22 +3,27 @@ import { ChartData } from "chart.js/auto";
 import { CurrencyQuotesMap } from "../../../models/apis/types";
 import { Currency } from "../../../models/portfolios/enums";
 import { BrokerAccount, ModelPortfolio } from "../../../models/portfolios/types";
+import { InstrumentViewMode } from "../../../models/settings/enums";
 import { getCurrencyQuote } from "../../../utils/currencyUtils";
 
 export function getPortfoliosChartData(
     analyticsCurrency: Currency,
     currencyQuotes: CurrencyQuotesMap,
-    portfolios: ModelPortfolio[] | BrokerAccount[]
+    portfolios: ModelPortfolio[] | BrokerAccount[],
+    instrumentViewMode: InstrumentViewMode
 ): ChartData<"doughnut"> {
     const amountMap = new Map<string, number>();
     let totalAmount = 0;
+
     for (const portfolio of portfolios) {
         for (const position of portfolio.positions) {
             const currencyQuote = getCurrencyQuote(portfolio.settings.baseCurrency, analyticsCurrency, currencyQuotes);
             const positionAmount = (currencyQuote ? position.amount * currencyQuote : 0);
 
             if (positionAmount > 0) {
-                const key: string = position.name ?? position.ticker;
+                const key: string = instrumentViewMode === InstrumentViewMode.INSTRUMENT_NAME && position.name
+                    ? position.name
+                    : position.ticker;
                 const tickerAmount: number = (amountMap.get(key) || 0) + positionAmount;
                 amountMap.set(key, tickerAmount);
                 totalAmount += positionAmount;

@@ -34,6 +34,8 @@ export interface Portfolios {
 
 export type Portfolio = ModelPortfolio | BrokerAccount;
 
+export type ExtendedPortfolio = Portfolio | Analytics;
+
 export interface ModelPortfolio {
     id: string;
     type: BrokeragePortfolioTypes.MODEL_PORTFOLIO;
@@ -49,9 +51,13 @@ export interface BrokerAccount {
     settings: PortfolioSettings;
 }
 
+export interface Analytics {
+    type: BrokeragePortfolioTypes.ANALYTICS;
+}
+
 export type PortfolioPosition = {
     readonly id: string;
-    readonly name?: string;
+    name?: string;
     readonly ticker: string;
     readonly percentage: number;
     readonly currentPrice: number;

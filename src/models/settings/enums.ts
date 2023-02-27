@@ -7,3 +7,8 @@ export enum ModelPortfolioQuantityMode {
     MANUAL_INPUT = "manualInput",
     BROKER_ACCOUNT = "brokerAccount"
 }
+
+export enum InstrumentViewMode {
+    TICKER = "ticker",
+    INSTRUMENT_NAME = "instrumentName"
+}

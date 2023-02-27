@@ -51,7 +51,9 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         onCellChange,
         onCellKeyEnter,
         placeholder,
-        datalist
+        datalist,
+        viewContentFormatter,
+        withFormatting
     } = params;
 
     const [initialValue, setInitialValue] = useState(cell);
@@ -74,13 +76,21 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
 
     const isValid = useMemo(() => getIsValid(initialValue, value || cell), [cell, getIsValid, initialValue, value]);
 
+    const inputValue = useMemo(() => (
+        onCellChange || onGlobalCellChanged ? cell : value
+    ), [cell, onCellChange, onGlobalCellChanged, value]);
+
     const input = useMemo(() => (
         <div>
             <Ref innerRef={inputRef}>
                 <Input
                     label={label ? { basic: true, content: label } : undefined}
                     labelPosition={label ? "right" : undefined}
-                    value={onCellChange || onGlobalCellChanged ? cell : value}
+                    value={
+                        !isFocus && withFormatting && viewContentFormatter
+                            ? viewContentFormatter(id, field, inputValue, row)
+                            : inputValue
+                    }
                     placeholder={placeholder}
                     error={!isValid}
                     onFocus={() => setIsFocus(true)}
@@ -185,23 +195,27 @@ export default function DataTableInput({ params = defaultParams, label }: DataTa
         </div>
     ), [
         label,
-        onCellChange,
-        onGlobalCellChanged,
-        cell,
-        value,
+        isFocus,
+        withFormatting,
+        viewContentFormatter,
+        id,
+        field,
+        inputValue,
+        row,
         placeholder,
         isValid,
         datalist,
-        id,
-        field,
         transparent,
         dashed,
         className,
         clearable,
+        cell,
+        onCellChange,
+        onGlobalCellChanged,
         getIsValid,
+        initialValue,
         onCellBlur,
         onGlobalCellBlur,
-        initialValue,
         onCellKeyEnter,
         onGlobalCellKeyEnter
     ]);

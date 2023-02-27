@@ -23,10 +23,19 @@ export function formatMoneyFormatterValue({
     currencyPosition = CurrencyPosition.AFTER,
     additionalSpace = false,
     precision = 2,
+    extendedPrecision = 2,
     zerosRemove = false
 }: MoneyFormatterParams & { value: number }) {
-    let precisionValue: string | number = precision === false ? value : value.toFixed(precision);
+    let precisionValue: string | number = extendedPrecision === false ? value : Number(value.toFixed(extendedPrecision));
+
+    const extendedPrecisionDecimal = String(precisionValue).split(".")[1];
+
+    precisionValue = precision !== false && extendedPrecisionDecimal?.length < precision
+        ? Number(precisionValue).toFixed(precision)
+        : precisionValue;
+
     precisionValue = zerosRemove ? Number(precisionValue) : precisionValue;
+
     const formattedValues = String(precisionValue).split(".");
 
     let integer = formattedValues[0];
@@ -52,12 +61,13 @@ export function formatPercentageFormatterValue({
     value,
     additionalSpace = false,
     precision = 2,
-    zerosRemove = false
+    zerosRemove = false,
+    withLabel = true
 }: PercentageFormatterParams & { value: number }) {
     let precisionValue: string | number = precision === false ? value : value.toFixed(precision);
     precisionValue = zerosRemove ? Number(precisionValue) : precisionValue;
 
-    return `${precisionValue}${additionalSpace ? " " : ""}%`;
+    return `${precisionValue}${additionalSpace ? " " : ""}${withLabel ? "%" : ""}`;
 }
 
 export const defaultStarFormatterParams: StarFormatterParams = {

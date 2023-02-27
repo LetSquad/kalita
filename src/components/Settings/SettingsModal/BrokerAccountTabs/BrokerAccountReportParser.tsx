@@ -15,14 +15,14 @@ import {
     BrokerReportEncoding,
     BrokerReportFormat,
     BrokerReportPositionCodeFormat
-} from "../../../../../models/portfolios/enums";
-import { BrokerReportLoadResult, BrokerReportMetadata } from "../../../../../models/portfolios/types";
-import openBrokerIcon from "../../../../../static/icons/open-broker.ico";
-import tinkoffBrokerIcon from "../../../../../static/icons/tinkoff-broker.png";
-import vtbBrokerIcon from "../../../../../static/icons/vtb-broker.png";
-import { useAppDispatch } from "../../../../../store/hooks";
-import { addBrokerAccountPositions } from "../../../../../store/portfolios/portfoliosReducer";
-import BrokerReportLoaderWorker from "../../../../../workers/BrokerReportLoader.worker";
+} from "../../../../models/portfolios/enums";
+import { BrokerReportLoadResult, BrokerReportMetadata } from "../../../../models/portfolios/types";
+import openBrokerIcon from "../../../../static/icons/open-broker.ico";
+import tinkoffBrokerIcon from "../../../../static/icons/tinkoff-broker.png";
+import vtbBrokerIcon from "../../../../static/icons/vtb-broker.png";
+import { useAppDispatch } from "../../../../store/hooks";
+import { addBrokerAccountPositions } from "../../../../store/portfolios/portfoliosReducer";
+import BrokerReportLoaderWorker from "../../../../workers/BrokerReportLoader.worker";
 import styles from "./styles/BrokerAccountReportParser.scss";
 
 const brokers: BrokerReportMetadata[] = [

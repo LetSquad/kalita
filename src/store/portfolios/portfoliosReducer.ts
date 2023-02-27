@@ -155,6 +155,10 @@ export const portfoliosSlice = createSlice({
                     .find((p) => p.id === action.payload.id);
                 if (currentPosition) {
                     state.activeGroup = currentPosition.groupName;
+
+                    if (action.payload.valueKey === EditableTableColumns.TICKER) {
+                        currentPosition.name = undefined;
+                    }
                 }
 
                 recalculateRow(currentPortfolio, action.payload);

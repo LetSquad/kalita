@@ -14,12 +14,12 @@ import {
     Radio
 } from "semantic-ui-react";
 
-import { loadMoexQuotesByTickers } from "../../../../../apis/moexApi";
-import { BrokerAccountMenuElement } from "../../../../../models/menu/types";
-import { ModelPortfolio } from "../../../../../models/portfolios/types";
-import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../../../../models/settings/enums";
-import { useAppDispatch, useAppSelector } from "../../../../../store/hooks";
-import { updateModelPortfolioPriceMode, updateModelPortfolioQuantityMode, updateModelPortfolioQuantitySources } from "../../../../../store/portfolios/portfoliosReducer";
+import { loadMoexQuotesByTickers } from "../../../../apis/moexApi";
+import { BrokerAccountMenuElement } from "../../../../models/menu/types";
+import { ModelPortfolio } from "../../../../models/portfolios/types";
+import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../../../models/settings/enums";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { updateModelPortfolioPriceMode, updateModelPortfolioQuantityMode, updateModelPortfolioQuantitySources } from "../../../../store/portfolios/portfoliosReducer";
 import styles from "../styles/SettingsModal.scss";
 
 interface ModelPortfolioDataSourcesSelectorProps {
