@@ -48,7 +48,9 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
                     content: { menu: SidebarMenuGroupData, portfolios: Portfolios, settings?: SettingsState }
                 } = fs.readJSONSync(filePath);
                 setStartState(saveFile.content);
-            } catch {
+            } catch (error) {
+                console.error(error);
+
                 addToast(`Ошибка открытия проекта "${currentProjectPath}"`, { appearance: "error" });
                 navigate("/");
             }
@@ -70,7 +72,9 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
                     settings: projectSettings
                 }
             })
-                .catch(() => {
+                .catch((error) => {
+                    console.error(error);
+
                     addToast(`Ошибка сохранения проекта "${currentProjectPath}"`, { appearance: "error" });
                 });
         }

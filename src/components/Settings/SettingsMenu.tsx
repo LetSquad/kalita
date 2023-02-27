@@ -47,7 +47,9 @@ export function SettingsMenu({ currentPortfolio, importTableToCsvText }: Props) 
                     fs.createFileSync(path);
                     fs.writeFileSync(path, content);
                     addToast(`Портфель успешно экспортирован в файл ${path}`, { appearance: "success" });
-                } catch {
+                } catch (error) {
+                    console.error(error);
+
                     addToast("Произошла ошибка при сохранении таблицы в csv файл", { appearance: "error" });
                 }
             }
