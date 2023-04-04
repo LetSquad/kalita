@@ -48,13 +48,15 @@ import {
 export interface PortfoliosState extends Portfolios {
     currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;
     activeGroup?: string;
+    isSavingInProgress: boolean;
 }
 
 const initialState: PortfoliosState = {
     modelPortfolios: [],
     brokerAccounts: [],
     currentTable: undefined,
-    activeGroup: undefined
+    activeGroup: undefined,
+    isSavingInProgress: false
 };
 
 export const portfoliosSlice = createSlice({
@@ -327,6 +329,9 @@ export const portfoliosSlice = createSlice({
         resetCurrentPortfolio: (state: PortfoliosState) => {
             state.currentTable = undefined;
             state.activeGroup = undefined;
+        },
+        setSavingInProgress: (state: PortfoliosState, action: PayloadAction<boolean>) => {
+            state.isSavingInProgress = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -407,7 +412,8 @@ export const {
     updateBaseCurrency,
     updateModelPortfolioPriceMode,
     updateModelPortfolioQuantityMode,
-    updateModelPortfolioQuantitySources
+    updateModelPortfolioQuantitySources,
+    setSavingInProgress
 } = portfoliosSlice.actions;
 
 export default portfoliosSlice.reducer;
