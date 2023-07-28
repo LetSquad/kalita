@@ -24,6 +24,7 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
     const modelPortfolios = useAppSelector((state) => state.sidebarMenu.modelPortfolios);
     const brokerAccounts = useAppSelector((state) => state.sidebarMenu.brokerAccounts);
     const allTickers = useAppSelector(allTickerSelector);
+    const isSavingInProgress = useAppSelector((state) => state.portfolios.isSavingInProgress);
 
     const closeProject = useCallback(() => {
         dispatch(setDefault());
@@ -48,6 +49,7 @@ export default function SidebarMenu({ onSidebarClose, projectName }: SidebarMenu
                     <Icon
                         name="log out"
                         link
+                        disabled={isSavingInProgress}
                         onClick={closeProject}
                     />
                 </div>

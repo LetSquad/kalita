@@ -4,11 +4,16 @@ import fs from "fs-extra";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 
-import { currentSaveFileVersion, saveProjectFileName } from "../../models/constants";
+import {
+    backupProjectFileTemplate,
+    currentSaveFileVersion,
+    saveProjectFileName,
+    snapshotProjectFileName
+} from "../../models/constants";
 import { SidebarMenuGroupData } from "../../models/menu/types";
 import { Portfolios } from "../../models/portfolios/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setPortfolios } from "../../store/portfolios/portfoliosReducer";
+import { setPortfolios, setSavingInProgress } from "../../store/portfolios/portfoliosReducer";
 import { setSettings, SettingsState } from "../../store/settings/settingsReducer";
 import { setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
 
@@ -40,20 +45,23 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
 
     useEffect(() => {
         const filePath = `${currentProjectPath}/${saveProjectFileName}`;
+        const snapshotPath = `${currentProjectPath}/${snapshotProjectFileName}`;
 
         if (fs.existsSync(filePath)) {
-            try {
-                const saveFile: {
-                    version: string,
-                    content: { menu: SidebarMenuGroupData, portfolios: Portfolios, settings?: SettingsState }
-                } = fs.readJSONSync(filePath);
-                setStartState(saveFile.content);
-            } catch (error) {
-                console.error(error);
+            fs.copyFile(filePath, snapshotPath)
+                .then(() => {
+                    const saveFile: {
+                        version: string,
+                        content: { menu: SidebarMenuGroupData, portfolios: Portfolios, settings?: SettingsState }
+                    } = fs.readJSONSync(filePath);
+                    setStartState(saveFile.content);
+                })
+                .catch((error) => {
+                    console.error(error);
 
-                addToast(`Ошибка открытия проекта "${currentProjectPath}"`, { appearance: "error" });
-                navigate("/");
-            }
+                    addToast(`Ошибка открытия проекта "${currentProjectPath}"`, { appearance: "error" });
+                    navigate("/");
+                });
         } else {
             addToast(`Проект "${currentProjectPath}" отсутствует или сломан`, { appearance: "error" });
             navigate("/");
@@ -63,19 +71,25 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
 
     useEffect(() => {
         if (currentProjectPath !== "") {
+            dispatch(setSavingInProgress(true));
+
             const filePath = `${currentProjectPath}/${saveProjectFileName}`;
-            fs.writeJson(filePath, {
-                version: currentSaveFileVersion,
-                content: {
-                    menu: { modelPortfolios: modelPortfoliosMenu, brokerAccounts: brokerAccountsMenu },
-                    portfolios: { modelPortfolios: modelPortfoliosData, brokerAccounts: brokerAccountsData },
-                    settings: projectSettings
-                }
-            })
+            const backupPath = `${currentProjectPath}/${backupProjectFileTemplate}.json`;
+            fs.copyFile(filePath, backupPath)
+                .then(() => fs.writeJson(filePath, {
+                    version: currentSaveFileVersion,
+                    content: {
+                        menu: { modelPortfolios: modelPortfoliosMenu, brokerAccounts: brokerAccountsMenu },
+                        portfolios: { modelPortfolios: modelPortfoliosData, brokerAccounts: brokerAccountsData },
+                        settings: projectSettings
+                    }
+                }))
+                .then(() => dispatch(setSavingInProgress(false)))
                 .catch((error) => {
                     console.error(error);
 
-                    addToast(`Ошибка сохранения проекта "${currentProjectPath}"`, { appearance: "error" });
+                    fs.copyFile(backupPath, `${currentProjectPath}/${backupProjectFileTemplate}_${Date.now()}.json`)
+                        .then(() => addToast(`Ошибка сохранения проекта "${currentProjectPath}"`, { appearance: "error" }));
                 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
