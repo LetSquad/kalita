@@ -47,7 +47,7 @@ export default function AnalyticsTable(
             }
         }
 
-        const brokerAccountData: AnalyticsTableData[] = [];
+        const unaccountedPositions: AnalyticsTableData[] = [];
         for (const account of brokerAccounts) {
             for (const position of account.positions) {
                 if (!modelPortfolioPositions.has(position.ticker)) {
@@ -57,7 +57,7 @@ export default function AnalyticsTable(
             for (const position of account.positions) {
                 if (!modelPortfolioPositions.has(position.ticker)) {
                     const proportion: number = position.amount / totalAmount;
-                    brokerAccountData.push({
+                    unaccountedPositions.push({
                         id: position.id,
                         portfolio: instrumentViewMode === InstrumentViewMode.INSTRUMENT_NAME && position.name
                             ? position.name
@@ -70,9 +70,10 @@ export default function AnalyticsTable(
             }
         }
 
-        const modelPortfolioData: AnalyticsTableData[] = [];
-        for (const pn of modelPortfolioNames.elements) {
-            const portfolio = modelPortfolios.find((p) => p.id === pn.id);
+        const groupedModelPortfolios: AnalyticsTableData[] = [];
+        const ungroupedModelPortfolios: AnalyticsTableData[] = [];
+        for (const portfolioName of modelPortfolioNames.elements) {
+            const portfolio = modelPortfolios.find((p) => p.id === portfolioName.id);
             if (portfolio) {
                 const currencyQuote = getCurrencyQuote(portfolio.settings.baseCurrency, analyticsCurrency, currencyQuotes);
                 const portfolioAmount: number = portfolio.positions
@@ -81,18 +82,29 @@ export default function AnalyticsTable(
                 const proportion: number = portfolioAmount / totalAmount;
 
                 if (portfolioAmount > 0) {
-                    modelPortfolioData.push({
-                        id: portfolio.id,
-                        portfolio: pn.name,
-                        percentage: proportion * 100,
-                        amount: portfolioAmount,
-                        groupName: MODEL_PORTFOLIOS
-                    });
+                    const portfolioNameSegments: string[] = portfolioName.name.split("-");
+                    if (portfolioNameSegments.length > 1) {
+                        groupedModelPortfolios.push({
+                            id: portfolio.id,
+                            portfolio: portfolioName.name,
+                            percentage: proportion * 100,
+                            amount: portfolioAmount,
+                            groupName: portfolioNameSegments[0]
+                        });
+                    } else {
+                        ungroupedModelPortfolios.push({
+                            id: portfolio.id,
+                            portfolio: portfolioName.name,
+                            percentage: proportion * 100,
+                            amount: portfolioAmount,
+                            groupName: MODEL_PORTFOLIOS
+                        });
+                    }
                 }
             }
         }
 
-        return [...modelPortfolioData, ...brokerAccountData];
+        return [...groupedModelPortfolios, ...ungroupedModelPortfolios, ...unaccountedPositions];
     }, [modelPortfolios, analyticsCurrency, currencyQuotes, brokerAccounts, instrumentViewMode, modelPortfolioNames.elements]);
 
     return (
