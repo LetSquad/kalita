@@ -35,7 +35,7 @@ const moexHttpClient = axios.create({
     responseType: "text"
 });
 
-function getUrl(board: string): string {
+function getBoardUrl(board: string): string {
     const filters = "iss.meta=off&iss.only=securities&securities.columns=SECID,PREVLEGALCLOSEPRICE,SHORTNAME,ISIN,CURRENCYID";
     return `/iss/engines/stock/markets/shares/boards/${board}/securities.xml?${filters}`;
 }
@@ -49,7 +49,7 @@ function getCurrencyQuotes(): Promise<CurrencyQuotes> {
 
 function getQuotesByBoard(board: string, tickers?: string[]): Promise<Quote[]> {
     return moexHttpClient.get(
-        getUrl(board),
+        getBoardUrl(board),
         tickers && tickers.length <= QUOTES_FILTER_LIMIT ? { params: { securities: tickers.join(",") } } : undefined
     ).then((response) => convertResponseToQuotes(response.data));
 }
