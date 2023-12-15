@@ -8,7 +8,7 @@ import {
     backupProjectFileTemplate,
     currentSaveFileVersion,
     saveProjectFileName,
-    snapshotProjectFileName
+    snapshotProjectFileTemplate
 } from "../../models/constants";
 import { SidebarMenuGroupData } from "../../models/menu/types";
 import { Portfolios } from "../../models/portfolios/types";
@@ -45,23 +45,25 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
 
     useEffect(() => {
         const filePath = `${currentProjectPath}/${saveProjectFileName}`;
-        const snapshotPath = `${currentProjectPath}/${snapshotProjectFileName}`;
+        const snapshotPath = `${currentProjectPath}/${snapshotProjectFileTemplate}.json`;
 
         if (fs.existsSync(filePath)) {
-            fs.copyFile(filePath, snapshotPath)
-                .then(() => {
-                    const saveFile: {
-                        version: string,
-                        content: { menu: SidebarMenuGroupData, portfolios: Portfolios, settings?: SettingsState }
-                    } = fs.readJSONSync(filePath);
-                    setStartState(saveFile.content);
-                })
-                .catch((error) => {
-                    console.error(error);
+            try {
+                fs.copyFileSync(filePath, snapshotPath);
 
-                    addToast(`Ошибка открытия проекта "${currentProjectPath}"`, { appearance: "error" });
-                    navigate("/");
-                });
+                const saveFile: {
+                    version: string,
+                    content: { menu: SidebarMenuGroupData, portfolios: Portfolios, settings?: SettingsState }
+                } = fs.readJSONSync(filePath);
+
+                setStartState(saveFile.content);
+            } catch (error) {
+                console.error(error);
+
+                fs.copyFileSync(snapshotPath, `${currentProjectPath}/${snapshotProjectFileTemplate}_${Date.now()}.json`)
+                addToast(`Ошибка открытия проекта "${currentProjectPath}"`, { appearance: "error" });
+                navigate("/");
+            }
         } else {
             addToast(`Проект "${currentProjectPath}" отсутствует или сломан`, { appearance: "error" });
             navigate("/");
