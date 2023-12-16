@@ -400,6 +400,7 @@ export const portfoliosSlice = createSlice({
             })
             .addCase(setDefault, (state) => {
                 portfoliosSlice.caseReducers.resetCurrentPortfolio(state);
+                state.isProjectReadyForSaving = false;
             });
     }
 });
