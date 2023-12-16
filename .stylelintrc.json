@@ -1,5 +1,6 @@
 {
     "extends": "stylelint-config-sass-guidelines",
+    "plugins": ["stylelint-order"],
     "rules": {
         "max-nesting-depth": 5,
         "selector-max-compound-selectors": 5,
@@ -9,6 +10,29 @@
         "property-no-vendor-prefix": [true, {
             "ignoreProperties": "box-flex"
         }],
-        "selector-no-qualifying-type": null
+        "selector-no-qualifying-type": null,
+        "order/order": [
+            [
+                "custom-properties",
+                "dollar-variables",
+                {
+                    "type": "at-rule",
+                    "name": "extend"
+                },
+                {
+                    "type": "at-rule",
+                    "name": "include",
+                    "hasBlock": false
+                },
+                "declarations",
+                {
+                    "type": "at-rule",
+                    "name": "include",
+                    "hasBlock": true
+                },
+                "rules"
+            ]
+        ],
+        "order/properties-alphabetical-order": true
     }
 }

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 
 import { Icon } from "semantic-ui-react";
 
@@ -13,7 +13,7 @@ import styles from "./styles/AdditionalHeader.scss";
 
 interface Props {
     currentPortfolio: Portfolio,
-    additionalHeaderPart?: JSX.Element,
+    additionalHeaderPart?: React.JSX.Element,
     importTableToCsvText: () => string | undefined,
     isChartMode: boolean
     onToggleChartMode: () => unknown

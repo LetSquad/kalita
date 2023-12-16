@@ -10,7 +10,7 @@ import {
 import persistStore from "redux-persist/es/persistStore";
 import storage from "redux-persist/lib/storage";
 import promise from "redux-promise-middleware";
-import thunk from "redux-thunk";
+import { thunk } from "redux-thunk";
 
 import { configureStore } from "@reduxjs/toolkit";
 

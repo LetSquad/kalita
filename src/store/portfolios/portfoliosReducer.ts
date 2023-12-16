@@ -49,6 +49,7 @@ export interface PortfoliosState extends Portfolios {
     currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;
     activeGroup?: string;
     isSavingInProgress: boolean;
+    isProjectReadyForSaving: boolean;
 }
 
 const initialState: PortfoliosState = {
@@ -56,7 +57,8 @@ const initialState: PortfoliosState = {
     brokerAccounts: [],
     currentTable: undefined,
     activeGroup: undefined,
-    isSavingInProgress: false
+    isSavingInProgress: false,
+    isProjectReadyForSaving: false
 };
 
 export const portfoliosSlice = createSlice({
@@ -332,6 +334,9 @@ export const portfoliosSlice = createSlice({
         },
         setSavingInProgress: (state: PortfoliosState, action: PayloadAction<boolean>) => {
             state.isSavingInProgress = action.payload;
+        },
+        setProjectReadyForSavingStatus: (state: PortfoliosState, action: PayloadAction<boolean>) => {
+            state.isProjectReadyForSaving = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -395,6 +400,7 @@ export const portfoliosSlice = createSlice({
             })
             .addCase(setDefault, (state) => {
                 portfoliosSlice.caseReducers.resetCurrentPortfolio(state);
+                state.isProjectReadyForSaving = false;
             });
     }
 });
@@ -413,7 +419,8 @@ export const {
     updateModelPortfolioPriceMode,
     updateModelPortfolioQuantityMode,
     updateModelPortfolioQuantitySources,
-    setSavingInProgress
+    setSavingInProgress,
+    setProjectReadyForSavingStatus
 } = portfoliosSlice.actions;
 
 export default portfoliosSlice.reducer;
