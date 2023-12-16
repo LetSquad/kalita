@@ -60,7 +60,7 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
             } catch (error) {
                 console.error(error);
 
-                fs.copyFileSync(snapshotPath, `${currentProjectPath}/${snapshotProjectFileTemplate}_${Date.now()}.json`)
+                fs.copyFileSync(snapshotPath, `${currentProjectPath}/${snapshotProjectFileTemplate}_${Date.now()}.json`);
                 addToast(`Ошибка открытия проекта "${currentProjectPath}"`, { appearance: "error" });
                 navigate("/");
             }

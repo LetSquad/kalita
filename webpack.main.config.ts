@@ -1,3 +1,5 @@
+/* eslint-disable import/no-import-module-exports */
+
 import path from "path";
 
 export const PATHS = {

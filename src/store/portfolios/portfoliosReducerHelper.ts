@@ -305,7 +305,7 @@ function getNewName(tableData: TableData, nameConst: string, fieldName: "ticker"
         if (ticker.length === nameConst.length) return 0;
         return Number.parseInt(ticker.slice(ticker.lastIndexOf(" ")), 10);
     }).sort((a, b) => a - b);
-    return `${nameConst} ${newStringsNums[newStringsNums.length - 1] + 1}`;
+    return `${nameConst} ${newStringsNums.at(-1) as number + 1}`;
 }
 
 function applyQuoteForPosition(
