@@ -13,7 +13,7 @@ import {
 import { SidebarMenuGroupData } from "../../models/menu/types";
 import { Portfolios } from "../../models/portfolios/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { setPortfolios, setSavingInProgress } from "../../store/portfolios/portfoliosReducer";
+import { setPortfolios, setProjectReadyForSavingStatus, setSavingInProgress } from "../../store/portfolios/portfoliosReducer";
 import { setSettings, SettingsState } from "../../store/settings/settingsReducer";
 import { setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
 
@@ -31,6 +31,9 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
     const brokerAccountsData = useAppSelector((state) => state.portfolios.brokerAccounts);
     const projectSettings = useAppSelector((state) => state.settings);
 
+    const isSavingInProgress = useAppSelector((state) => state.portfolios.isSavingInProgress);
+    const isProjectReadyForSaving = useAppSelector((state) => state.portfolios.isProjectReadyForSaving);
+
     const currentProjectPath = useMemo(() => searchParams.get("currentProject"), [searchParams]);
 
     const setStartState = useCallback(({ menu, portfolios, settings }: {
@@ -41,6 +44,7 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
         dispatch(setMenuGroups(menu));
         dispatch(setPortfolios(portfolios));
         dispatch(setSettings(settings));
+        dispatch(setProjectReadyForSavingStatus(true));
     }, [dispatch]);
 
     useEffect(() => {
@@ -72,7 +76,7 @@ export function WithSaving(props: { children: JSX.Element }): JSX.Element {
     }, []);
 
     useEffect(() => {
-        if (currentProjectPath !== "") {
+        if (currentProjectPath !== "" && !isSavingInProgress && isProjectReadyForSaving) {
             dispatch(setSavingInProgress(true));
 
             const filePath = `${currentProjectPath}/${saveProjectFileName}`;
