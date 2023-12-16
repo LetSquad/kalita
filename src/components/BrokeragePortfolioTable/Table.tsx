@@ -1,4 +1,4 @@
-import {
+import React, {
     FocusEvent,
     KeyboardEvent,
     lazy,
@@ -35,9 +35,9 @@ import DividendsModal from "./DividendsModal";
 import styles from "./styles/Table.scss";
 
 interface TableProps {
-    columns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[],
+    columns: (dividendsButton: (ticket: string) => React.JSX.Element) => ColumnDefinition[],
     currentPortfolio: Portfolio,
-    additionalHeaderPart?: JSX.Element
+    additionalHeaderPart?: React.JSX.Element
 }
 
 const DataTable = lazy(/* webpackChunkName: "dataTable" */() =>

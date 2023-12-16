@@ -1,4 +1,4 @@
-import { HTMLAttributeAnchorTarget } from "react";
+import React, { HTMLAttributeAnchorTarget } from "react";
 
 // eslint-disable-next-line import/no-cycle
 import { DataTableData } from "./base";
@@ -224,7 +224,7 @@ export interface TotalCalcProgressFormatterParams extends BaseCalcProgressFormat
  *
  * @interface
  * @name ElementFormatterParams
- * @param {(rowId: string, field: keyof DataTableData, cellData: string | number | boolean | undefined, rowData: DataTableData) => JSX.Element} renderElement - Displayed react component
+ * @param {(rowId: string, field: keyof DataTableData, cellData: string | number | boolean | undefined, rowData: DataTableData) => React.JSX.Element} renderElement - Displayed react component
  */
 export interface ElementFormatterParams {
     renderElement: (
@@ -232,7 +232,7 @@ export interface ElementFormatterParams {
         field: keyof DataTableData,
         cellData: string | number | boolean | undefined,
         rowData: DataTableData
-    ) => JSX.Element;
+    ) => React.JSX.Element;
 }
 
 /**

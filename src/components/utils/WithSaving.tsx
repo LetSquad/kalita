@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 import fs from "fs-extra";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -17,7 +17,7 @@ import { setPortfolios, setProjectReadyForSavingStatus, setSavingInProgress } fr
 import { setSettings, SettingsState } from "../../store/settings/settingsReducer";
 import { setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
 
-export function WithSaving(props: { children: JSX.Element }): JSX.Element {
+export function WithSaving(props: { children: React.JSX.Element }): React.JSX.Element {
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();

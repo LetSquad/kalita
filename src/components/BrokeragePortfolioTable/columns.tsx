@@ -1,3 +1,5 @@
+import React from "react";
+
 import sum from "lodash.sum";
 
 import { Currency } from "../../models/portfolios/enums";
@@ -73,7 +75,7 @@ function averagePriceValidator(
 
 export const commonColumns: (
     baseCurrency: Currency,
-    dividendsButton: (ticker: string) => JSX.Element,
+    dividendsButton: (ticker: string) => React.JSX.Element,
     instrumentViewMode: InstrumentViewMode,
     priceMode?: ModelPortfolioPriceMode
 ) => ColumnDefinition[] = (baseCurrency, dividendsButton, instrumentViewMode, priceMode) => [
@@ -254,7 +256,7 @@ export const modelPortfolioColumnsWidth = [
 ];
 
 const _modelPortfolioColumns: (
-    dividendsButton: (ticker: string) => JSX.Element,
+    dividendsButton: (ticker: string) => React.JSX.Element,
     portfolioSettings: ModelPortfolioSettings,
     instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
@@ -386,7 +388,7 @@ const _modelPortfolioColumns: (
     ];
 
 export const modelPortfolioColumns: (
-    dividendsButton: (ticker: string) => JSX.Element,
+    dividendsButton: (ticker: string) => React.JSX.Element,
     portfolioSettings: ModelPortfolioSettings,
     instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
@@ -422,7 +424,7 @@ export const brokerAccountColumnsWidth = [
 ];
 
 export const _brokerAccountColumns: (
-    dividendsButton: (ticker: string) => JSX.Element,
+    dividendsButton: (ticker: string) => React.JSX.Element,
     instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
     (dividendsButton, instrumentViewMode) => [
@@ -497,7 +499,7 @@ export const _brokerAccountColumns: (
     ];
 
 export const brokerAccountColumns: (
-    dividendsButton: (ticker: string) => JSX.Element,
+    dividendsButton: (ticker: string) => React.JSX.Element,
     instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
     (dividendsButton, instrumentViewMode) => _brokerAccountColumns(dividendsButton, instrumentViewMode).sort((columnA, columnB) =>

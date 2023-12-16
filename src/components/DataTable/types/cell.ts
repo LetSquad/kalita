@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import React, { CSSProperties } from "react";
 
 import { DataTableData } from "./base";
 import { CalcType } from "./calc";
@@ -23,7 +23,7 @@ export interface DataTableCellParams {
 }
 
 export interface DataTableBaseCellParams {
-    children?: string | number | boolean | JSX.Element | JSX.Element[] | undefined;
+    children?: string | number | boolean | React.JSX.Element | React.JSX.Element[] | undefined;
     style?: CSSProperties;
     className?: string;
     withWrapper?: boolean;
