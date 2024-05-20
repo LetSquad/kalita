@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 
 import fs from "fs-extra";
+import { toast } from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useToasts } from "react-toast-notifications";
 
 import {
     backupProjectFileTemplate,
@@ -17,13 +17,13 @@ import { setPortfolios, setProjectReadyForSavingStatus, setSavingInProgress } fr
 import { setSettings, SettingsState } from "../../store/settings/settingsReducer";
 import { setMenuGroups } from "../../store/sidebarMenu/sidebarMenuReducer";
 
+const SAVE_PROJECT_TOAST_ID = "save-project";
+
 export function WithSaving(props: { children: React.JSX.Element }): React.JSX.Element {
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-
-    const { addToast } = useToasts();
 
     const modelPortfoliosMenu = useAppSelector((state) => state.sidebarMenu.modelPortfolios);
     const brokerAccountsMenu = useAppSelector((state) => state.sidebarMenu.brokerAccounts);
@@ -65,11 +65,11 @@ export function WithSaving(props: { children: React.JSX.Element }): React.JSX.El
                 console.error(error);
 
                 fs.copyFileSync(snapshotPath, `${currentProjectPath}/${snapshotProjectFileTemplate}_${Date.now()}.json`);
-                addToast(`Ошибка открытия проекта "${currentProjectPath}"`, { appearance: "error" });
+                toast.error(`Ошибка открытия проекта "${currentProjectPath}"`, { id: SAVE_PROJECT_TOAST_ID });
                 navigate("/");
             }
         } else {
-            addToast(`Проект "${currentProjectPath}" отсутствует или сломан`, { appearance: "error" });
+            toast.error(`Проект "${currentProjectPath}" отсутствует или сломан`, { id: SAVE_PROJECT_TOAST_ID });
             navigate("/");
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,7 +95,10 @@ export function WithSaving(props: { children: React.JSX.Element }): React.JSX.El
                     console.error(error);
 
                     fs.copyFile(backupPath, `${currentProjectPath}/${backupProjectFileTemplate}_${Date.now()}.json`)
-                        .then(() => addToast(`Ошибка сохранения проекта "${currentProjectPath}"`, { appearance: "error" }));
+                        .then(() => toast.error(
+                            `Ошибка сохранения проекта "${currentProjectPath}"`,
+                            { id: SAVE_PROJECT_TOAST_ID }
+                        ));
                 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
