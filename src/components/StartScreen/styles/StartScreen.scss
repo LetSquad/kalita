@@ -1,4 +1,5 @@
 @use 'src/styles/parts' as *;
+@use 'sass:color' as color;
 
 .start-screen {
   @extend %flex-base-center-container;
@@ -52,12 +53,12 @@ $recent-project-color: #4c74b9;
       width: 90%;
 
       &:hover {
-        color: lighten($recent-project-color, 10);
+        color: color.adjust($recent-project-color, $lightness: 10);
         cursor: pointer;
       }
 
       &:active {
-        color: darken($recent-project-color, 10);
+        color: color.adjust($recent-project-color, $lightness: -10);
         cursor: pointer;
       }
     }
