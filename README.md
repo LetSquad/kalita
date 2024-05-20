@@ -1,6 +1,19 @@
-# Калита
+<header>
 
-Очень безопасный модуль для вашего светлого будущего
+<div style="text-align: center">
+<h1>Калита</h1>
+
+<p>Очень безопасный модуль для вашего светлого будущего</p>
+
+<a href="https://github.com/LetSquad/kalita">
+	<img src="https://img.shields.io/github/languages/top/LetSquad/kalita?style=flat-square&logo=github" alt="GitHub top language" />
+</a>
+<a href="https://github.com/LetSquad/kalita/workflows/build/badge.svg">
+	<img src="https://github.com/LetSquad/kalita/workflows/build/badge.svg" alt="Build" />
+</a>
+</div>
+
+</header>
 
 ## Предустановки
 1. Нужно предустановить node@^20.x
