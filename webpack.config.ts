@@ -21,7 +21,7 @@ export const PATHS = {
 const isProduction = process.env.NODE_ENV === "production";
 const mode = isProduction ? "production" : "development";
 
-module.exports = () => {
+const webpack_ = () => {
     const commonPlugins = [
         new HtmlWebpackPlugin({
             template: `${PATHS.src}/index.html`,
@@ -96,6 +96,7 @@ module.exports = () => {
                             import: true,
                             sourceMap: true,
                             modules: {
+                                namedExport: false,
                                 mode: "local",
                                 localIdentName: "[path][name]__[local]--[hash]",
                                 exportLocalsConvention: "camelCaseOnly"
@@ -164,3 +165,4 @@ module.exports = () => {
 
     return isProduction ? config : { ...config, devServer: devOptions };
 };
+module.exports = webpack_;
