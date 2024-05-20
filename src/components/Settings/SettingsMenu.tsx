@@ -6,7 +6,7 @@ import {
 } from "react";
 
 import fs from "fs-extra";
-import { useToasts } from "react-toast-notifications";
+import { toast } from "react-hot-toast";
 import { Dropdown } from "semantic-ui-react";
 
 import { app, dialog } from "@electron/remote";
@@ -25,9 +25,9 @@ interface Props {
 const SettingsModal = lazy(/* webpackChunkName: "settingsModal" */() =>
     import("./SettingsModal/SettingsModal"));
 
-export function SettingsMenu({ currentPortfolio, importTableToCsvText }: Props) {
-    const { addToast } = useToasts();
+const IMPORT_CSV_TOAST_ID = (path: string) => `import-csv-${path}`;
 
+export function SettingsMenu({ currentPortfolio, importTableToCsvText }: Props) {
     const [settingsModalActiveTab, setSettingsModalActiveTab] = useState<number>();
 
     const importToCsv = useCallback((_importTableToCsvText: () => string | undefined) => {
@@ -41,20 +41,26 @@ export function SettingsMenu({ currentPortfolio, importTableToCsvText }: Props) 
         });
 
         if (path) {
+            toast.loading(`Экспортируем портфель в файл ${path}`, {
+                id: IMPORT_CSV_TOAST_ID(path)
+            });
             const content = _importTableToCsvText();
             if (content) {
                 try {
                     fs.createFileSync(path);
                     fs.writeFileSync(path, content);
-                    addToast(`Портфель успешно экспортирован в файл ${path}`, { appearance: "success" });
+                    toast.success(`Портфель успешно экспортирован в файл ${path}`, {
+                        id: IMPORT_CSV_TOAST_ID(path)
+                    });
                 } catch (error) {
                     console.error(error);
-
-                    addToast("Произошла ошибка при сохранении таблицы в csv файл", { appearance: "error" });
+                    toast.error("Произошла ошибка при сохранении таблицы в csv файл", {
+                        id: IMPORT_CSV_TOAST_ID(path)
+                    });
                 }
             }
         }
-    }, [addToast]);
+    }, []);
 
     const commonMenuItems = useMemo(() => (
         <Dropdown.Item onClick={() => setSettingsModalActiveTab(0)}>
