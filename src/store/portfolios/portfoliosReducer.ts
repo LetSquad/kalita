@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { loadMoexQuoteByTicker, loadMoexQuotesByTickers } from "../../apis/moexApi";
-import { QuoteData, QuotesData } from "../../models/apis/types";
+import { QuoteData } from "../../models/apis/types";
 import { SidebarMenuElementsTypes } from "../../models/menu/enums";
 import { MenuElementIdentifier } from "../../models/menu/types";
 import { BrokeragePortfolioTypes, Currency } from "../../models/portfolios/enums";
@@ -18,7 +18,7 @@ import {
     Portfolios,
     PortfolioUpdatePayload
 } from "../../models/portfolios/types";
-import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
+import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import {
     addNewElementToGroup,
@@ -47,12 +47,18 @@ import {
 
 export interface PortfoliosState extends Portfolios {
     currentTable?: ModelPortfolioIdentifier | BrokerAccountIdentifier | AnalyticsIdentifier;
+    activeGroup?: string;
+    isSavingInProgress: boolean;
+    isProjectReadyForSaving: boolean;
 }
 
 const initialState: PortfoliosState = {
     modelPortfolios: [],
     brokerAccounts: [],
-    currentTable: undefined
+    currentTable: undefined,
+    activeGroup: undefined,
+    isSavingInProgress: false,
+    isProjectReadyForSaving: false
 };
 
 export const portfoliosSlice = createSlice({
@@ -85,6 +91,8 @@ export const portfoliosSlice = createSlice({
         },
         setCurrentPortfolio: (state: PortfoliosState, action: PayloadAction<PortfolioIdentifier>) => {
             state.currentTable = action.payload;
+            state.activeGroup = undefined;
+
             const currentPortfolio = getCurrentPortfolio(action.payload, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
                 currentPortfolio.positions = recalculatePortfolioPercentage(currentPortfolio);
@@ -96,16 +104,26 @@ export const portfoliosSlice = createSlice({
                         getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)
                     );
                 }
+
+                if (currentPortfolio.positions.length > 0) {
+                    state.activeGroup = currentPortfolio.positions[0].groupName;
+                }
             }
         },
-        addNewPosition: (state: PortfoliosState, action: PayloadAction<string>) => {
+        addNewPosition: (state: PortfoliosState, action: PayloadAction<string | undefined>) => {
             if (!state.currentTable) {
+                return;
+            }
+            if (action.payload) {
+                state.activeGroup = action.payload;
+            }
+            if (!state.activeGroup) {
                 return;
             }
 
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
-                generateNewPosition(currentPortfolio, action.payload);
+                generateNewPosition(currentPortfolio, state.activeGroup);
             }
         },
         addBrokerAccountPositions: (state: PortfoliosState, action: PayloadAction<BrokerReportData>) => {
@@ -126,7 +144,9 @@ export const portfoliosSlice = createSlice({
             }
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
-                generateNewPosition(currentPortfolio, getNewGroupName(currentPortfolio.positions));
+                const groupName: string = getNewGroupName(currentPortfolio.positions);
+                state.activeGroup = groupName;
+                generateNewPosition(currentPortfolio, groupName);
             }
         },
         update: (state: PortfoliosState, action: PayloadAction<PortfolioUpdatePayload>) => {
@@ -135,6 +155,16 @@ export const portfoliosSlice = createSlice({
             }
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
+                const currentPosition = (currentPortfolio.positions as Array<ModelPortfolioPosition | BrokerAccountPosition>)
+                    .find((p) => p.id === action.payload.id);
+                if (currentPosition) {
+                    state.activeGroup = currentPosition.groupName;
+
+                    if (action.payload.valueKey === EditableTableColumns.TICKER) {
+                        currentPosition.name = undefined;
+                    }
+                }
+
                 recalculateRow(currentPortfolio, action.payload);
 
                 if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
@@ -145,7 +175,9 @@ export const portfoliosSlice = createSlice({
                             currentPortfolio.positions,
                             getBrokerAccountsPositionsByIds(state.brokerAccounts, currentPortfolio.settings.quantitySources)
                         );
-                    } else if (action.payload.valueKey === EditableTableColumns.WEIGHT) {
+                    } else if (action.payload.valueKey === EditableTableColumns.WEIGHT ||
+                        action.payload.valueKey === EditableTableColumns.CURRENT_PRICE
+                    ) {
                         currentPortfolio.positions = recalculateModelPortfolioPercentage(currentPortfolio);
                     }
                 } else if (
@@ -153,6 +185,17 @@ export const portfoliosSlice = createSlice({
                         action.payload.valueKey === EditableTableColumns.QUANTITY
                 ) {
                     currentPortfolio.positions = recalculateBrokerAccountPercentage(currentPortfolio.positions);
+                    for (const modelPortfolio of state.modelPortfolios) {
+                        if (
+                            modelPortfolio.settings.quantityMode === ModelPortfolioQuantityMode.BROKER_ACCOUNT &&
+                            modelPortfolio.settings.quantitySources.includes(currentPortfolio.id)
+                        ) {
+                            modelPortfolio.positions = recalculateModelPortfolioQuantity(
+                                modelPortfolio.positions,
+                                getBrokerAccountsPositionsByIds(state.brokerAccounts, modelPortfolio.settings.quantitySources)
+                            );
+                        }
+                    }
                 }
             }
         },
@@ -160,10 +203,14 @@ export const portfoliosSlice = createSlice({
             if (!state.currentTable) {
                 return;
             }
+
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
+            let positionGroup: string;
             if (currentPortfolio) {
                 if (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
                     const movedPosition = currentPortfolio.positions.splice(action.payload.oldOrder, 1)[0];
+                    positionGroup = movedPosition.groupName;
+
                     currentPortfolio.positions.splice(
                         action.payload.newOrder,
                         0,
@@ -171,18 +218,23 @@ export const portfoliosSlice = createSlice({
                     );
                 } else {
                     const movedPosition = currentPortfolio.positions.splice(action.payload.oldOrder, 1)[0];
+                    positionGroup = movedPosition.groupName;
+
                     currentPortfolio.positions.splice(
                         action.payload.newOrder,
                         0,
                         action.payload.newGroupName ? { ...movedPosition, groupName: action.payload.newGroupName } : movedPosition
                     );
                 }
+
+                state.activeGroup = action.payload.newGroupName ?? positionGroup;
             }
         },
         updateGroupName: (state: PortfoliosState, action: PayloadAction<{ oldGroupName: string, newGroupName: string }>) => {
             if (!state.currentTable) {
                 return;
             }
+            state.activeGroup = action.payload.newGroupName;
 
             const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
             if (currentPortfolio) {
@@ -234,6 +286,16 @@ export const portfoliosSlice = createSlice({
             currentPortfolio.positions = recalculatePortfolioCurrency(currentPortfolio, previousCurrency, action.payload.quotes);
             currentPortfolio.positions = recalculatePortfolioPercentage(currentPortfolio);
         },
+        updateModelPortfolioPriceMode: (state: PortfoliosState, action: PayloadAction<ModelPortfolioPriceMode>) => {
+            if (!state.currentTable) {
+                return;
+            }
+
+            const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
+            if (currentPortfolio && currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
+                currentPortfolio.settings.priceMode = action.payload;
+            }
+        },
         updateModelPortfolioQuantityMode: (state: PortfoliosState, action: PayloadAction<ModelPortfolioQuantityMode>) => {
             if (!state.currentTable) {
                 return;
@@ -268,6 +330,13 @@ export const portfoliosSlice = createSlice({
         },
         resetCurrentPortfolio: (state: PortfoliosState) => {
             state.currentTable = undefined;
+            state.activeGroup = undefined;
+        },
+        setSavingInProgress: (state: PortfoliosState, action: PayloadAction<boolean>) => {
+            state.isSavingInProgress = action.payload;
+        },
+        setProjectReadyForSavingStatus: (state: PortfoliosState, action: PayloadAction<boolean>) => {
+            state.isProjectReadyForSaving = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -281,12 +350,24 @@ export const portfoliosSlice = createSlice({
                     }
                 }
             })
-            .addCase(loadMoexQuotesByTickers.fulfilled, (state: PortfoliosState, action: PayloadAction<QuotesData>) => {
-                if (state.currentTable) {
+            .addCase(loadMoexQuotesByTickers.fulfilled, (state: PortfoliosState, action) => {
+                if (state.currentTable && !action.meta.arg.isGlobalUpdate) {
                     const currentPortfolio = getCurrentPortfolio(state.currentTable, state.modelPortfolios, state.brokerAccounts);
                     if (currentPortfolio) {
                         currentPortfolio.positions = recalculatePortfolioPrice(currentPortfolio, action.payload[0], action.payload[1]);
                         currentPortfolio.positions = recalculatePortfolioPercentage(currentPortfolio);
+                    }
+                }
+
+                if (action.meta.arg.isGlobalUpdate) {
+                    for (const portfolio of [
+                        ...state.modelPortfolios.filter((_portfolio) => (
+                            _portfolio.settings.priceMode === ModelPortfolioPriceMode.MARKET_DATA
+                        )),
+                        ...state.brokerAccounts
+                    ]) {
+                        portfolio.positions = recalculatePortfolioPrice(portfolio, action.payload[0], action.payload[1]);
+                        portfolio.positions = recalculatePortfolioPercentage(portfolio);
                     }
                 }
             })
@@ -319,6 +400,7 @@ export const portfoliosSlice = createSlice({
             })
             .addCase(setDefault, (state) => {
                 portfoliosSlice.caseReducers.resetCurrentPortfolio(state);
+                state.isProjectReadyForSaving = false;
             });
     }
 });
@@ -334,8 +416,11 @@ export const {
     deleteRowById,
     updateTotalTargetAmount,
     updateBaseCurrency,
+    updateModelPortfolioPriceMode,
     updateModelPortfolioQuantityMode,
-    updateModelPortfolioQuantitySources
+    updateModelPortfolioQuantitySources,
+    setSavingInProgress,
+    setProjectReadyForSavingStatus
 } = portfoliosSlice.actions;
 
 export default portfoliosSlice.reducer;

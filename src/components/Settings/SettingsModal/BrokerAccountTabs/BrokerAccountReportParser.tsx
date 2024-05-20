@@ -5,7 +5,7 @@ import {
     useState
 } from "react";
 
-import { useToasts } from "react-toast-notifications";
+import { toast } from "react-hot-toast";
 import { Button, Dropdown } from "semantic-ui-react";
 
 import { app, dialog } from "@electron/remote";
@@ -15,14 +15,14 @@ import {
     BrokerReportEncoding,
     BrokerReportFormat,
     BrokerReportPositionCodeFormat
-} from "../../../../../models/portfolios/enums";
-import { BrokerReportLoadResult, BrokerReportMetadata } from "../../../../../models/portfolios/types";
-import openBrokerIcon from "../../../../../static/icons/open-broker.ico";
-import tinkoffBrokerIcon from "../../../../../static/icons/tinkoff-broker.png";
-import vtbBrokerIcon from "../../../../../static/icons/vtb-broker.png";
-import { useAppDispatch } from "../../../../../store/hooks";
-import { addBrokerAccountPositions } from "../../../../../store/portfolios/portfoliosReducer";
-import BrokerReportLoaderWorker from "../../../../../workers/BrokerReportLoader.worker";
+} from "../../../../models/portfolios/enums";
+import { BrokerReportLoadResult, BrokerReportMetadata } from "../../../../models/portfolios/types";
+import openBrokerIcon from "../../../../static/icons/open-broker.ico";
+import tinkoffBrokerIcon from "../../../../static/icons/tinkoff-broker.png";
+import vtbBrokerIcon from "../../../../static/icons/vtb-broker.png";
+import { useAppDispatch } from "../../../../store/hooks";
+import { addBrokerAccountPositions } from "../../../../store/portfolios/portfoliosReducer";
+import BrokerReportLoaderWorker from "../../../../workers/BrokerReportLoader.worker";
 import styles from "./styles/BrokerAccountReportParser.scss";
 
 const brokers: BrokerReportMetadata[] = [
@@ -52,9 +52,10 @@ const brokers: BrokerReportMetadata[] = [
     }
 ];
 
+const LOAD_BROKER_ACCOUNT_TOAST_ID = "load-broker-account";
+
 export default function BrokerAccountReportParser() {
     const dispatch = useAppDispatch();
-    const { addToast } = useToasts();
 
     const [chosenBrokerIndex, setChosenBrokerIndex] = useState<number>();
     const [chosenReportPath, setChosenReportPath] = useState<string>();
@@ -92,17 +93,19 @@ export default function BrokerAccountReportParser() {
     const onBrokerReportLoaded = useCallback((event: MessageEvent<BrokerReportLoadResult>) => {
         if (event.data.error !== undefined) {
             console.error(event.data.error);
-            addToast("Произошла ошибка при загрузке отчёта", { appearance: "error" });
+
+            toast.error("Произошла ошибка при загрузке отчёта", {
+                id: LOAD_BROKER_ACCOUNT_TOAST_ID
+            });
         } else if (
             chosenBrokerIndex !== undefined &&
             chosenReportPath !== undefined &&
             event.data.reportData !== undefined
         ) {
             dispatch(addBrokerAccountPositions(event.data.reportData));
-            addToast(
-                `Отчёт ${event.data.reportData.accountName} успешно загружен`,
-                { appearance: "success" }
-            );
+            toast.success(`Отчёт ${event.data.reportData.accountName} успешно загружен`, {
+                id: LOAD_BROKER_ACCOUNT_TOAST_ID
+            });
         }
 
         setChosenReportPath(undefined);
@@ -111,12 +114,16 @@ export default function BrokerAccountReportParser() {
             reportLoader.terminate();
             setReportLoader(undefined);
         }
-    }, [dispatch, addToast, chosenBrokerIndex, chosenReportPath, reportLoader, setReportLoading]);
+    }, [dispatch, chosenBrokerIndex, chosenReportPath, reportLoader, setReportLoading]);
 
     const loadBrokerReport = useCallback(() => {
         if (chosenBrokerIndex === undefined || chosenReportPath === undefined) {
             return;
         }
+        toast.loading("Загрузка отчёта", {
+            id: LOAD_BROKER_ACCOUNT_TOAST_ID
+        });
+
         const chosenBroker = brokers[chosenBrokerIndex];
 
         setReportLoading(true);

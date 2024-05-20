@@ -6,6 +6,7 @@ export enum BrokeragePortfolioTypes {
 
 export enum Currency {
     RUB = "RUB",
+    CNY = "CNY",
     USD = "USD",
     EUR = "EUR"
 }

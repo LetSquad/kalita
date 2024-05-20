@@ -2,8 +2,8 @@ import { useCallback, useMemo } from "react";
 
 import fs from "fs-extra";
 import nodePath from "path";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useToasts } from "react-toast-notifications";
 import { Button, Icon } from "semantic-ui-react";
 
 import { app, dialog } from "@electron/remote";
@@ -15,13 +15,15 @@ import { baseSidebarMenuGroups } from "../../store/sidebarMenu/sidebarMenuReduce
 import { Kalita } from "../Kalita/Kalita";
 import styles from "./styles/StartScreen.scss";
 
+const CREATE_NEW_PROJECT_TOAST_ID = "create-new-project";
+const OPEN_PROJECT_TOAST_ID = "open-project";
+const OPEN_RECENT_PROJECT_TOAST_ID = "open-recent-project";
+
 export default function StartScreen() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     const recentProjects = useAppSelector((state) => state.electronCache.recentProjects);
-
-    const { addToast } = useToasts();
 
     const addRecent = useCallback((path: string) => {
         dispatch(addRecentProject(path));
@@ -45,7 +47,7 @@ export default function StartScreen() {
                 dirContentCount = 0;
             }
             if (dirContentCount > 0) {
-                addToast("Папка не пустая", { appearance: "warning" });
+                toast.error("Папка не пустая", { id: CREATE_NEW_PROJECT_TOAST_ID });
             } else {
                 try {
                     fs.mkdirpSync(path);
@@ -65,30 +67,30 @@ export default function StartScreen() {
                     navigate(`/dashboard?currentProject=${path}`);
                 } catch {
                     fs.removeSync(path);
-                    addToast("Ошибка при создании проекта", { appearance: "error" });
+                    toast.error("Ошибка при создании проекта", { id: CREATE_NEW_PROJECT_TOAST_ID });
                 }
             }
         }
-    }, [addRecent, addToast, navigate]);
+    }, [addRecent, navigate]);
 
     const openProjectByPath = useCallback((path: string) => {
         if (fs.existsSync(`${path}${nodePath.sep}${saveProjectFileName}`)) {
             addRecent(path);
             navigate(`/dashboard?currentProject=${path}`);
         } else {
-            addToast(`Проект "${path}" сломан`, { appearance: "error" });
+            toast.error(`Проект "${path}" сломан`, { id: OPEN_PROJECT_TOAST_ID });
             removeRecent(path);
         }
-    }, [addRecent, addToast, navigate, removeRecent]);
+    }, [addRecent, navigate, removeRecent]);
 
     const openRecentProject = useCallback((recent: [string, string]) => {
         if (fs.existsSync(recent[1])) {
             openProjectByPath(recent[1]);
         } else {
-            addToast(`Проект "${recent[1]}" не найден`, { appearance: "warning" });
+            toast.error(`Проект "${recent[1]}" не найден`, { id: OPEN_RECENT_PROJECT_TOAST_ID });
             removeRecent(recent[0]);
         }
-    }, [addToast, openProjectByPath, removeRecent]);
+    }, [openProjectByPath, removeRecent]);
 
     const openProject = useCallback(() => {
         const path = dialog.showOpenDialogSync({

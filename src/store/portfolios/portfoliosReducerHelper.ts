@@ -16,10 +16,11 @@ import {
     PortfolioPosition,
     PortfolioUpdatePayload
 } from "../../models/portfolios/types";
-import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
+import { ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { EditableTableColumns } from "../../models/table/enums";
 import { TableData } from "../../models/table/types";
-import { moexCurrencyToInternalCurrency } from "../../utils/currencyUtils";
+import { getCurrencyQuote, moexCurrencyToInternalCurrency } from "../../utils/currencyUtils";
+import { parseMoney } from "../../utils/parseUtils";
 
 export const defaultTotalTargetAmount = 1_000_000;
 
@@ -56,6 +57,7 @@ export const newModelPortfolio: (id: string) => ModelPortfolio = (id: string) =>
     totalTargetAmount: defaultTotalTargetAmount,
     settings: {
         baseCurrency: Currency.RUB,
+        priceMode: ModelPortfolioPriceMode.MARKET_DATA,
         quantityMode: ModelPortfolioQuantityMode.MANUAL_INPUT,
         quantitySources: []
     }
@@ -84,18 +86,6 @@ export function getCurrentPortfolio(
     return brokerAccounts.find((account) => account.id === currentTable.id);
 }
 
-export function getCurrentPortfolioIndex(
-    currentTable: PortfolioIdentifier,
-    modelPortfolios: ModelPortfolio[],
-    brokerAccounts: BrokerAccount[]
-): number {
-    if (currentTable.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO) {
-        return modelPortfolios.findIndex((portfolio) => portfolio.id === currentTable.id);
-    }
-
-    return brokerAccounts.findIndex((account) => account.id === currentTable.id);
-}
-
 export function getBrokerAccountsPositionsByIds(
     brokerAccounts: BrokerAccount[],
     brokerAccountsIds: string[]
@@ -115,7 +105,7 @@ export function generateNewPosition(currentPortfolio: Portfolio, groupName: stri
 }
 
 export function mapPositionFromBrokerReport(groupName: string, position: BrokerReportPosition): BrokerAccountPosition {
-    const currentPrice = position.currentPrice ? position.currentPrice : position.averagePrice;
+    const currentPrice = position.currentPrice ?? position.averagePrice;
     return {
         id: uuidv4(),
         name: position.name,
@@ -167,10 +157,18 @@ export function recalculateRow(portfolio: Portfolio, tableUpdate: PortfolioUpdat
                     [tableUpdate.valueKey]: Number.parseInt(tableUpdate.newValue, 10)
                 };
             }
+            if (tableUpdate.valueKey === EditableTableColumns.CURRENT_PRICE) {
+                const currentPrice: number = parseMoney(tableUpdate.newValue);
+                return {
+                    ...row,
+                    [tableUpdate.valueKey]: currentPrice,
+                    amount: currentPrice * row.quantity
+                };
+            }
             if (tableUpdate.valueKey === EditableTableColumns.AVERAGE_PRICE) {
                 return {
                     ...row,
-                    [tableUpdate.valueKey]: Number.parseFloat(Number.parseFloat(tableUpdate.newValue.replace(",", ".")).toFixed(5))
+                    [tableUpdate.valueKey]: parseMoney(tableUpdate.newValue)
                 };
             }
             return {
@@ -198,13 +196,7 @@ export function recalculatePortfolioCurrency(
     currencyQuotes: CurrencyQuotesMap
 ): ModelPortfolioPosition[] | BrokerAccountPosition[] {
     return portfolio.positions.map((position) => {
-        const currencyQuote = currencyQuotes[previousCurrency]
-            ? currencyQuotes[previousCurrency][portfolio.settings.baseCurrency]
-            : undefined;
-        if (!currencyQuote) {
-            // TODO: replace with toast
-            console.warn(`There is no quote for currency pair ${previousCurrency}:${portfolio.settings.baseCurrency}`);
-        }
+        const currencyQuote = getCurrencyQuote(previousCurrency, portfolio.settings.baseCurrency, currencyQuotes);
         const currentPrice = currencyQuote ? position.currentPrice * currencyQuote : 0;
         return {
             ...position,
@@ -313,7 +305,7 @@ function getNewName(tableData: TableData, nameConst: string, fieldName: "ticker"
         if (ticker.length === nameConst.length) return 0;
         return Number.parseInt(ticker.slice(ticker.lastIndexOf(" ")), 10);
     }).sort((a, b) => a - b);
-    return `${nameConst} ${newStringsNums[newStringsNums.length - 1] + 1}`;
+    return `${nameConst} ${newStringsNums.at(-1) as number + 1}`;
 }
 
 function applyQuoteForPosition(

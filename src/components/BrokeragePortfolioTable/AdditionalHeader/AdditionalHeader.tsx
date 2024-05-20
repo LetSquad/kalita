@@ -1,17 +1,19 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 
 import { Icon } from "semantic-ui-react";
 
 import { loadMoexQuotesByTickers } from "../../../apis/moexApi";
+import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
 import { Portfolio } from "../../../models/portfolios/types";
+import { ModelPortfolioPriceMode } from "../../../models/settings/enums";
 import { useAppDispatch } from "../../../store/hooks";
 import { addNewGroup } from "../../../store/portfolios/portfoliosReducer";
-import { AdditionalHeaderMenu } from "./AdditionalHeaderMenu";
+import { SettingsMenu } from "../../Settings/SettingsMenu";
 import styles from "./styles/AdditionalHeader.scss";
 
 interface Props {
     currentPortfolio: Portfolio,
-    additionalHeaderPart?: JSX.Element,
+    additionalHeaderPart?: React.JSX.Element,
     importTableToCsvText: () => string | undefined,
     isChartMode: boolean
     onToggleChartMode: () => unknown
@@ -28,7 +30,7 @@ export function AdditionalHeader({
 
     const updateQuotesCurrentPrice = useCallback(() => {
         const tickers: string[] = currentPortfolio.positions.map((position) => position.ticker);
-        dispatch(loadMoexQuotesByTickers(tickers));
+        dispatch(loadMoexQuotesByTickers({ tickers }));
     }, [dispatch, currentPortfolio]);
 
     return (
@@ -37,7 +39,7 @@ export function AdditionalHeader({
                 {additionalHeaderPart}
             </div>
             <div>
-                <AdditionalHeaderMenu
+                <SettingsMenu
                     currentPortfolio={currentPortfolio}
                     importTableToCsvText={importTableToCsvText}
                 />
@@ -47,12 +49,16 @@ export function AdditionalHeader({
                     className={styles.additionalHeaderIcon}
                     onClick={onToggleChartMode}
                 />
-                <Icon
-                    name="sync alternate"
-                    link
-                    className={styles.additionalHeaderIcon}
-                    onClick={() => updateQuotesCurrentPrice()}
-                />
+                {currentPortfolio.type === BrokeragePortfolioTypes.BROKER_ACCOUNT ||
+                    currentPortfolio.settings.priceMode === ModelPortfolioPriceMode.MARKET_DATA
+                    ? (
+                        <Icon
+                            name="sync alternate"
+                            link
+                            className={styles.additionalHeaderIcon}
+                            onClick={() => updateQuotesCurrentPrice()}
+                        />
+                    ) : null}
                 <Icon
                     name="plus"
                     link

@@ -16,13 +16,13 @@ export const electronCacheSlice = createSlice({
     reducers: {
         addRecentProject: (state, action: PayloadAction<string>) => {
             const recentIndex = state.recentProjects.findIndex((recent) => recent[1] === action.payload);
-            state.recentProjects = recentIndex !== -1
-                ? [
+            state.recentProjects = recentIndex === -1
+                ? [[uuidv4(), action.payload], ...state.recentProjects]
+                : [
                     state.recentProjects[recentIndex],
                     ...state.recentProjects.slice(0, recentIndex),
                     ...state.recentProjects.slice(recentIndex + 1)
-                ]
-                : [[uuidv4(), action.payload], ...state.recentProjects];
+                ];
         },
         removeRecentProject: ((state, action: PayloadAction<string>) => {
             state.recentProjects = state.recentProjects.filter((recent) => recent[0] !== action.payload);

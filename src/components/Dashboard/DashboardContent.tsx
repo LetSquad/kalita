@@ -13,6 +13,7 @@ const Table = lazy(/* webpackChunkName: "model-portfolio-table" */() =>
 
 export default function DashboardContent() {
     const currentPortfolio = useAppSelector(currentPortfolioSelector);
+
     const isAnalyticsSelected: boolean = useAppSelector((state) => (
         state.sidebarMenu.activeMenuElementId?.id === SidebarMenuElementsTypes.ANALYTICS
     ));

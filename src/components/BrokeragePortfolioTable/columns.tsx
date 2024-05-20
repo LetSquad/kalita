@@ -1,8 +1,10 @@
+import React from "react";
+
 import sum from "lodash.sum";
 
 import { Currency } from "../../models/portfolios/enums";
 import { BrokerAccountPosition, ModelPortfolioPosition } from "../../models/portfolios/types";
-import { ModelPortfolioQuantityMode } from "../../models/settings/enums";
+import { InstrumentViewMode, ModelPortfolioPriceMode, ModelPortfolioQuantityMode } from "../../models/settings/enums";
 import { ModelPortfolioSettings } from "../../models/settings/types";
 import { BaseColumnNames, BrokerAccountColumnNames, ModelPortfolioColumnNames } from "../../models/table/enums";
 import { getSymbol } from "../../utils/currencyUtils";
@@ -19,7 +21,7 @@ const TICKER_DUPLICATE = "Тикер должен быть уникальным 
 const WEIGHT_INVALID_FORMAT = "Вес должен быть числовым";
 const WEIGHT_INVALID_COUNT = "Вес должен быть больше 0";
 const QUANTITY_INVALID = "Количество бумаг в портфеле должно быть числовым и больше нуля";
-const AVERAGE_PRICE_INVALID = "Цена покупки бумаги должна быть числовой, больше нуля и иметь не более 5 символов после точки";
+const AVERAGE_PRICE_INVALID = "Цена покупки бумаги должна быть числовой, больше нуля и иметь не более 6 символов после точки";
 
 function tickerValidator(tableData: ModelPortfolioPosition[] | BrokerAccountPosition[], oldValue: string, newValue: string) {
     if (/^[\dA-Z]([\d.A-Z]){0,11}$/.test(newValue)) {
@@ -64,7 +66,7 @@ function quantityValidator(
 function averagePriceValidator(
     newValue: string
 ) {
-    if (/^\d+([,.]\d{1,5})?$/.test(newValue)) {
+    if (/^\d+([,.]\d{1,6})?$/.test(newValue)) {
         return "";
     }
 
@@ -73,8 +75,10 @@ function averagePriceValidator(
 
 export const commonColumns: (
     baseCurrency: Currency,
-    dividendsButton: (ticker: string) => JSX.Element
-) => ColumnDefinition[] = (baseCurrency, dividendsButton) => [
+    dividendsButton: (ticker: string) => React.JSX.Element,
+    instrumentViewMode: InstrumentViewMode,
+    priceMode?: ModelPortfolioPriceMode
+) => ColumnDefinition[] = (baseCurrency, dividendsButton, instrumentViewMode, priceMode) => [
     {
         title: "Инструмент",
         field: BaseColumnNames.TICKER,
@@ -82,10 +86,17 @@ export const commonColumns: (
         edit: {
             type: EditTypes.INPUT,
             params: {
-                dashed: true
+                dashed: true,
+                withFormatting: instrumentViewMode === InstrumentViewMode.INSTRUMENT_NAME,
+                viewContentFormatter: (
+                    rowId,
+                    field,
+                    value,
+                    rowData
+                ) => rowData.name ?? value
             }
         },
-        validator: {
+        validator: priceMode === ModelPortfolioPriceMode.MANUAL_INPUT ? undefined : {
             validate: (
                 tableData,
                 rowId,
@@ -119,7 +130,11 @@ export const commonColumns: (
                 field,
                 value,
                 rowData
-            ) => rowData.name as string || undefined
+            ) => (
+                instrumentViewMode === InstrumentViewMode.INSTRUMENT_NAME && rowData.name
+                    ? rowData.ticker as string
+                    : rowData.name as string || undefined
+            )
         }
     }, {
         title: "Доля",
@@ -144,11 +159,19 @@ export const commonColumns: (
     }, {
         title: "Цена",
         field: BaseColumnNames.CURRENT_PRICE,
+        edit: priceMode === ModelPortfolioPriceMode.MANUAL_INPUT ? {
+            type: EditTypes.INPUT,
+            params: {
+                dashed: true,
+                withFormatting: true
+            }
+        } : undefined,
         formatter: {
             type: FormatterTypes.MONEY,
             params: {
                 currency: getSymbol(baseCurrency),
-                additionalSpace: true
+                additionalSpace: true,
+                extendedPrecision: 4
             }
         },
         vertAlign: VerticalAlignValues.MIDDLE
@@ -233,11 +256,12 @@ export const modelPortfolioColumnsWidth = [
 ];
 
 const _modelPortfolioColumns: (
-    dividendsButton: (ticker: string) => JSX.Element,
-    portfolioSettings: ModelPortfolioSettings
+    dividendsButton: (ticker: string) => React.JSX.Element,
+    portfolioSettings: ModelPortfolioSettings,
+    instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
-    (dividendsButton, portfolioSettings) => [
-        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton),
+    (dividendsButton, portfolioSettings, instrumentViewMode) => [
+        ...commonColumns(portfolioSettings.baseCurrency, dividendsButton, instrumentViewMode, portfolioSettings.priceMode),
         {
             title: "Вес",
             field: ModelPortfolioColumnNames.WEIGHT,
@@ -364,16 +388,18 @@ const _modelPortfolioColumns: (
     ];
 
 export const modelPortfolioColumns: (
-    dividendsButton: (ticker: string) => JSX.Element,
-    portfolioSettings: ModelPortfolioSettings
+    dividendsButton: (ticker: string) => React.JSX.Element,
+    portfolioSettings: ModelPortfolioSettings,
+    instrumentViewMode: InstrumentViewMode
 ) => ColumnDefinition[] =
-    (dividendsButton, portfolioSettings) => _modelPortfolioColumns(dividendsButton, portfolioSettings).sort((columnA, columnB) =>
-        modelPortfolioColumnsOrder.indexOf(columnA.field as BaseColumnNames | ModelPortfolioColumnNames) -
+    (dividendsButton, portfolioSettings, instrumentViewMode) =>
+        _modelPortfolioColumns(dividendsButton, portfolioSettings, instrumentViewMode).sort((columnA, columnB) =>
+            modelPortfolioColumnsOrder.indexOf(columnA.field as BaseColumnNames | ModelPortfolioColumnNames) -
     modelPortfolioColumnsOrder.indexOf(columnB.field as BaseColumnNames | ModelPortfolioColumnNames))
-        .map((column, index) => ({
-            ...column,
-            width: modelPortfolioColumnsWidth[index]
-        }));
+            .map((column, index) => ({
+                ...column,
+                width: modelPortfolioColumnsWidth[index]
+            }));
 
 export const brokerAccountColumnsOrder = [
     BaseColumnNames.TICKER,
@@ -397,9 +423,12 @@ export const brokerAccountColumnsWidth = [
     40
 ];
 
-export const _brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.Element) => ColumnDefinition[] =
-    (dividendsButton) => [
-        ...commonColumns(Currency.RUB, dividendsButton),
+export const _brokerAccountColumns: (
+    dividendsButton: (ticker: string) => React.JSX.Element,
+    instrumentViewMode: InstrumentViewMode
+) => ColumnDefinition[] =
+    (dividendsButton, instrumentViewMode) => [
+        ...commonColumns(Currency.RUB, dividendsButton, instrumentViewMode),
         {
             title: "Цена покупки",
             field: BrokerAccountColumnNames.AVERAGE_PRICE,
@@ -407,13 +436,15 @@ export const _brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.El
                 type: FormatterTypes.MONEY,
                 params: {
                     currency: getSymbol(Currency.RUB),
-                    additionalSpace: true
+                    additionalSpace: true,
+                    extendedPrecision: 4
                 }
             },
             edit: {
                 type: EditTypes.INPUT,
                 params: {
-                    dashed: true
+                    dashed: true,
+                    withFormatting: true
                 }
             },
             validator: {
@@ -467,8 +498,11 @@ export const _brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.El
         }
     ];
 
-export const brokerAccountColumns: (dividendsButton: (ticker: string) => JSX.Element) => ColumnDefinition[] =
-    (dividendsButton) => _brokerAccountColumns(dividendsButton).sort((columnA, columnB) =>
+export const brokerAccountColumns: (
+    dividendsButton: (ticker: string) => React.JSX.Element,
+    instrumentViewMode: InstrumentViewMode
+) => ColumnDefinition[] =
+    (dividendsButton, instrumentViewMode) => _brokerAccountColumns(dividendsButton, instrumentViewMode).sort((columnA, columnB) =>
         brokerAccountColumnsOrder.indexOf(columnA.field as BaseColumnNames | BrokerAccountColumnNames) -
     brokerAccountColumnsOrder.indexOf(columnB.field as BaseColumnNames | BrokerAccountColumnNames))
         .map((column, index) => ({

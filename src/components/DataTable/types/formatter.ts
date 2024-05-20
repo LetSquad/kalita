@@ -1,4 +1,4 @@
-import { HTMLAttributeAnchorTarget } from "react";
+import React, { HTMLAttributeAnchorTarget } from "react";
 
 // eslint-disable-next-line import/no-cycle
 import { DataTableData } from "./base";
@@ -29,7 +29,8 @@ export enum CurrencyPosition {
  * @param {string} [currency]                                          - Currency symbol
  * @param {CurrencyPosition} [currencyPosition=CurrencyPosition.AFTER] - Where will the currency symbol be located?
  * @param {boolean} [additionalSpace=false]                            - Whether to add a space between the number and the currency symbol
- * @param {number | false} [precision=2]                               - The number of digits after the decimal point to which the number will be rounded
+ * @param {number | false} [precision=2]                               - The number of digits after the decimal point to which the number will be rounded. The rest will be filled with zeros
+ * @param {number | false} [extendedPrecision=2]                       - The number of digits after the decimal point to which the number will be rounded if there are no trailing zeros
  * @param {boolean} [zerosRemove=false]                                - Whether to remove extra zeros at the end
  */
 export interface MoneyFormatterParams {
@@ -39,6 +40,7 @@ export interface MoneyFormatterParams {
     currencyPosition?: CurrencyPosition;
     additionalSpace?: boolean;
     precision?: number | false;
+    extendedPrecision?: number | false;
     zerosRemove?: boolean;
 }
 
@@ -50,11 +52,13 @@ export interface MoneyFormatterParams {
  * @param {boolean} [additionalSpace=false] - Whether to add a space between the number and the currency symbol
  * @param {number | false} [precision=2]    - The number of digits after the decimal point to which the number will be rounded
  * @param {boolean} [zerosRemove=false]     - Whether to remove extra zeros at the end
+ * @param {boolean} [withLabel=true]        - Whether to add % label at the end
  */
 export interface PercentageFormatterParams {
     additionalSpace?: boolean;
     precision?: number | false;
     zerosRemove?: boolean;
+    withLabel?: boolean;
 }
 
 /**
@@ -145,7 +149,7 @@ export interface DefaultProgressFormatterParams {
  * @param {(cellData: number, rowId: string, rowData: DataTableData) => boolean} [error]   - Progress bar shows error
  * @param {(cellData: number, rowId: string, rowData: DataTableData) => boolean} [warning] - Progress bar shows warning
  */
-export interface BaseProgressFormatterParams extends DefaultProgressFormatterParams{
+export interface BaseProgressFormatterParams extends DefaultProgressFormatterParams {
     success?: (cellData: number, rowId: string, rowData: DataTableData) => boolean;
     error?: (cellData: number, rowId: string, rowData: DataTableData) => boolean;
     warning?: (cellData: number, rowId: string, rowData: DataTableData) => boolean;
@@ -185,7 +189,7 @@ export interface TotalProgressFormatterParams extends BaseProgressFormatterParam
  * @param {(cellData: number, columnData: number[]) => boolean} [error]   - Progress bar shows error
  * @param {(cellData: number, columnData: number[]) => boolean} [warning] - Progress bar shows warning
  */
-export interface BaseCalcProgressFormatterParams extends DefaultProgressFormatterParams{
+export interface BaseCalcProgressFormatterParams extends DefaultProgressFormatterParams {
     success?: (cellData: number, columnData: number[]) => boolean;
     error?: (cellData: number, columnData: number[]) => boolean;
     warning?: (cellData: number, columnData: number[]) => boolean;
@@ -220,7 +224,7 @@ export interface TotalCalcProgressFormatterParams extends BaseCalcProgressFormat
  *
  * @interface
  * @name ElementFormatterParams
- * @param {(rowId: string, field: keyof DataTableData, cellData: string | number | boolean | undefined, rowData: DataTableData) => JSX.Element} renderElement - Displayed react component
+ * @param {(rowId: string, field: keyof DataTableData, cellData: string | number | boolean | undefined, rowData: DataTableData) => React.JSX.Element} renderElement - Displayed react component
  */
 export interface ElementFormatterParams {
     renderElement: (
@@ -228,7 +232,7 @@ export interface ElementFormatterParams {
         field: keyof DataTableData,
         cellData: string | number | boolean | undefined,
         rowData: DataTableData
-    ) => JSX.Element;
+    ) => React.JSX.Element;
 }
 
 /**

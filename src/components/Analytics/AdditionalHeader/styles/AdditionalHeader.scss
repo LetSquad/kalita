@@ -1,0 +1,23 @@
+$additional-header-height: 50px;
+
+.additional-header {
+  align-items: center;
+  background-color: #ececec;
+  display: flex;
+  height: $additional-header-height;
+  justify-content: space-between;
+  width: 100%;
+
+  &-currency {
+    margin-left: 10px !important;
+  }
+
+  &-icon {
+    font-size: 16px !important;
+    margin-right: 10px !important;
+  }
+}
+
+.currency-dropdown {
+  margin-left: 10px;
+}

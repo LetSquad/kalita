@@ -10,12 +10,13 @@ import {
 import persistStore from "redux-persist/es/persistStore";
 import storage from "redux-persist/lib/storage";
 import promise from "redux-promise-middleware";
-import thunk from "redux-thunk";
+import { thunk } from "redux-thunk";
 
 import { configureStore } from "@reduxjs/toolkit";
 
 import electronCacheReducer from "./electronCache/electronCacheReducer";
 import portfoliosReducer from "./portfolios/portfoliosReducer";
+import settingsReducer from "./settings/settingsReducer";
 import sidebarMenuReducer from "./sidebarMenu/sidebarMenuReducer";
 
 const electronCachePersistConfig = {
@@ -29,6 +30,7 @@ export const store = configureStore({
     reducer: {
         portfolios: portfoliosReducer,
         sidebarMenu: sidebarMenuReducer,
+        settings: settingsReducer,
         electronCache: electronCachePersistedReducer
     },
     devTools: process.env.NODE_ENV !== "production",

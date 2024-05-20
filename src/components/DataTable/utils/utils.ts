@@ -97,7 +97,7 @@ export function exportDataToCsv(
         }
 
         return column.title ? column.field : undefined;
-    }).filter((column) => column) as (keyof DataTableData)[];
+    }).filter((column) => !!column) as (keyof DataTableData)[];
 
     const fieldsName = columns.filter((column) => fields.includes(column.field)).map((column) => `"${column.title?.replace("\"", "\"\"")}"`);
 

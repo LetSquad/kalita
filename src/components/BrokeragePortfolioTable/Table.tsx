@@ -1,4 +1,4 @@
-import {
+import React, {
     FocusEvent,
     KeyboardEvent,
     lazy,
@@ -14,9 +14,11 @@ import { Icon, Popup } from "semantic-ui-react";
 import { $enum } from "ts-enum-util";
 
 import { loadMoexQuoteByTicker } from "../../apis/moexApi";
+import { BrokeragePortfolioTypes } from "../../models/portfolios/enums";
 import { Portfolio } from "../../models/portfolios/types";
+import { InstrumentViewMode, ModelPortfolioPriceMode } from "../../models/settings/enums";
 import { BaseColumnNames, EditableTableColumns } from "../../models/table/enums";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
     addNewPosition,
     update,
@@ -33,9 +35,9 @@ import DividendsModal from "./DividendsModal";
 import styles from "./styles/Table.scss";
 
 interface TableProps {
-    columns: (dividendsButton: (ticket: string) => JSX.Element) => ColumnDefinition[],
+    columns: (dividendsButton: (ticket: string) => React.JSX.Element) => ColumnDefinition[],
     currentPortfolio: Portfolio,
-    additionalHeaderPart?: JSX.Element
+    additionalHeaderPart?: React.JSX.Element
 }
 
 const DataTable = lazy(/* webpackChunkName: "dataTable" */() =>
@@ -43,17 +45,21 @@ const DataTable = lazy(/* webpackChunkName: "dataTable" */() =>
 
 export default function Table({ columns, currentPortfolio, additionalHeaderPart }: TableProps) {
     const dispatch = useAppDispatch();
+
     const [isChartMode, setIsChartMode] = useState<boolean>(false);
     const [dividendsTicket, setDividendsTicket] = useState<string>();
+
     const dataTableRef = useRef<DataTableRef>(null);
+
+    const instrumentViewMode = useAppSelector((state) => state.settings.instrumentViewMode);
 
     const importTableToCsvText = useCallback(() => dataTableRef.current?.exportToCsv({ includeGroup: true }), []);
 
-    const addRowToGroup = useCallback((groupName) => {
+    const addRowToGroup = useCallback((groupName: string) => {
         dispatch(addNewPosition(groupName));
     }, [dispatch]);
 
-    const updateGroup = useCallback((oldGroupName, newGroupName) => {
+    const updateGroup = useCallback((oldGroupName: string, newGroupName: string) => {
         dispatch(updateGroupName({
             oldGroupName,
             newGroupName
@@ -81,18 +87,26 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 .asValueOrThrow(field as string),
             newValue: value as string
         }));
-        if (field === BaseColumnNames.TICKER) {
+        if (field === BaseColumnNames.TICKER &&
+            !(currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO &&
+                currentPortfolio.settings.priceMode === ModelPortfolioPriceMode.MANUAL_INPUT)
+        ) {
             dispatch(loadMoexQuoteByTicker(value as string));
         }
-    }, [dispatch]);
+    }, [dispatch, currentPortfolio]);
 
     const chart = useMemo(() => {
         const chartData: ChartData<"doughnut"> | null = {
-            labels: currentPortfolio.positions.map((row) => row.ticker),
+            labels: currentPortfolio.positions.map((row) => (
+                instrumentViewMode === InstrumentViewMode.INSTRUMENT_NAME && row.name
+                    ? row.name
+                    : row.ticker
+            )),
             datasets: [{
                 data: currentPortfolio.positions.map((row) => row.percentage)
             }]
         };
+
         return (
             <div className={stylesChart.chartWrapper}>
                 <div className={stylesChart.chart}>
@@ -100,7 +114,7 @@ export default function Table({ columns, currentPortfolio, additionalHeaderPart 
                 </div>
             </div>
         );
-    }, [currentPortfolio.positions]);
+    }, [currentPortfolio.positions, instrumentViewMode]);
 
     const dividendsButton = useCallback((ticket: string) => (
         <Popup

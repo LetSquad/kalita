@@ -29,3 +29,12 @@ export const baseCurrencySelector = createSelector(currentPortfolioSelector, (cu
     }
     return undefined;
 });
+
+export const allTickerSelector = createSelector(
+    selectPortfolios,
+    (portfolios) => [...new Set(
+        [...portfolios.modelPortfolios, ...portfolios.brokerAccounts]
+            .flatMap((portfolio) => portfolio.positions
+                .map((position) => position.ticker))
+    )]
+);

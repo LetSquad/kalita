@@ -23,9 +23,10 @@ const BOARD_STOCKS = "TQBR";
 const BOARD_ETFS = "TQTF";
 const BOARD_FUNDS = "TQIF";
 
+const QUOTE_CNY = "CNYFIXME";
 const QUOTE_USD = "USDFIXME";
-const QUOTES_EUR = "EURFIXME";
-const QUOTES_EUR_USD = "EURUSDFIXME";
+const QUOTE_EUR = "EURFIXME";
+const QUOTE_EUR_USD = "EURUSDFIXME";
 
 const QUOTES_FILTER_LIMIT = 10;
 
@@ -34,8 +35,8 @@ const moexHttpClient = axios.create({
     responseType: "text"
 });
 
-function getUrl(board: string): string {
-    const filters = "iss.meta=off&iss.only=securities&securities.columns=SECID,PREVADMITTEDQUOTE,SHORTNAME,ISIN,CURRENCYID";
+function getBoardUrl(board: string): string {
+    const filters = "iss.meta=off&iss.only=securities&securities.columns=SECID,PREVLEGALCLOSEPRICE,SHORTNAME,ISIN,CURRENCYID";
     return `/iss/engines/stock/markets/shares/boards/${board}/securities.xml?${filters}`;
 }
 
@@ -48,7 +49,7 @@ function getCurrencyQuotes(): Promise<CurrencyQuotes> {
 
 function getQuotesByBoard(board: string, tickers?: string[]): Promise<Quote[]> {
     return moexHttpClient.get(
-        getUrl(board),
+        getBoardUrl(board),
         tickers && tickers.length <= QUOTES_FILTER_LIMIT ? { params: { securities: tickers.join(",") } } : undefined
     ).then((response) => convertResponseToQuotes(response.data));
 }
@@ -79,7 +80,7 @@ function parseQuotes(json: MoexData): Quote[] {
         if (Array.isArray(row)) {
             return row.map((el: MoexQuote) => ({
                 ticker: el.SECID,
-                price: Number.parseFloat(Number.parseFloat(el.PREVADMITTEDQUOTE).toFixed(5)),
+                price: Number.parseFloat(Number.parseFloat(el.PREVLEGALCLOSEPRICE).toFixed(5)),
                 isin: el.ISIN,
                 name: el.SHORTNAME,
                 currency: el.CURRENCYID
@@ -87,7 +88,7 @@ function parseQuotes(json: MoexData): Quote[] {
         }
         return [{
             ticker: row.SECID,
-            price: Number.parseFloat(Number.parseFloat(row.PREVADMITTEDQUOTE).toFixed(5)),
+            price: Number.parseFloat(Number.parseFloat(row.PREVLEGALCLOSEPRICE).toFixed(5)),
             isin: row.ISIN,
             name: row.SHORTNAME,
             currency: row.CURRENCYID
@@ -107,18 +108,35 @@ function parseCurrencyQuotes(json: MoexCurrencyData): CurrencyQuotes {
 
 function createCurrencyQuotesMap(moexQuotes: CurrencyQuotes): CurrencyQuotesMap {
     const map: CurrencyQuotesMap = {};
+
     const rubMap: CurrencyQuotes = {};
+    rubMap[Currency.RUB] = 1;
+    rubMap[Currency.CNY] = 1 / moexQuotes[QUOTE_CNY];
     rubMap[Currency.USD] = 1 / moexQuotes[QUOTE_USD];
-    rubMap[Currency.EUR] = 1 / moexQuotes[QUOTES_EUR];
+    rubMap[Currency.EUR] = 1 / moexQuotes[QUOTE_EUR];
     map[Currency.RUB] = rubMap;
+
+    const cnyMap: CurrencyQuotes = {};
+    cnyMap[Currency.CNY] = 1;
+    cnyMap[Currency.RUB] = moexQuotes[QUOTE_CNY];
+    cnyMap[Currency.USD] = moexQuotes[QUOTE_CNY] / moexQuotes[QUOTE_USD];
+    cnyMap[Currency.EUR] = moexQuotes[QUOTE_CNY] / moexQuotes[QUOTE_EUR];
+    map[Currency.CNY] = cnyMap;
+
     const usdMap: CurrencyQuotes = {};
+    usdMap[Currency.USD] = 1;
     usdMap[Currency.RUB] = moexQuotes[QUOTE_USD];
-    usdMap[Currency.EUR] = 1 / moexQuotes[QUOTES_EUR_USD];
+    usdMap[Currency.CNY] = moexQuotes[QUOTE_USD] / moexQuotes[QUOTE_CNY];
+    usdMap[Currency.EUR] = 1 / moexQuotes[QUOTE_EUR_USD];
     map[Currency.USD] = usdMap;
+
     const eurMap: CurrencyQuotes = {};
-    eurMap[Currency.RUB] = moexQuotes[QUOTES_EUR];
-    eurMap[Currency.USD] = moexQuotes[QUOTES_EUR_USD];
+    eurMap[Currency.EUR] = 1;
+    eurMap[Currency.RUB] = moexQuotes[QUOTE_EUR];
+    eurMap[Currency.CNY] = moexQuotes[QUOTE_EUR] / moexQuotes[QUOTE_CNY];
+    eurMap[Currency.USD] = moexQuotes[QUOTE_EUR_USD];
     map[Currency.EUR] = eurMap;
+
     return map;
 }
 
@@ -126,13 +144,13 @@ export const loadMoexQuoteByTicker = createAsyncThunk<QuoteData, string>(
     "loadMoexQuoteByTicker",
     async (ticker: string) => Promise.all([
         getMoexCurrencyQuotes(),
-        getMoexQuotes([ticker]).then((quotes) => (quotes[0] ? quotes[0] : undefined))
+        getMoexQuotes([ticker]).then((quotes) => (quotes[0] ?? undefined))
     ])
 );
 
-export const loadMoexQuotesByTickers = createAsyncThunk<QuotesData, string[]>(
+export const loadMoexQuotesByTickers = createAsyncThunk<QuotesData, { tickers: string[], isGlobalUpdate?: boolean }>(
     "loadMoexQuotesByTickers",
-    async (tickers: string[]) => Promise.all([
+    async ({ tickers }) => Promise.all([
         getMoexCurrencyQuotes(),
         getMoexQuotesByTickers(tickers)
     ])

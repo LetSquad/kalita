@@ -10,7 +10,7 @@ const BOND_TYPE_UNIT = "ПАЙ";
 
 function parseVtbDeals(data: any): Map<string, BrokerReportDeal[]> {
     const dealsSection = data.Report.Tablix_b9;
-    if (!dealsSection || dealsSection.length === 0) {
+    if (!dealsSection || dealsSection.length === 0 || !dealsSection[0][`${CHAPTER_DEALS}_Collection`]) {
         return new Map();
     }
 
@@ -33,8 +33,10 @@ function parseVtbDeals(data: any): Map<string, BrokerReportDeal[]> {
 
 export function parseVtbReport(brokerName: string, data: any): BrokerReportData {
     const accountNumber: string = data.Report
-        .Tablix_h2_acc[0][`${CHAPTER_ACCOUNT_NAME}_Collection`][0][CHAPTER_ACCOUNT_NAME][0]
-        .$.AccNum;
+        .Tablix_h2_acc[0][`${CHAPTER_ACCOUNT_NAME}_Collection`][0][CHAPTER_ACCOUNT_NAME]
+        .find((acc: any) => acc.$)
+        .$.AccNum
+        .split(" ")[0];
     const accountName = `${brokerName}: ${accountNumber}`;
 
     const positionsSection = data.Report.Tablix6[0];
@@ -44,7 +46,7 @@ export function parseVtbReport(brokerName: string, data: any): BrokerReportData 
 
     const dealsMap = parseVtbDeals(data);
     const positions: BrokerReportPosition[] = [];
-    for (const bondType of data.Report.Tablix6[0].bond_type_Collection[0].bond_type) {
+    for (const bondType of positionsSection.bond_type_Collection[0].bond_type) {
         const bondTypeName = bondType.bond_type1[0].$.bond_type1;
         if (bondTypeName === BOND_TYPE_STOCK || bondTypeName === BOND_TYPE_DEPOSIT_RECEIPT || bondTypeName === BOND_TYPE_UNIT) {
             for (const instrument of bondType.FinInstr_Collection[0].FinInstr) {

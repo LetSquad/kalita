@@ -7,14 +7,14 @@ import {
 
 import { Modal, Tab } from "semantic-ui-react";
 
-import { BrokeragePortfolioTypes } from "../../../../models/portfolios/enums";
-import { ModelPortfolio, Portfolio } from "../../../../models/portfolios/types";
-import partsStyles from "../../../../styles/parts.scss";
-import { WithSuspense } from "../../../utils/WithSuspense";
+import { BrokeragePortfolioTypes } from "../../../models/portfolios/enums";
+import { ExtendedPortfolio, ModelPortfolio } from "../../../models/portfolios/types";
+import partsStyles from "../../../styles/parts.scss";
+import { WithSuspense } from "../../utils/WithSuspense";
 import styles from "./styles/SettingsModal.scss";
 
 interface SettingsModalProps {
-    currentPortfolio: Portfolio,
+    currentPortfolio: ExtendedPortfolio,
     readonly onClose: () => void;
     readonly activeTab: number;
 }
@@ -22,12 +22,26 @@ interface SettingsModalProps {
 const BrokerAccountReportParser = lazy(/* webpackChunkName: "brokerAccountReportParser" */() =>
     import("./BrokerAccountTabs/BrokerAccountReportParser"));
 const ModelPortfolioQuantityModeSelector = lazy(/* webpackChunkName: "modelPortfolioQuantityModeSelector" */() =>
-    import("./ModelPortfolioTabs/ModelPortfolioQuantityModeSelector"));
+    import("./ModelPortfolioTabs/ModelPortfolioDataSourcesSelector"));
+const CommonSettings = lazy(/* webpackChunkName: "commonSettings" */() =>
+    import("./CommonTabs/CommonSettings"));
 
 export default function SettingsModal({ currentPortfolio, onClose, activeTab }: SettingsModalProps) {
     const [activeIndex, setActiveIndex] = useState<number>(activeTab);
 
+    const commonPanes = useMemo(() => [
+        {
+            menuItem: "Общие настройки",
+            render: () => (
+                <Tab.Pane className={styles.settingsTabPane}>
+                    <CommonSettings />
+                </Tab.Pane>
+            )
+        }
+    ], []);
+
     const modelPortfolioPanes = useCallback((_currentPortfolio: ModelPortfolio) => [
+        ...commonPanes,
         {
             menuItem: "Источники данных",
             render: () => (
@@ -36,9 +50,10 @@ export default function SettingsModal({ currentPortfolio, onClose, activeTab }: 
                 </Tab.Pane>
             )
         }
-    ], []);
+    ], [commonPanes]);
 
     const brokerAccountPanes = useMemo(() => [
+        ...commonPanes,
         {
             menuItem: "Загрузка отчёта брокера",
             render: () => (
@@ -47,13 +62,21 @@ export default function SettingsModal({ currentPortfolio, onClose, activeTab }: 
                 </Tab.Pane>
             )
         }
-    ], []);
-    const settingsPanes = useMemo(
-        () => (currentPortfolio.type === BrokeragePortfolioTypes.MODEL_PORTFOLIO
-            ? modelPortfolioPanes(currentPortfolio)
-            : brokerAccountPanes),
-        [currentPortfolio, modelPortfolioPanes, brokerAccountPanes]
-    );
+    ], [commonPanes]);
+
+    const settingsPanes = useMemo(() => {
+        switch (currentPortfolio.type) {
+            case BrokeragePortfolioTypes.BROKER_ACCOUNT: {
+                return brokerAccountPanes;
+            }
+            case BrokeragePortfolioTypes.MODEL_PORTFOLIO: {
+                return modelPortfolioPanes(currentPortfolio);
+            }
+            case BrokeragePortfolioTypes.ANALYTICS: {
+                return commonPanes;
+            }
+        }
+    }, [currentPortfolio, brokerAccountPanes, modelPortfolioPanes, commonPanes]);
 
     return (
         <Modal

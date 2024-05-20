@@ -114,6 +114,10 @@
                 "trailingUnderscore": "allow"
             },
             {
+                "selector": "import",
+                "format": ["PascalCase", "camelCase"]
+            },
+            {
                 "selector": "enumMember",
                 "format": ["UPPER_CASE"]
             },
